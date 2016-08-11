@@ -14,7 +14,7 @@ server:
 system:
   api:
     server:
-      url: http://dev-nxtims-svc.hlc.co.kr
+      url: https://dev-nxtims-svc.e-hlc.com
 ---
 spring:
   profiles: development
