@@ -24,6 +24,8 @@ public class SampleService {
             return new ObjectMapper().readValue(stream, Map.class);
         }
         catch(IOException e) {
+            e.printStackTrace();
+
             Map<String, Object> map = new HashMap<>();
             map.put("message", e.getMessage());
             return map;
