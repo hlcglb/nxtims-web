@@ -1,0 +1,61 @@
+buildscript {
+    repositories {
+        maven {
+            url 'https://artifactory.hlc.co.kr/artifactory/list/jcenter/'
+        }
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE'
+        classpath 'ro.isdc.wro4j.gradle:wro4j-gradle-plugin:1.8.0.Beta4'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+apply plugin: 'wro4j'
+
+repositories {
+    maven {
+        url 'https://artifactory.hlc.co.kr/artifactory/list/jcenter/'
+    }
+}
+
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-devtools'
+
+    compile 'de.codecentric:spring-boot-admin-starter-client:1.4.1'
+    compile 'org.jolokia:jolokia-core'
+
+    webjars 'org.webjars:jquery:2.2.4'
+    webjars 'org.webjars:angularjs:1.5.7'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+}
+
+jar {
+    baseName = 'app'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+task resources(dependsOn: build) << {
+    copy {
+        from "build/wro/webjars/jquery/2.2.4"
+        into 'src/main/resources/static/js/jquery'
+        include '*.min.js'
+    }
+    copy {
+        from "build/wro/webjars/angularjs/1.5.7"
+        into 'src/main/resources/static/js/angularjs'
+        include '*.min.js'
+        include '**/angular-locale_en-us.js'
+        include '**/angular-locale_ko-kr.js'
+    }
+}

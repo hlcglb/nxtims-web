@@ -1,0 +1,62 @@
+spring:
+  application:
+    name: nxtims-web
+  boot:
+    admin:
+      auto-deregistration: true
+      client:
+        prefer-ip: true
+---
+spring:
+  profiles: default
+server:
+  port: 7310
+system:
+  api:
+    server:
+      url: http://dev-nxtims-svc.hlc.co.kr
+---
+spring:
+  profiles: development
+  boot:
+    admin:
+      url: http://app-hlcadmin-dev.default
+server:
+  tomcat:
+    port-header: X-Forwarded-Port
+    protocol-header: X-Forwarded-Proto
+    remote-ip-header: X-Forwarded-For
+system:
+  api:
+    server:
+      url: http://app-nxtims-svc-dev.default
+---
+spring:
+  profiles: staging
+  boot:
+    admin:
+      url: http://app-hlcadmin-stage.default
+server:
+  tomcat:
+    port-header: X-Forwarded-Port
+    protocol-header: X-Forwarded-Proto
+    remote-ip-header: X-Forwarded-For
+system:
+  api:
+    server:
+      url: http://app-nxtims-svc-stage.default
+---
+spring:
+  profiles: production
+  boot:
+    admin:
+      url: http://app-hlcadmin.default
+server:
+  tomcat:
+    port-header: X-Forwarded-Port
+    protocol-header: X-Forwarded-Proto
+    remote-ip-header: X-Forwarded-For
+system:
+  api:
+    server:
+      url: http://app-nxtims-svc.default
