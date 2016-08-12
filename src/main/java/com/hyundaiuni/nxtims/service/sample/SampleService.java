@@ -16,7 +16,7 @@ public class SampleService {
     private String apiUrl = "/api/v1/sample";
 
     @Autowired
-    private RestApiTemplate apiClient;
+    private RestApiTemplate apiTemplate;
 
     @SuppressWarnings("unchecked")
     public Map<String, Object> get(String id) {
@@ -25,7 +25,7 @@ public class SampleService {
 
         String resourceUrl = apiServerUrl + apiUrl;
 
-        Map<String, Object> resultMap = apiClient.getRestTemplate().getForObject(resourceUrl + "/{id}", Map.class,
+        Map<String, Object> resultMap = apiTemplate.getRestTemplate().getForObject(resourceUrl + "/{id}", Map.class,
             params);
 
         return resultMap;
@@ -34,6 +34,6 @@ public class SampleService {
     public void insert(Map<String, Object> params) {
         String resourceUrl = apiServerUrl + apiUrl;
 
-        apiClient.getRestTemplate().postForEntity(resourceUrl, params, null);
+        apiTemplate.getRestTemplate().postForEntity(resourceUrl, params, null);
     }
 }
