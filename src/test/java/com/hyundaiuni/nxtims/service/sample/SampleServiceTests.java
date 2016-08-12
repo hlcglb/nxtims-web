@@ -1,6 +1,10 @@
 package com.hyundaiuni.nxtims.service.sample;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +20,24 @@ public class SampleServiceTests {
 
     @Test
     public void testGet() {
-        assertThat(sampleService.get("19850003")).isNotEmpty();
+        Map<String, Object> resultMap = sampleService.get("19850003");
+        assertThat(resultMap).isNotEmpty();
+    }
+
+    @Test
+    public void testInsert() {
+        Exception ex = null;
+        
+        Map<String, Object> params = new HashMap<>();
+        params.put("REMARK", "SPRING INSERT 테스트");
+
+        try {
+            sampleService.insert(params);
+        }
+        catch(Exception e) {
+            ex = e;
+        }
+        
+        assertEquals(null, ex);
     }
 }
