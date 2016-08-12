@@ -33,9 +33,6 @@ public class SampleControllerTests {
 
     @Test
     public void testGet() throws Exception {
-        mvc.perform(get(URL + "/1")).andDo(print()).andExpect(status().isOk()).andExpect(
-            content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(jsonPath("$.message").exists());
-        
         mvc.perform(get(URL + "/19850003")).andDo(print()).andExpect(status().isOk()).andExpect(
             content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(jsonPath("$.EMP_NO").value("19850003"));
     }
