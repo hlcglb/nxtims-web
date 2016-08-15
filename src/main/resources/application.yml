@@ -14,7 +14,7 @@ server:
 system:
   api:
     server:
-      url: https://dev-nxtims-svc.e-hlc.com
+      url: https://dev-kong.hlc.co.kr
 ---
 spring:
   profiles: development
@@ -29,7 +29,7 @@ server:
 system:
   api:
     server:
-      url: http://app-nxtims-svc-dev.default
+      url: http://system-kong-dev.default
 ---
 spring:
   profiles: staging
@@ -44,7 +44,7 @@ server:
 system:
   api:
     server:
-      url: http://app-nxtims-svc-stage.default
+      url: http://system-kong-stage.default
 ---
 spring:
   profiles: production
@@ -59,4 +59,4 @@ server:
 system:
   api:
     server:
-      url: http://app-nxtims-svc.default
+      url: http://system-kong.default

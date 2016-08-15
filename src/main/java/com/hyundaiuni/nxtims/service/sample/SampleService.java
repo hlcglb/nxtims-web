@@ -13,27 +13,21 @@ import com.hyundaiuni.nxtims.framework.api.RestApiTemplate;
 public class SampleService {
     @Value("${system.api.server.url}")
     private String apiServerUrl;
-    private String apiUrl = "/api/v1/sample";
+    private String apiUrl = "/nxtims/v1/sample";
 
     @Autowired
     private RestApiTemplate apiTemplate;
 
     @SuppressWarnings("unchecked")
     public Map<String, Object> get(String id) {
+        String resourceUrl = apiServerUrl + apiUrl;
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
-
-        String resourceUrl = apiServerUrl + apiUrl;
-
-        Map<String, Object> resultMap = apiTemplate.getRestTemplate().getForObject(resourceUrl + "/{id}", Map.class,
-            params);
-
-        return resultMap;
+        return apiTemplate.getRestTemplate().getForObject(resourceUrl + "/{id}", Map.class, params);
     }
 
     public void insert(Map<String, Object> params) {
         String resourceUrl = apiServerUrl + apiUrl;
-
         apiTemplate.getRestTemplate().postForEntity(resourceUrl, params, null);
     }
 }
