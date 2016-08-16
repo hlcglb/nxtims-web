@@ -34,6 +34,16 @@ public class SampleServiceTests {
             assertThat(e).isInstanceOf(ResourceAccessException.class).hasMessageContaining("timed out");
         }
     }
+    
+    @Test
+    public void getWithMinusTimeout() {
+        try {
+            sampleService.getWithMinusTimeout("19850003");
+        }
+        catch(Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("non-negative value");
+        }
+    }    
 
     @Test
     public void getWithRequestConfig() {
