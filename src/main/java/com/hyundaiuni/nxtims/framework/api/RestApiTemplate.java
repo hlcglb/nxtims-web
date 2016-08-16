@@ -16,24 +16,26 @@ public class RestApiTemplate {
     private RequestConfig config;
 
     public RestTemplate getRestTemplate() {
-        config = RequestConfig.custom().setConnectTimeout(DEFAULT_TIMEOUT).setConnectionRequestTimeout(
+        this.config = RequestConfig.custom().setConnectTimeout(DEFAULT_TIMEOUT).setConnectionRequestTimeout(
             DEFAULT_TIMEOUT).setSocketTimeout(DEFAULT_TIMEOUT).build();
-
         return new RestTemplate(getClientHttpRequestFactory());
     }
 
     public RestTemplate getRestTemplate(int timeout) {
         Assert.isTrue(timeout >= 0, "Timeout must be a non-negative value");
-
-        config = RequestConfig.custom().setConnectTimeout(timeout).setConnectionRequestTimeout(
+        this.config = RequestConfig.custom().setConnectTimeout(timeout).setConnectionRequestTimeout(
             timeout).setSocketTimeout(timeout).build();
-
         return new RestTemplate(getClientHttpRequestFactory());
     }
+    
+    public RestTemplate getRestTemplate(RequestConfig config) {
+        Assert.notNull(config, "RequestConfig must not be null");
+        this.config = config;
+        return new RestTemplate(getClientHttpRequestFactory());
+    }    
 
     private ClientHttpRequestFactory getClientHttpRequestFactory() {
-        CloseableHttpClient httpClient = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
-
+        CloseableHttpClient httpClient = HttpClientBuilder.create().setDefaultRequestConfig(this.config).build();
         return new HttpComponentsClientHttpRequestFactory(httpClient);
     }
 }
