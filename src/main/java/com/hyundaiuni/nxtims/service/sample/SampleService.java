@@ -7,6 +7,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import com.hyundaiuni.nxtims.framework.api.RestApiTemplate;
 
@@ -29,6 +30,8 @@ public class SampleService {
 
     @SuppressWarnings("unchecked")
     public Map<String, Object> getWithTimeout(String id, int timeout) {
+        Assert.isTrue(timeout >= 0, "Timeout must be a non-negative value");
+
         String resourceUrl = apiServerUrl + apiUrl;
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);

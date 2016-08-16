@@ -27,23 +27,29 @@ public class SampleServiceTests {
 
     @Test
     public void getWithTimeout() {
+        Map<String, Object> resultMap = sampleService.getWithTimeout("19850003", 1000);
+        assertThat(resultMap).isNotEmpty();
+    }
+
+    @Test
+    public void getWithShortTimeout() {
         try {
-            sampleService.getWithTimeout("19850003",1);
+            sampleService.getWithTimeout("19850003", 1);
         }
         catch(Exception e) {
             assertThat(e).isInstanceOf(ResourceAccessException.class).hasMessageContaining("timed out");
         }
     }
-    
+
     @Test
     public void getWithMinusTimeout() {
         try {
-            sampleService.getWithTimeout("19850003",-1);
+            sampleService.getWithTimeout("19850003", -1);
         }
         catch(Exception e) {
             assertThat(e).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("non-negative value");
         }
-    }    
+    }
 
     @Test
     public void getWithRequestConfig() {
