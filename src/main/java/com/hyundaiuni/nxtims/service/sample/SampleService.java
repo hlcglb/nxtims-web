@@ -28,21 +28,13 @@ public class SampleService {
     }
 
     @SuppressWarnings("unchecked")
-    public Map<String, Object> getWithTimeout(String id) {
+    public Map<String, Object> getWithTimeout(String id, int timeout) {
         String resourceUrl = apiServerUrl + apiUrl;
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
-        return apiTemplate.getRestTemplate(1).getForObject(resourceUrl + "/{id}", Map.class, params);
+        return apiTemplate.getRestTemplate(timeout).getForObject(resourceUrl + "/{id}", Map.class, params);
     }
     
-    @SuppressWarnings("unchecked")
-    public Map<String, Object> getWithMinusTimeout(String id) {
-        String resourceUrl = apiServerUrl + apiUrl;
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", id);
-        return apiTemplate.getRestTemplate(-11).getForObject(resourceUrl + "/{id}", Map.class, params);
-    }       
-
     @SuppressWarnings("unchecked")
     public Map<String, Object> getWithRequestConfig(String id) {
         String resourceUrl = apiServerUrl + apiUrl;

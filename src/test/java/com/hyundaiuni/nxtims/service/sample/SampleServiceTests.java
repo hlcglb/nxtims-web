@@ -28,7 +28,7 @@ public class SampleServiceTests {
     @Test
     public void getWithTimeout() {
         try {
-            sampleService.getWithTimeout("19850003");
+            sampleService.getWithTimeout("19850003",1);
         }
         catch(Exception e) {
             assertThat(e).isInstanceOf(ResourceAccessException.class).hasMessageContaining("timed out");
@@ -38,7 +38,7 @@ public class SampleServiceTests {
     @Test
     public void getWithMinusTimeout() {
         try {
-            sampleService.getWithMinusTimeout("19850003");
+            sampleService.getWithTimeout("19850003",-1);
         }
         catch(Exception e) {
             assertThat(e).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("non-negative value");
