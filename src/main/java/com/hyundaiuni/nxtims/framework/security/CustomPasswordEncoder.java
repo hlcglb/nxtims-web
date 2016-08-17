@@ -9,19 +9,18 @@ import com.hyundaiuni.nxtims.framework.helper.MessageDigestHelper;
 public class CustomPasswordEncoder implements PasswordEncoder {
     private static final Log log = LogFactory.getLog(CustomPasswordEncoder.class);
 
-    private static final String algorithm = "SHA-256";
-    private static final String charsetName = "UTF-8";
+    private static final String ALGORITHM = "SHA-256";
+    private static final String CHARSET_NAME = "UTF-8";
 
     @Override
     public String encode(CharSequence rawPassword) {
         String encodedPassword = null;
 
         try {
-            encodedPassword = MessageDigestHelper.getMessageDigest(rawPassword.toString(), algorithm, charsetName);
+            encodedPassword = MessageDigestHelper.getMessageDigest(rawPassword.toString(), ALGORITHM, CHARSET_NAME);
         }
         catch(Exception e) {
             log.error("Password Encoding Exception : ", e);
-            e.printStackTrace();
         }
 
         return encodedPassword;

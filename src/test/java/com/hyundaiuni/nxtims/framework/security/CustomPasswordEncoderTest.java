@@ -27,5 +27,12 @@ public class CustomPasswordEncoderTest {
         boolean isMatched = encoder.matches(builder.toString(),encodedPassword);
         
         assertThat(isMatched).isTrue();
-    }      
+        
+        builder = new StringBuilder();
+        builder.append("admin1");        
+        
+        isMatched = encoder.matches(builder.toString(),encodedPassword);
+        
+        assertThat(isMatched).isFalse();        
+    }
 }

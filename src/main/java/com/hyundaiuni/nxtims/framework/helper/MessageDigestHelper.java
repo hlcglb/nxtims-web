@@ -6,17 +6,32 @@ import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.codec.binary.Base64;
 
+import com.hyundaiuni.nxtims.framework.exception.MessageDigestException;
+
 public class MessageDigestHelper {
+    private MessageDigestHelper() {}
+
     public static String getMessageDigest(String input, String algorithm, String charsetName)
-        throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        MessageDigest messageDigest = MessageDigest.getInstance(algorithm);
-        messageDigest.update(input.getBytes(charsetName));
-        byte byteData[] = messageDigest.digest();
+        throws MessageDigestException {
+        MessageDigest messageDigest = null;
+        StringBuilder stringBuilder = null;
 
-        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            messageDigest = MessageDigest.getInstance(algorithm);
+            messageDigest.update(input.getBytes(charsetName));
+            byte byteData[] = messageDigest.digest();
 
-        for(int i = 0; i < byteData.length; i++) {
-            stringBuilder.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+            stringBuilder = new StringBuilder();
+
+            for(int i = 0; i < byteData.length; i++) {
+                stringBuilder.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+            }
+        }
+        catch(NoSuchAlgorithmException e) {
+            throw new MessageDigestException("NoSuchAlgorithmException : " + e.getMessage());
+        }
+        catch(UnsupportedEncodingException e) {
+            throw new MessageDigestException("UnsupportedEncodingException : " + e.getMessage());
         }
 
         return stringBuilder.toString();
