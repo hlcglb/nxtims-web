@@ -21,20 +21,20 @@ public class SampleServiceTests {
 
     @Test
     public void testGet() {
-        Map<String, Object> resultMap = sampleService.get("19850003");
+        Map<String, Object> resultMap = sampleService.get("21101711");
         assertThat(resultMap).isNotEmpty();
     }
 
     @Test
     public void getWithTimeout() {
-        Map<String, Object> resultMap = sampleService.getWithTimeout("19850003", 1000);
+        Map<String, Object> resultMap = sampleService.getWithTimeout("21101711", 1000);
         assertThat(resultMap).isNotEmpty();
     }
 
     @Test
     public void getWithShortTimeout() {
         try {
-            sampleService.getWithTimeout("19850003", 1);
+            sampleService.getWithTimeout("21101711", 1);
         }
         catch(Exception e) {
             assertThat(e).isInstanceOf(ResourceAccessException.class).hasMessageContaining("timed out");
@@ -44,7 +44,7 @@ public class SampleServiceTests {
     @Test
     public void getWithMinusTimeout() {
         try {
-            sampleService.getWithTimeout("19850003", -1);
+            sampleService.getWithTimeout("21101711", -1);
         }
         catch(Exception e) {
             assertThat(e).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("non-negative value");
@@ -53,7 +53,7 @@ public class SampleServiceTests {
 
     @Test
     public void getWithRequestConfig() {
-        Map<String, Object> resultMap = sampleService.getWithRequestConfig("19850003");
+        Map<String, Object> resultMap = sampleService.getWithRequestConfig("21101711");
         assertThat(resultMap).isNotEmpty();
     }
 
