@@ -1,14 +1,53 @@
 <!doctype html>
-<html>
+<html ng-app="loginApp">
 <head>
 <meta charset="UTF-8">
 <title>신컨테이너운송시스템</title>
+
+
 </head>
 
-<body>
+<body ng-controller="LoginController">
     <p>로그인 테스트~~</p>
+    
     <script src="js/jquery/jquery.min.js" type="text/javascript"></script>
     <script src="js/angularjs/angular.min.js" type="text/javascript"></script>
     <script src="js/kendoui/kendo.all.min.js" type="text/javascript"></script>
+
+    <script src="js/app/app.js" type="text/javascript"></script>
+    <script src="js/app/services.js" type="text/javascript"></script>
+    <script src="js/app/controllers.js" type="text/javascript"></script>
+
+    <div class="k-content">
+        <form id="loginForm" name="loginForm" ng-submit="login()">
+            <h3>
+                <!-- {{PGM.LOGIN.TITLE}} -->
+                login
+            </h3>
+            <ul>
+                <li class="status"></li>
+                <li>
+                    <label for="userId" class="required">ID</label>
+                    <input type="text"  class="k-textbox" name="userId" ng-model="userId"  minlength="2" ng-required="true"></input>
+                </li>
+                <li>
+                    <label for="userpwd" class="required">PASSWORD</label>
+                    <input type="password"  class="k-textbox" name="userPwd" ng-model="userPwd" minlength="4" maxlength="18" required="required"></input>
+                </li>
+                <li class="accept">
+                    <kendo-button type="submit" ng-bind="loginBtnName"></kendo-button>
+                    <kendo-button k-on-click="find()" ng-bind="findBtnName"></kendo-button>
+                </li>
+            </ul>
+            <input id="test" type="hidden" name="action" value="processSubmit" />
+        </form>
+        <code>myForm.$valid = {{loginForm.$valid}}</code><br>
+    </div>
+    <div id="notifiContainer" class="k-content">
+    </div>
+    <span kendo-notification="notf2" k-append-to="'#notifiContainer'">
+        <b>{{notifications.status}}</b>
+        <b>{{notifications.data}}</b>
+    </span>
 </body>
 </html>
