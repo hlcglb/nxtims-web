@@ -13,13 +13,13 @@ public class MessageDigestHelper {
         messageDigest.update(input.getBytes(charsetName));
         byte byteData[] = messageDigest.digest();
 
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuilder = new StringBuilder();
 
         for(int i = 0; i < byteData.length; i++) {
-            stringBuffer.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+            stringBuilder.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
         }
 
-        return stringBuffer.toString();
+        return stringBuilder.toString();
     }
 
     public static String encodeBase64(byte[] binaryData) {

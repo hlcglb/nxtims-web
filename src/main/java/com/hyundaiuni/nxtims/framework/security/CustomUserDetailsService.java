@@ -2,6 +2,7 @@ package com.hyundaiuni.nxtims.framework.security;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -32,7 +33,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         Auth auth = new Auth();
         auth.setAuthId("ROLE_ADMIN");
 
-        ArrayList<Auth> authList = new ArrayList<Auth>();
+        List<Auth> authList = new ArrayList<Auth>();
         authList.add(auth);
 
         user.setAuthList(authList);

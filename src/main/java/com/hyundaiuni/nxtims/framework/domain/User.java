@@ -1,7 +1,6 @@
 package com.hyundaiuni.nxtims.framework.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -45,7 +44,7 @@ public class User implements Serializable {
     private String updUserId = null;
 
     @JsonProperty(value = "AUTH_LIST")
-    private ArrayList<Auth> authList = null;
+    private List<Auth> authList = null;
 
     public String getUserId() {
         return userId;
@@ -175,7 +174,7 @@ public class User implements Serializable {
         return authList;
     }
 
-    public void setAuthList(ArrayList<Auth> authList) {
+    public void setAuthList(List<Auth> authList) {
         this.authList = authList;
     }
 }
