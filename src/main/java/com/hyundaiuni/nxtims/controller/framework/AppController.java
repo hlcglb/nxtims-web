@@ -16,7 +16,7 @@ public class AppController {
     
     @RequestMapping("/resource")
     public Map<String,Object> main() {
-        Map<String,Object> model = new HashMap<String,Object>();
+        Map<String,Object> model = new HashMap<>();
         return model;
       }    
 }

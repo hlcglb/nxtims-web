@@ -48,7 +48,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     private Set<GrantedAuthority> getAuthorities(com.hyundaiuni.nxtims.framework.domain.User user) {
-        Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+        Set<GrantedAuthority> authorities = new HashSet<>();
 
         for(Auth auth : user.getAuthList()) {
             GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(auth.getAuthId());
