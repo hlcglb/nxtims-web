@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AppController {
     @RequestMapping("/authentication")
     public Principal user(Principal user) {
-      return user;
+        return user;
     }
-    
+
     @RequestMapping("/resource")
-    public Map<String,Object> main() {
-        Map<String,Object> model = new HashMap<>();
+    public Map<String, Object> main() {
+        Map<String, Object> model = new HashMap<>();
         return model;
-      }    
+    }
 }

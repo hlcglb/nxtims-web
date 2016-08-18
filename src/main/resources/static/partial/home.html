@@ -1,0 +1,8 @@
+<div ng-show="!authenticated">
+    <a href="#/login">login</a>
+    <p>Login to see the next intermodal application</p>
+</div>
+<div ng-show="authenticated">
+    <a href="" ng-click="controller.logout()">logout</a>
+    <p>menu list</p>
+</div>
