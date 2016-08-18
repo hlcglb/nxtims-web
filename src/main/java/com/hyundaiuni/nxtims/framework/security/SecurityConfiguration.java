@@ -26,7 +26,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.httpBasic().and().authorizeRequests().antMatchers("/index.html","/partial/home.html","/partial/login.html",
+        http.httpBasic().and().authorizeRequests().antMatchers("/index.html","/partial/**",
             "/").permitAll().anyRequest().authenticated().and().addFilterAfter(new CsrfHeaderFilter(),
                 CsrfFilter.class).csrf().csrfTokenRepository(csrfTokenRepository()).and().logout();
     }
