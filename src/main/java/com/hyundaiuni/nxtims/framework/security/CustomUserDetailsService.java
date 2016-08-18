@@ -1,10 +1,12 @@
 package com.hyundaiuni.nxtims.framework.security;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,30 +15,33 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import com.hyundaiuni.nxtims.framework.api.RestApiTemplate;
 import com.hyundaiuni.nxtims.framework.domain.Auth;
+import com.hyundaiuni.nxtims.framework.domain.User;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
+    @Value("${system.api.server.url}")
+    private String apiServerUrl;
+    private String apiUrl = "/nxtims/v1/users";
+    
+    @Autowired
+    private RestApiTemplate apiTemplate;    
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Assert.notNull(username, "username must not be null");
+        
+        String resourceUrl = apiServerUrl + apiUrl;
+        
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", username);        
 
-        com.hyundaiuni.nxtims.framework.domain.User user = new com.hyundaiuni.nxtims.framework.domain.User();
-        user.setUserId(username);
-        user.setUserPwd("8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"); //패스워드 admin sha-256
-        user.setUseYn("Y");
-        user.setExpiredYn("N");
-        user.setPwdExpiredYn("N");
-        user.setLockedYn("N");
-
-        Auth auth = new Auth();
-        auth.setAuthId("ROLE_ADMIN");
-
-        List<Auth> authList = new ArrayList<Auth>();
-        authList.add(auth);
-
-        user.setAuthList(authList);
+        com.hyundaiuni.nxtims.framework.domain.User user = apiTemplate.getRestTemplate().getForObject(resourceUrl + "/{id}", User.class, params);
+        
+        if(user == null){
+            throw new UsernameNotFoundException(username + " not found");
+        }
 
         return new org.springframework.security.core.userdetails.User(user.getUserId(), user.getUserPwd(), user.isUse(),
             user.isNonExpired(), user.isNonPwdExpired(), user.isNonLocked(), getAuthorities(user));
