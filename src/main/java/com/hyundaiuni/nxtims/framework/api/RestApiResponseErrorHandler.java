@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.ResponseErrorHandler;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hyundaiuni.nxtims.framework.exception.ServiceException;
 
 public class RestApiResponseErrorHandler implements ResponseErrorHandler {
     private static final Log log = LogFactory.getLog(RestApiResponseErrorHandler.class);
@@ -39,11 +41,16 @@ public class RestApiResponseErrorHandler implements ResponseErrorHandler {
                 try {
                     @SuppressWarnings("unchecked")
                     Map<String, String> error = objectMapper.readValue(responseBody, Map.class);
-                    
+
                     log.debug("Error Code: " + MapUtils.getString(error, "CODE"));
-                    log.debug("Error Text: " + MapUtils.getString(error, "MESSAGE"));                    
+                    log.debug("Error Text: " + MapUtils.getString(error, "MESSAGE"));
+
+                    String errorCode = MapUtils.getString(error, "CODE");
+                    String errorMessage = MapUtils.getString(error, "MESSAGE");
+
+                    throw new ServiceException(errorCode, errorMessage);
                 }
-                catch(Exception e) {
+                catch(JsonParseException e) {
                     log.error("RestApiResponseErrorHandler Exception : ", e);
                 }
             }
