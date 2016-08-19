@@ -1,5 +1,8 @@
 angular.module('nxtims', [ 'ngRoute' ]).config(function($routeProvider, $httpProvider) {
-    $routeProvider.when('/', {
+    $routeProvider.
+    when('/', {
+        redirectTo: '/login'
+    }).when('/home', {
         templateUrl : 'partial/home.html',
         controller : 'home',
         controllerAs: 'controller'
@@ -60,7 +63,7 @@ angular.module('nxtims', [ 'ngRoute' ]).config(function($routeProvider, $httpPro
             if (authenticated) {
                 console.log("Login succeeded")
                 
-                $location.path("/");
+                $location.path("/home");
                 self.error = false;
                 $rootScope.authenticated = true;
             } else {
