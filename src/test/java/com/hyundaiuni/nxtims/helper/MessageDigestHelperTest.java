@@ -1,4 +1,4 @@
-package com.hyundaiuni.nxtims.framework.helper;
+package com.hyundaiuni.nxtims.helper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -7,7 +7,8 @@ import java.io.UnsupportedEncodingException;
 
 import org.junit.Test;
 
-import com.hyundaiuni.nxtims.framework.exception.MessageDigestException;
+import com.hyundaiuni.nxtims.exception.MessageDigestException;
+import com.hyundaiuni.nxtims.helper.MessageDigestHelper;
 
 public class MessageDigestHelperTest {
     @Test

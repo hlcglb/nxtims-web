@@ -1,4 +1,4 @@
-package com.hyundaiuni.nxtims.controller.framework;
+package com.hyundaiuni.nxtims.controller.app;
 
 import java.security.Principal;
 import java.util.HashMap;

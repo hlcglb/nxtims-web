@@ -1,10 +1,10 @@
-package com.hyundaiuni.nxtims.framework.security;
+package com.hyundaiuni.nxtims.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.hyundaiuni.nxtims.framework.helper.MessageDigestHelper;
+import com.hyundaiuni.nxtims.helper.MessageDigestHelper;
 
 public class CustomPasswordEncoder implements PasswordEncoder {
     private static final Log log = LogFactory.getLog(CustomPasswordEncoder.class);

@@ -1,4 +1,4 @@
-package com.hyundaiuni.nxtims.framework.helper;
+package com.hyundaiuni.nxtims.helper;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.codec.binary.Base64;
 
-import com.hyundaiuni.nxtims.framework.exception.MessageDigestException;
+import com.hyundaiuni.nxtims.exception.MessageDigestException;
 
 public class MessageDigestHelper {
     private MessageDigestHelper() {}

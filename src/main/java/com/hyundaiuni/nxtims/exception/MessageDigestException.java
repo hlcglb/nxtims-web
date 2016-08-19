@@ -1,4 +1,4 @@
-package com.hyundaiuni.nxtims.framework.exception;
+package com.hyundaiuni.nxtims.exception;
 
 public class MessageDigestException extends Exception {
     private static final long serialVersionUID = 2447133971626256442L;

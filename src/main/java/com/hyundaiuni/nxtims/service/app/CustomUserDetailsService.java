@@ -1,4 +1,4 @@
-package com.hyundaiuni.nxtims.framework.security;
+package com.hyundaiuni.nxtims.service.app;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,9 +15,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import com.hyundaiuni.nxtims.framework.api.RestApiTemplate;
-import com.hyundaiuni.nxtims.framework.domain.Auth;
-import com.hyundaiuni.nxtims.framework.domain.User;
+import com.hyundaiuni.nxtims.domain.app.Auth;
+import com.hyundaiuni.nxtims.domain.app.User;
+import com.hyundaiuni.nxtims.service.RestApiTemplate;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -37,7 +37,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         Map<String, Object> params = new HashMap<>();
         params.put("id", username);        
 
-        com.hyundaiuni.nxtims.framework.domain.User user = apiTemplate.getRestTemplate().getForObject(resourceUrl + "/{id}", User.class, params);
+        User user = apiTemplate.getRestTemplate().getForObject(resourceUrl + "/{id}", User.class, params);
         
         if(user == null){
             throw new UsernameNotFoundException(username + " not found");
@@ -47,7 +47,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             user.isNonExpired(), user.isNonPwdExpired(), user.isNonLocked(), getAuthorities(user));
     }
 
-    private Set<GrantedAuthority> getAuthorities(com.hyundaiuni.nxtims.framework.domain.User user) {
+    private Set<GrantedAuthority> getAuthorities(User user) {
         Set<GrantedAuthority> authorities = new HashSet<>();
 
         for(Auth auth : user.getAuthList()) {

@@ -1,4 +1,4 @@
-package com.hyundaiuni.nxtims.framework.security;
+package com.hyundaiuni.nxtims.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -14,6 +14,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import com.hyundaiuni.nxtims.service.app.CustomUserDetailsService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

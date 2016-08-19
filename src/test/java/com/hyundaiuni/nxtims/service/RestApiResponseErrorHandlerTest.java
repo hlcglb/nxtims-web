@@ -1,4 +1,4 @@
-package com.hyundaiuni.nxtims.framework.api;
+package com.hyundaiuni.nxtims.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -15,7 +15,7 @@ import org.springframework.mock.http.client.MockClientHttpResponse;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hyundaiuni.nxtims.framework.exception.ServiceException;
+import com.hyundaiuni.nxtims.exception.ServiceException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

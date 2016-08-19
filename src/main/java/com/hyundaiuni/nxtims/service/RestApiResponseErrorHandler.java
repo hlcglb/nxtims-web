@@ -1,4 +1,4 @@
-package com.hyundaiuni.nxtims.framework.api;
+package com.hyundaiuni.nxtims.service;
 
 import java.io.IOException;
 import java.util.Map;
@@ -13,7 +13,7 @@ import org.springframework.web.client.ResponseErrorHandler;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hyundaiuni.nxtims.framework.exception.ServiceException;
+import com.hyundaiuni.nxtims.exception.ServiceException;
 
 public class RestApiResponseErrorHandler implements ResponseErrorHandler {
     private static final Log log = LogFactory.getLog(RestApiResponseErrorHandler.class);

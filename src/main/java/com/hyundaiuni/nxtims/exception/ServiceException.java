@@ -1,4 +1,4 @@
-package com.hyundaiuni.nxtims.framework.exception;
+package com.hyundaiuni.nxtims.exception;
 
 public class ServiceException extends RuntimeException {
     private static final long serialVersionUID = -9061697529915101565L;

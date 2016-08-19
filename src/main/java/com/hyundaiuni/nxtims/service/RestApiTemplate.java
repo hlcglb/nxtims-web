@@ -1,4 +1,4 @@
-package com.hyundaiuni.nxtims.framework.api;
+package com.hyundaiuni.nxtims.service;
 
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
