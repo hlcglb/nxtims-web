@@ -35,6 +35,11 @@ public class UserTest {
             String json = mapper.writeValueAsString(user);
             
             System.out.println(json);
+            
+            assertEquals(user.isUse(),true);
+            assertEquals(user.isNonExpired(),true);
+            assertEquals(user.isNonLocked(),true);
+            assertEquals(user.isNonPwdExpired(),true);
         }
         catch(Exception e) {
             ex = e;
