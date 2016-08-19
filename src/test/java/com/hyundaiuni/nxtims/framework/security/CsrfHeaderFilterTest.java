@@ -16,6 +16,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -56,6 +58,18 @@ public class CsrfHeaderFilterTest {
             if(csrf != null){
                 fail("");
             }
+            
+            MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+            mockHttpServletRequest.setAttribute(CsrfToken.class.getName(), token);
+            
+            MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+            
+            headerFilter.doFilterInternal(mockHttpServletRequest, mockHttpServletResponse, filterChain);
+            csrf = (CsrfToken)mockHttpServletRequest.getAttribute(CsrfToken.class.getName());
+            
+            if(csrf == null){
+                fail("");
+            }            
         }
         catch(ServletException e) {
             ex = e;
