@@ -1,4 +1,4 @@
-package com.hyundaiuni.nxtims.framework.api;
+package com.hyundaiuni.nxtims.service;
 
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -18,21 +18,33 @@ public class RestApiTemplate {
     public RestTemplate getRestTemplate() {
         this.config = RequestConfig.custom().setConnectTimeout(DEFAULT_TIMEOUT).setConnectionRequestTimeout(
             DEFAULT_TIMEOUT).setSocketTimeout(DEFAULT_TIMEOUT).build();
-        return new RestTemplate(getClientHttpRequestFactory());
+
+        RestTemplate restTemplate = new RestTemplate(getClientHttpRequestFactory());
+        restTemplate.setErrorHandler(new RestApiResponseErrorHandler());
+
+        return restTemplate;
     }
 
     public RestTemplate getRestTemplate(int timeout) {
         Assert.isTrue(timeout >= 0, "Timeout must be a non-negative value");
         this.config = RequestConfig.custom().setConnectTimeout(timeout).setConnectionRequestTimeout(
             timeout).setSocketTimeout(timeout).build();
-        return new RestTemplate(getClientHttpRequestFactory());
+
+        RestTemplate restTemplate = new RestTemplate(getClientHttpRequestFactory());
+        restTemplate.setErrorHandler(new RestApiResponseErrorHandler());
+
+        return restTemplate;
     }
-    
+
     public RestTemplate getRestTemplate(RequestConfig config) {
         Assert.notNull(config, "RequestConfig must not be null");
         this.config = config;
-        return new RestTemplate(getClientHttpRequestFactory());
-    }    
+
+        RestTemplate restTemplate = new RestTemplate(getClientHttpRequestFactory());
+        restTemplate.setErrorHandler(new RestApiResponseErrorHandler());
+
+        return restTemplate;
+    }
 
     private ClientHttpRequestFactory getClientHttpRequestFactory() {
         CloseableHttpClient httpClient = HttpClientBuilder.create().setDefaultRequestConfig(this.config).build();

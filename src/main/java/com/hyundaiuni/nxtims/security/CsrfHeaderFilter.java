@@ -1,4 +1,4 @@
-package com.hyundaiuni.nxtims.framework.security;
+package com.hyundaiuni.nxtims.security;
 
 import java.io.IOException;
 

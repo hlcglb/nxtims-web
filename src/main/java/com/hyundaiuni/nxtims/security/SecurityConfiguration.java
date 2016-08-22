@@ -1,4 +1,4 @@
-package com.hyundaiuni.nxtims.framework.security;
+package com.hyundaiuni.nxtims.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -13,6 +13,8 @@ import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
+import com.hyundaiuni.nxtims.service.app.CustomUserDetailsService;
+
 @Configuration
 @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -26,7 +28,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.httpBasic().and().authorizeRequests().antMatchers("/index.html","/partial/**",
+        http.httpBasic().and().authorizeRequests().antMatchers("/index.html","/partial/login.html",
             "/").permitAll().anyRequest().authenticated().and().addFilterAfter(new CsrfHeaderFilter(),
                 CsrfFilter.class).csrf().csrfTokenRepository(csrfTokenRepository()).and().logout();
     }

@@ -1,4 +1,4 @@
-package com.hyundaiuni.nxtims.framework.domain;
+package com.hyundaiuni.nxtims.domain.app;
 
 import java.io.Serializable;
 import java.util.List;
@@ -75,12 +75,7 @@ public class User implements Serializable {
     }
 
     public boolean isNonExpired() {
-        if("Y".equals(expiredYn)) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        return "Y".equals(expiredYn) ? false : true;
     }
 
     public void setExpiredYn(String expiredYn) {
@@ -100,12 +95,7 @@ public class User implements Serializable {
     }
     
     public boolean isNonLocked() {
-        if("Y".equals(lockedYn)) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        return "Y".equals(lockedYn) ? false : true;
     }    
 
     public void setLockedYn(String lockedYn) {
@@ -117,12 +107,7 @@ public class User implements Serializable {
     }
     
     public boolean isNonPwdExpired() {
-        if("Y".equals(pwdExpiredYn)) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        return "Y".equals(pwdExpiredYn) ? false : true;
     }    
 
     public void setPwdExpiredYn(String pwdExpiredYn) {
@@ -142,12 +127,7 @@ public class User implements Serializable {
     }
     
     public boolean isUse() {
-        if("Y".equals(useYn)) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return "Y".equals(useYn) ? true : false;
     }     
 
     public void setUseYn(String useYn) {
