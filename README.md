@@ -8,4 +8,3 @@
 [![Coverage](https://sonarqube.hlc.co.kr/api/badges/measure?key=nxtims-web&metric=coverage)](https://sonarqube.hlc.co.kr/dashboard/index/nxtims-web)
 
 <br>
-프로젝트 소개글을 등록하세요.
