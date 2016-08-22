@@ -1,4 +1,4 @@
-package com.hyundaiuni.nxtims.security;
+package com.hyundaiuni.nxtims.service.app;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
