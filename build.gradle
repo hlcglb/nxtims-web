@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         maven {
-            url 'https://artifactory.hlc.co.kr/artifactory/list/jcenter/'
+            url 'http://10.41.104.189:8081/artifactory/list/jcenter/'
         }
     }
     dependencies {
@@ -18,7 +18,7 @@ apply plugin: 'wro4j'
 
 repositories {
     maven {
-        url 'https://artifactory.hlc.co.kr/artifactory/list/jcenter/'
+        url 'http://10.41.104.189:8081/artifactory/list/jcenter/'
     }
 }
 
