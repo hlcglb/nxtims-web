@@ -14,7 +14,7 @@ server:
 system:
   api:
     server:
-      url: https://dev-kong.hlc.co.kr
+      url: http://localhost:7311
 ---
 spring:
   profiles: development

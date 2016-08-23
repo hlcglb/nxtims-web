@@ -21,7 +21,7 @@ import com.hyundaiuni.nxtims.service.RestApiTemplate;
 public class SecuredObjectService {
     @Value("${system.api.server.url}")
     private String apiServerUrl;
-    private String apiUrl = "/nxtims/v1/resources/";
+    private String apiUrl = "/api/v1/resources/";
 
     @Autowired
     private RestApiTemplate apiTemplate;

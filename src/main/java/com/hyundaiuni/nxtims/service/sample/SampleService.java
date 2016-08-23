@@ -15,7 +15,7 @@ import com.hyundaiuni.nxtims.service.RestApiTemplate;
 public class SampleService {
     @Value("${system.api.server.url}")
     private String apiServerUrl;
-    private String apiUrl = "/nxtims/v1/sample";
+    private String apiUrl = "/api/v1/sample";
 
     @Autowired
     private RestApiTemplate apiTemplate;
