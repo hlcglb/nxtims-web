@@ -1,97 +1,92 @@
-angular.module('nxtims', [ 'ngRoute' ]).config(function($routeProvider, $httpProvider) {
-    $routeProvider.
-    when('/', {
-        redirectTo: '/login'
-    }).when('/home', {
-        templateUrl : 'partial/home.html',
-        controller : 'home',
-        controllerAs: 'controller'
-    }).when('/login', {
-        templateUrl : 'partial/login.html',
-        controller : 'navigation',
-        controllerAs: 'controller'
-    }).otherwise('/');
-
-    $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-}).controller('navigation',function($rootScope, $http, $location, $route) {
-    var self = this;
-
-    var authenticate = function(credentials, callback) {
-        console.log("authenticate")
-        
-        var headers = credentials ? {
-            authorization : "Basic "
-                    + btoa(credentials.username + ":"
-                            + credentials.password)
-        } : {};
-        
-        console.log("http get /authentication")
-
-        $http.get('authentication', {
-            headers : headers
-        }).then(function(response) {
-            if (response.data.name) {
-                console.log("authentication success")
-                
-                $rootScope.authenticated = true;
-            } else {
-                console.log("authentication fail")
-                
-                $rootScope.authenticated = false;
+angular.module("nxtIms", 
+        [ "ngRoute",
+          "ui.router",
+          "comn.service.data",
+          "comn.service.auth",
+          "kendo.directives"])
+.config(["$stateProvider", "$urlRouterProvider", "$httpProvider", 
+         function($stateProvider, $urlRouterProvider, $httpProvider) {
+    $urlRouterProvider.otherwise("/");
+    $stateProvider
+    .state("login", {
+        url : "/",
+        templateUrl : "partial/login.html",
+        controller : "NavigationController",
+        controllerAs: "controller"
+    })
+    .state("main", {
+        url : "/main",
+        templateUrl : "partial/home.html",
+        resolve: {
+            User: function(comnDataService){
+                console.log("resolve"); 
+                return comnDataService().get({service: "resource"}).$promise.then().catch(function(error){throw error;});
             }
-            callback && callback($rootScope.authenticated);
-        }, function() {
-            console.log("authentication fail(401)")
-            
-            $rootScope.authenticated = false;
-            callback && callback(false);
-            
-            $location.path("/login");
-        });
-    }
-
-    console.log("call authenticate")
-    authenticate();
-
-    console.log("init credentials")
+        },
+        controller : "MainController",
+        controllerAs: "controller",
+    })
+    .state("program", {
+        url : "/program/:id",
+        templateUrl : function(param){
+            return "partial/home.html";
+        },
+        controller : function(param){
+            return "controller"
+        },
+        controllerAs: "controller",
+    });
+    
+    $httpProvider.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+}]).controller("NavigationController",["$rootScope", "$http", "$location", "$state", "Authenticate",
+                            function($rootScope, $http, $location, $state, Authenticate) {
+    console.log("navigation controller");
+    var self = this;
     self.credentials = {};
     
     self.login = function() {
-        console.log("login")
-        
-        authenticate(self.credentials, function(authenticated) {
-            if (authenticated) {
-                console.log("Login succeeded")
-                
-                $location.path("/home");
-                self.error = false;
-                $rootScope.authenticated = true;
-            } else {
-                console.log("Login failed")
-                
-                $location.path("/login");
-                self.error = true;
-                $rootScope.authenticated = false;
-            }
-        })
-    };    
-})
-.controller('home', function($rootScope, $http, $location) {
-    var self = this;
-
-    $http.get('/resource').then(function(response) {
-        console.log("http get /resource")
-        
-        //menu, 즐겨찾기, ....
-        self.data = response.data;
-    })
-    
-    self.logout = function() {
-        console.log("logout")
-
-        $http.post('logout', {}).finally(function() {
-            $rootScope.authenticated = false;
-            $location.path("/login");
+        console.log("login");
+        Authenticate.login(self.credentials)
+        .then(
+                function(message){
+                    console.log("Login succeeded");
+                    console.log(message);
+                    
+                    //$location.path("/home");
+                    $state.go("main");
+                    self.error = false;
+                }, 
+                function(message){
+                    console.log("Login failed");
+                    console.log(message);
+                    
+                    //$location.path("/login");
+                    $state.go("login");
+                    self.error = true;
+                }
+        ).catch(function(error){
+            console.log(error);
         });
-    }    
-});
+    };    
+}])
+.controller("MainController", ["$rootScope", "$state", "Authenticate", "User",
+                     function($rootScope, $state, Authenticate, User) {
+    var self = this;
+    console.log("home controller");
+    console.log(User);
+    console.log($rootScope);
+    console.log(Authenticate.isAuthenticat());
+
+    self.logout = function() {
+        Authenticate.logout().finally(function() {
+            $state.go("login");
+        });
+    }
+    
+    self.openNav = function(){
+        angular.element("#programMenu").css("width","250px");
+    }
+    self.closeNav = function(){
+        angular.element("#programMenu").css("width", "0");
+    }
+}]);
