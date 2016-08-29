@@ -54,22 +54,22 @@ public class CsrfHeaderFilterTest {
             headerFilter.doFilterInternal(request, response, filterChain);
 
             CsrfToken csrf = (CsrfToken)request.getAttribute(CsrfToken.class.getName());
-            
-            if(csrf != null){
+
+            if(csrf != null) {
                 fail("");
             }
-            
+
             MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
             mockHttpServletRequest.setAttribute(CsrfToken.class.getName(), token);
-            
+
             MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
-            
+
             headerFilter.doFilterInternal(mockHttpServletRequest, mockHttpServletResponse, filterChain);
             csrf = (CsrfToken)mockHttpServletRequest.getAttribute(CsrfToken.class.getName());
-            
-            if(csrf == null){
+
+            if(csrf == null) {
                 fail("");
-            }            
+            }
         }
         catch(ServletException e) {
             ex = e;
