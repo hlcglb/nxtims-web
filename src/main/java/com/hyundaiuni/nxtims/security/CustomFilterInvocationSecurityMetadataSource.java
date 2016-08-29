@@ -13,26 +13,24 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import com.hyundaiuni.nxtims.service.app.SecuredObjectService;
+import com.hyundaiuni.nxtims.service.app.ResourcesService;
 
 public class CustomFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
     private static final Log log = LogFactory.getLog(CustomFilterInvocationSecurityMetadataSource.class);
 
-    private SecuredObjectService securedObjectService;
+    @Autowired
+    private ResourcesService resourcesService;
 
-    public void setSecuredObjectService(SecuredObjectService securedObjectService) {
-        this.securedObjectService = securedObjectService;
-    }
-
-    private final Map<RequestMatcher, Collection<ConfigAttribute>> requestMap;
+    private final Map<RequestMatcher, List<ConfigAttribute>> requestMap;
 
     public CustomFilterInvocationSecurityMetadataSource(
-        LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> requestMap) {
+        LinkedHashMap<RequestMatcher, List<ConfigAttribute>> requestMap) {
         this.requestMap = requestMap;
     }
 
@@ -42,7 +40,7 @@ public class CustomFilterInvocationSecurityMetadataSource implements FilterInvoc
 
         Collection<ConfigAttribute> result = null;
 
-        for(Map.Entry<RequestMatcher, Collection<ConfigAttribute>> entry : requestMap.entrySet()) {
+        for(Map.Entry<RequestMatcher, List<ConfigAttribute>> entry : requestMap.entrySet()) {
             if(entry.getKey().matches(request)) {
                 result = entry.getValue();
                 break;
@@ -56,7 +54,7 @@ public class CustomFilterInvocationSecurityMetadataSource implements FilterInvoc
     public Collection<ConfigAttribute> getAllConfigAttributes() {
         Set<ConfigAttribute> allAttributes = new HashSet<ConfigAttribute>();
 
-        for(Map.Entry<RequestMatcher, Collection<ConfigAttribute>> entry : requestMap.entrySet()) {
+        for(Map.Entry<RequestMatcher, List<ConfigAttribute>> entry : requestMap.entrySet()) {
             allAttributes.addAll(entry.getValue());
         }
 
@@ -69,7 +67,7 @@ public class CustomFilterInvocationSecurityMetadataSource implements FilterInvoc
     }
 
     public void reload() throws Exception {
-        LinkedHashMap<RequestMatcher, List<ConfigAttribute>> reloadedMap = securedObjectService.getRolesAndUrl();
+        LinkedHashMap<RequestMatcher, List<ConfigAttribute>> reloadedMap = resourcesService.getRolesAndUrl();
 
         Iterator<Entry<RequestMatcher, List<ConfigAttribute>>> iterator = reloadedMap.entrySet().iterator();
 
