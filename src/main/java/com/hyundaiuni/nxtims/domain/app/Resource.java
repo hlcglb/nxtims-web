@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Resource implements Serializable {
     private static final long serialVersionUID = -1061697241118943250L;
 
-
     @JsonProperty(value = "RESOURCE_LEVEL")
     private String resourceLevel;
     
@@ -24,12 +23,6 @@ public class Resource implements Serializable {
     
     @JsonProperty(value = "RESOURCE_TYPE")
     private String resourceType;
-    
-    @JsonProperty(value = "HTTP_METHOD")
-    private String httpMethod;
-    
-    @JsonProperty(value = "SORT_ORDER")
-    private int sortOrder;
 
     public String getResourceLevel() {
         return resourceLevel;
@@ -69,21 +62,5 @@ public class Resource implements Serializable {
 
     public void setResourceType(String resourceType) {
         this.resourceType = resourceType;
-    }
-
-    public String getHttpMethod() {
-        return httpMethod;
-    }
-
-    public void setHttpMethod(String httpMethod) {
-        this.httpMethod = httpMethod;
-    }
-
-    public int getSortOrder() {
-        return sortOrder;
-    }
-
-    public void setSortOrder(int sortOrder) {
-        this.sortOrder = sortOrder;
     }
 }
