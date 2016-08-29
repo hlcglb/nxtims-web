@@ -137,8 +137,8 @@ angular.module('comn.service.auth',['ngCookies'])
                 // 쿠키값이 존재하면 삭제 하고 로그인페이지로 이동
                 if ($cookies.get('nxtImsAuthorization')) $cookies.remove("nxtImsAuthorization");
                 console.log("[#AuthenticationInterceptor] Access denied (error 401), please login again");
-                var $state = $injector.get('$state');
-                $state.go("login");
+                /*var $state = $injector.get('$state');
+                $state.go("login");*/
             }
             return $q.reject(rejection);
         }

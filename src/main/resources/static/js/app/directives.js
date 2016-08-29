@@ -65,10 +65,11 @@ angular.module('directives.kendo.menu',[])
     };
 
 }])
-.directive('prgmRef', ['$window', '$compile', function ($window, $compile) {
+.directive('nHref', ['$window', '$compile', function ($window, $compile) {
     return {
         restrict: 'A',
-        compile: [function(element){
+        compile: [function(element, attrs){
+            console.log(attrs);
             element.attr('target', '_blank');
         }]
     };
