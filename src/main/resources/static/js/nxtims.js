@@ -19,9 +19,8 @@ angular.module("nxtIms",
           ])
 .config(["$stateProvider", "$urlRouterProvider", "$httpProvider", "$locationProvider", "constants",
          function($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider, constants) {
-    
     //ui-router 
-    $urlRouterProvider.otherwise("/");
+    $urlRouterProvider.otherwise("/login");
     $stateProvider
     .state(constants.login, {
         url : constants.loginUrl,
@@ -59,18 +58,14 @@ angular.module("nxtIms",
         controllerAs: "controller",
     })
     .state(constants.program, {
-        url : 'partial/:id', //constants.programUrl,
-        templateUrl : function(urlAttr){
+        url : constants.programUrl,
+        templateUrl : constants.templateUrl + "/app/resource.html",/*function(urlAttr){
             angular.injector
             console.log(urlAttr);
             return "partial/app/resource.html";
-        },
+        },*/
         controller : ["$scope", function($scope){var vm = this; vm.id = "id"}],
         controllerAs: "vm"
-    });
-    $locationProvider.html5Mode({
-        enabled: true,
-        requireBase: false
     });
     $httpProvider.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
     
@@ -102,7 +97,7 @@ angular.module("nxtIms",
     baseUrl: '/',
     templateUrl: '/partial',
     login: 'login',
-    loginUrl: '/',
+    loginUrl: '/login',
     main: 'main',
     mainUrl: '/main',
     program: 'program',
