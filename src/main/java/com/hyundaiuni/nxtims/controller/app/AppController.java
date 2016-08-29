@@ -12,8 +12,8 @@ import com.hyundaiuni.nxtims.service.app.AppService;
 @RestController
 public class AppController {
     @Autowired
-    private AppService appService;    
-    
+    private AppService appService;
+
     @RequestMapping("/authentication")
     public Principal authentication(Principal user) {
         return user;
@@ -22,7 +22,7 @@ public class AppController {
     @RequestMapping("/resource")
     public Map<String, Object> resource(Principal user) {
         String userId = user.getName();
-        
+
         Map<String, Object> model = appService.getResourceByUserId(userId);
         return model;
     }
