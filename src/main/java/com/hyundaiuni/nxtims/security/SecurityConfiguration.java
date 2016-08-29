@@ -32,7 +32,7 @@ import com.hyundaiuni.nxtims.service.app.ResourcesService;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private CustomUserDetailsService userDetailsService;
-    
+
     @Autowired
     private ResourcesService resourcesService;
 
@@ -63,8 +63,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         catch(Exception ex) {
             throw new RuntimeException(ex);
         }
-    }    
-    
+    }
+
     @Bean
     public CustomFilterInvocationSecurityMetadataSource customFilterInvocationSecurityMetadataSource() {
         CustomFilterInvocationSecurityMetadataSource filterInvocationSecurityMetadataSource = new CustomFilterInvocationSecurityMetadataSource(
@@ -91,7 +91,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         return roleVoter;
     }
-    
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() {
@@ -101,23 +101,26 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         catch(Exception ex) {
             throw new RuntimeException(ex);
         }
-    }    
+    }
+
+    @Bean
+    public CsrfTokenRepository csrfTokenRepository() {
+        HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
+        repository.setHeaderName("X-XSRF-TOKEN");
+        return repository;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.httpBasic().and().addFilterBefore(filterSecurityInterceptor(),
             FilterSecurityInterceptor.class).addFilterAfter(new CsrfHeaderFilter(),
-                CsrfFilter.class).csrf().csrfTokenRepository(csrfTokenRepository());
+                CsrfFilter.class).csrf().csrfTokenRepository(csrfTokenRepository())
+            .and()
+            .formLogin().loginPage("/login");
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-    }
-
-    private CsrfTokenRepository csrfTokenRepository() {
-        HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
-        repository.setHeaderName("X-XSRF-TOKEN");
-        return repository;
     }
 }
