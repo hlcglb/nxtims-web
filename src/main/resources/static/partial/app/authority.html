@@ -1,0 +1,29 @@
+<div ng-app="program">
+    <script type="text/javascript">
+    console.log("program script start");
+    var prgm00000 = (function(){
+        console.log("module");
+        'use strict';
+        function ProgramController($scope, $injector){
+            $injector.get("")
+            var vm = this;
+            vm.number = 155800;
+            vm.text = "authority test";
+        }
+        
+        ProgramController.injector = ["$scope", "$injector"];
+        angular.module("program", ["nxtIms"])
+        .controller("ProgramController", ProgramController);
+        
+        angular.element("#prgm")
+    })();
+   
+    console.log(window);
+    </script>
+    <p>{{controller.test}}</p>
+    <div id="prgm" class="content">
+        <p>authority</p>
+        <p>{{vm.number}}</p>
+        <spna>{{vm.text}}</spna>
+    </div>
+</div>
