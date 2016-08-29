@@ -73,7 +73,7 @@ angular.module('comn.service.auth',['ngCookies'])
             .then(
                     function(response) {
                         console.log("success! cookie delete");
-                        deferred.resolve("success: " + data.status);
+                        deferred.resolve("success: " + response.status);
         
                     }, function(data) {
                         console.log("falie! cookie delete");
