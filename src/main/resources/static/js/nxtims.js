@@ -20,7 +20,7 @@ angular.module("nxtIms",
 .config(["$stateProvider", "$urlRouterProvider", "$httpProvider", "$locationProvider", "constants",
          function($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider, constants) {
     //ui-router 
-    $urlRouterProvider.otherwise("/login");
+    $urlRouterProvider.otherwise(constants.login);
     $stateProvider
     .state(constants.login, {
         url : constants.loginUrl,
@@ -66,6 +66,9 @@ angular.module("nxtIms",
         },*/
         controller : ["$scope", function($scope){var vm = this; vm.id = "id"}],
         controllerAs: "vm"
+    });
+    $locationProvider.html5Mode({
+        enabled: true 
     });
     $httpProvider.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
     
