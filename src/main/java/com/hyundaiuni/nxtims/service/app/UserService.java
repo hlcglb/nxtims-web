@@ -20,26 +20,26 @@ import com.hyundaiuni.nxtims.domain.app.User;
 import com.hyundaiuni.nxtims.service.RestApiTemplate;
 
 @Service
-public class CustomUserDetailsService implements UserDetailsService {
+public class UserService implements UserDetailsService {
     @Value("${system.api.server.url}")
     private String apiServerUrl;
     private String apiUrl = "/api/v1/users";
-    
+
     @Autowired
-    private RestApiTemplate apiTemplate;    
+    private RestApiTemplate apiTemplate;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Assert.notNull(username, "username must not be null");
-        
+
         String resourceUrl = apiServerUrl + apiUrl;
-        
+
         Map<String, Object> params = new HashMap<>();
-        params.put("id", username);        
+        params.put("id", username);
 
         User user = apiTemplate.getRestTemplate().getForObject(resourceUrl + "/{id}", User.class, params);
-        
-        if(user == null){
+
+        if(user == null) {
             throw new UsernameNotFoundException(username + " not found");
         }
 
@@ -56,5 +56,29 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
 
         return authorities;
+    }
+
+    public void onAuthenticationSuccess(String userId, String sessionId) {
+        Assert.notNull(userId, "userId must not be null");
+        Assert.notNull(sessionId, "sessionId must not be null");
+
+        String resourceUrl = apiServerUrl + apiUrl;
+
+        Map<String, Object> parameter = new HashMap<>();
+        parameter.put("USER_ID", userId);
+        parameter.put("SESSION_ID", sessionId);
+
+        apiTemplate.getRestTemplate().postForEntity(resourceUrl + "/onAuthenticationSuccess", parameter, null);
+    }
+
+    public void onAuthenticationFailure(String userId) {
+        Assert.notNull(userId, "userId must not be null");
+
+        String resourceUrl = apiServerUrl + apiUrl;
+
+        Map<String, Object> parameter = new HashMap<>();
+        parameter.put("USER_ID", userId);
+
+        apiTemplate.getRestTemplate().postForEntity(resourceUrl + "/onAuthenticationFailure", parameter, null);
     }
 }

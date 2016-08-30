@@ -15,13 +15,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.hyundaiuni.nxtims.service.app.CustomUserDetailsService;
+import com.hyundaiuni.nxtims.service.app.UserService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class CustomUserDetailsServiceTest {
     @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+    private UserService customUserDetailsService;
     
     @Test
     public void loadUserByUsernameTest() {

@@ -20,7 +20,7 @@ import org.springframework.util.CollectionUtils;
 @SpringBootTest
 public class ResourcesServiceTest {
     @Autowired
-    private ResourcesService resourcesService;
+    private ResourceService resourcesService;
 
     @Test
     public void testGetRolesAndUrl() {

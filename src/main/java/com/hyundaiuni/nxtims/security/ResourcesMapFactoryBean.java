@@ -9,26 +9,26 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import com.hyundaiuni.nxtims.service.app.ResourcesService;
+import com.hyundaiuni.nxtims.service.app.ResourceService;
 
 public class ResourcesMapFactoryBean implements FactoryBean<LinkedHashMap<RequestMatcher, List<ConfigAttribute>>> {
-    private ResourcesService resourcesService;
+    private ResourceService resourceService;
     
-    public void setResourcesService(ResourcesService resourcesService){
-        this.resourcesService = resourcesService;
+    public void setResourceService(ResourceService resourceService){
+        this.resourceService = resourceService;
     }
 
     private LinkedHashMap<RequestMatcher, List<ConfigAttribute>> requestMap;
 
     @PostConstruct
     public void init() throws Exception {
-        requestMap = resourcesService.getRolesAndUrl();
+        requestMap = resourceService.getRolesAndUrl();
     }
 
     @Override
     public LinkedHashMap<RequestMatcher, List<ConfigAttribute>> getObject() throws Exception {
         if(requestMap == null) {
-            requestMap = resourcesService.getRolesAndUrl();
+            requestMap = resourceService.getRolesAndUrl();
         }
         return requestMap;
     }

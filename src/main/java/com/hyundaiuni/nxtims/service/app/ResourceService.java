@@ -18,7 +18,7 @@ import org.springframework.util.CollectionUtils;
 import com.hyundaiuni.nxtims.service.RestApiTemplate;
 
 @Service
-public class ResourcesService {
+public class ResourceService {
     @Value("${system.api.server.url}")
     private String apiServerUrl;
     private String apiUrl = "/api/v1/resources/";

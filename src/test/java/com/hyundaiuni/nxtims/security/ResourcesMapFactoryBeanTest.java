@@ -16,18 +16,18 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.CollectionUtils;
 
-import com.hyundaiuni.nxtims.service.app.ResourcesService;
+import com.hyundaiuni.nxtims.service.app.ResourceService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ResourcesMapFactoryBeanTest {
     @Autowired
-    private ResourcesService resourcesService;
+    private ResourceService resourcesService;
     
     @Test
     public void testGetObject() {
         ResourcesMapFactoryBean factoryBean = new ResourcesMapFactoryBean();
-        factoryBean.setResourcesService(resourcesService);
+        factoryBean.setResourceService(resourcesService);
         
         Exception ex = null;
 

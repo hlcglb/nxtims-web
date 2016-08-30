@@ -19,13 +19,13 @@ import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import com.hyundaiuni.nxtims.service.app.ResourcesService;
+import com.hyundaiuni.nxtims.service.app.ResourceService;
 
 public class CustomFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
     private static final Log log = LogFactory.getLog(CustomFilterInvocationSecurityMetadataSource.class);
 
     @Autowired
-    private ResourcesService resourcesService;
+    private ResourceService resourceService;
 
     private final Map<RequestMatcher, List<ConfigAttribute>> requestMap;
 
@@ -67,7 +67,7 @@ public class CustomFilterInvocationSecurityMetadataSource implements FilterInvoc
     }
 
     public void reload() throws Exception {
-        LinkedHashMap<RequestMatcher, List<ConfigAttribute>> reloadedMap = resourcesService.getRolesAndUrl();
+        LinkedHashMap<RequestMatcher, List<ConfigAttribute>> reloadedMap = resourceService.getRolesAndUrl();
 
         Iterator<Entry<RequestMatcher, List<ConfigAttribute>>> iterator = reloadedMap.entrySet().iterator();
 
