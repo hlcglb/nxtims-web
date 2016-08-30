@@ -1,16 +1,27 @@
 <div id="program">
     <script type="text/javascript">
-    var vm = angular.element("#program").scope();
-    console.log(vm);
-    vm.vm.number = 123456;
-    vm.text = "test"
-    console.log(window);
+    var $scope = angular.element("#program").scope();
+    var $injector = angular.element("#program").injector().get("$injector");
+    var $state = angular.element("#program").injector().get("$state");
+    var vm2 = angular.element("[ui-view]").data("$uiView").state;
+    console.log(angular.element("#program"));
+    console.log($scope);
+    var controller = vm2.self.controller[vm2.self.controller.length-1].prototype;
+    console.log(controller.vm);
+    console.log(vm2);
+    console.log(controller);
+    var dd = $injector.get("$controller"); //("vm", {$scope: $scope});
+    console.log(dd);
+    $scope.number = 123456;
+    $scope.text = "test"
+
     
-        
+    console.log($state);
     </script>
     <div class="content">
         <p>resource</p>
-        <p>{{vm.number}}</p>
-        <spna>{{vm.text}}</spna>
+        <p>{{vm.id}}</p>
+        <p>{{number | currency }}</p>
+        <span>{{text}}</span>
     </div>
 </div>

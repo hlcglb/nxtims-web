@@ -7,14 +7,14 @@
 'use strict';
 
 
-angular.module('comn.service.locale',[]).config([function(){
-    console.log('comn.service.locale config!!');
-}])
-.run(function(){
-    console.log('comn.service.Locale run!!');
-})
+angular.module('comn.service.locale',[])
 .provider('Locale',[function() {
-    var localeUrlPattern = 'angularjs/i18n/angular-locale_{{locale}}.js';
+    var localeUrlPattern = '/js/angularjs/i18n/angular-locale_{{locale}}.js';
+    var nodeToAppend;
+    
+    this.setNodeToAppend = function(node){
+        nodeToAppend = node;
+    };
     
     this.setLocaleUrlPattern = function(value){
         if(value){
@@ -22,11 +22,10 @@ angular.module('comn.service.locale',[]).config([function(){
         }
     };
     //scpit 생성
-    function loadScript(url, callback, errorCallback, $timeout) {
+    function loadScript(url, localeId, $locale, $timeout, callback, errorCallback)  {
         var script = document.createElement('script'),
         element = nodeToAppend ? nodeToAppend : document.getElementsByTagName("body")[0],
         removed = false;
-
         script.type = 'text/javascript';
         if(script.readyState) { // IE
             script.onreadystatechange = function() {
@@ -36,7 +35,7 @@ angular.module('comn.service.locale',[]).config([function(){
                         if(removed) return;
                         removed = true;
                         element.removeChild(script);
-                        callback();
+                        (callback || angular.noop)();
                     }, 30, false);
                 }
             };
@@ -46,36 +45,35 @@ angular.module('comn.service.locale',[]).config([function(){
                 if(removed) return;
                 removed = true;
                 element.removeChild(script);
-                callback();
+                (callback || angular.noop)();
             };
             script.onerror = function() {
                 if(removed) return;
                 removed = true;
                 element.removeChild(script);
-                errorCallback();
+                (errorCallback || angular.noop)();
             };
         }
         script.src = url;
         script.async = true;
-        element.appendChild(script);
+        script.dataType = "script",
+        //element.appendChild(script);
+        angular.element(element).prepend(script);
+
     }
     
 
-    this.$get = ['$timeout', function($timeout){
-        loadScript();
-    }];
-    
-    return{
-
-    }
-
-
-}])
-.directive('', ['$window', function ($window) {
-    return{
-        link: function($scope, element, attrs, ctrl){
-            
+    this.$get = ['$timeout', '$locale', '$interpolate', function($timeout, $locale, $interpolate){
+        var url = $interpolate(localeUrlPattern)({locale: $locale.id});
+        console.log(url);
+        var that = this;
+        var init = function(localeId){
+            url = $interpolate(localeUrlPattern)({locale: localeId});
+            console.log(url);
+            loadScript(url, localeId, $locale, $timeout);
         }
-    }
-
+        return {
+            init : init
+        }
+    }];
 }]);

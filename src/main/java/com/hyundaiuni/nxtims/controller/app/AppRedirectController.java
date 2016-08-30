@@ -9,4 +9,9 @@ public class AppRedirectController {
     public String redirect() {
         return "forward:/";
     }
+    
+    @RequestMapping(value = "/program/{path:[^\\.]*}")
+    public String program() {
+        return "forward:/";
+    }
 }

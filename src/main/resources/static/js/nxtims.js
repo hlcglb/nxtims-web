@@ -11,14 +11,17 @@ angular.module("nxtIms",
           "ui.router",
           "kendo.directives",
           "comn.service.resource",
+          "comn.service.locale",
           "comn.service.auth",
           "comn.service.user",
           "comn.service.message",
           "service.kendo.data",
-          "directives.kendo.menu"
+          "directives.kendo.menu",
+          "nxtIms.login",
+          "nxtIms.home"
           ])
-.config(["$stateProvider", "$urlRouterProvider", "$httpProvider", "$locationProvider", "constants",
-         function($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider, constants) {
+.config(["$stateProvider", "$urlRouterProvider", "$httpProvider", "$locationProvider", "LocaleProvider", "constants",
+         function($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider, LocaleProvider, constants) {
     //ui-router 
     $urlRouterProvider.otherwise(constants.login);
     $stateProvider
@@ -44,7 +47,6 @@ angular.module("nxtIms",
                                 UserService.setMenuList(resource.MENU_LIST);
                                 //resource["LOCALE"] = "ko-kr";
                                 return UserService.getMenuList();
-                                
                             }, function(data){return null;})
                     .catch(function(error){
                         console.log("[#catch] main resolved user resource : " + error);
@@ -59,23 +61,23 @@ angular.module("nxtIms",
     })
     .state(constants.program, {
         url : constants.programUrl,
-        templateUrl : constants.templateUrl + "/app/resource.html",/*function(urlAttr){
-            angular.injector
-            console.log(urlAttr);
-            return "partial/app/resource.html";
-        },*/
-        controller : ["$scope", function($scope){var vm = this; vm.id = "id"}],
+        templateUrl : function(urlAttr){
+            return constants.templateUrl + "/app/" + urlAttr.id +".html";
+        },
+        controller : ["$scope", "$injector", "$state", function($scope, $injector, $state){var vm = this; vm.id = "progrmaId"}],
         controllerAs: "vm"
     });
     $locationProvider.html5Mode({
         enabled: true 
     });
     $httpProvider.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+    //LocaleProvider.init();
     
 }])
-.run(["$rootScope", "$injector", "Authentication", "constants", function($rootScope, $injector, Authentication, constants){
+.run(["$rootScope", "$injector", "Authentication", "Locale", "constants", 
+      function($rootScope, $injector, Authentication, Locale, constants){
     Authentication.init();
-    
+    Locale.init("en-us");
     // stateChange evnet
     $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams, options) {
         //console.log(event);
@@ -103,7 +105,7 @@ angular.module("nxtIms",
     loginUrl: '/login',
     main: 'main',
     mainUrl: '/main',
-    program: 'program',
+    program: 'program/:id',
     programUrl: '/program/:id',
     findPassword: 'find',
     findPasswordUrl: '/find'

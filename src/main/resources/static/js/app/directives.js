@@ -5,34 +5,35 @@
  */
 
 angular.module('directives.kendo.menu',[])
-.directive('programMenuTree', ['$window', function ($window) {
+.directive('programMenuTree', ['$window', '$state', function ($window, $state) {
     return {
         scope: true,
         template: ['<div kendo-tree-view="menu.tree" k-options="menu.treeSetting" k-data-source="menu.data" k-ng-delay ="menu.data" ng-click="menu.toggle($event)">',
                    '</div>'].join(''),
         //templateUrl: "./js/templates/components/mainlayout/menu.html",
-        controller: ['$scope', '$timeout', '$window', function($scope, $timeout, $window){
+        controller: ['$scope', '$timeout', 'KendoDataHelper', 'UserService', 
+                     function($scope, $timeout, KendoDataHelper, UserService){
             //var model = $parse(attrs.attr2);
             var menu = this;
             menu.treeSetting = {
                                 
             };
             $timeout(function(){
-                console.log(123);
-                menu.data = $scope.$parent.controller.treelist;
-            });
+                menu.data = KendoDataHelper.toKendoData(angular.copy(UserService.getMenuList()), "tree");
+            },50);
             
         }],
         controllerAs: 'menu',
         link: function($scope, element, attrs, ctrl) {
-            //ctrl == $scope.menu
-            //ctrl != this
-            
+            element.css({
+                "display": "inline-block",
+                "overflow": "hidden"
+            });
             ctrl.toggle = function(e){
                 //e.preventDefault();
                 var target = angular.element(e.target);
+                console.log(target);
                 var toggleIcon = target.closest(".k-icon");
-                // ctrl == this
                 if (!toggleIcon.length) {
                     var currData = ctrl.tree.dataItem(ctrl.tree.select());
                     console.log(currData);
@@ -40,8 +41,12 @@ angular.module('directives.kendo.menu',[])
                         this.tree.toggle(target.closest(".k-item"));
                     }
                     else{
-                        //$scope.tabAdd.add({programId: currData.value});
-                        $window.open(currData.RESOURCE_URL);
+                        var url = currData.RESOURCE_URL;
+                        console.log();
+                        var id = url.substring(url.lastIndexOf("/"), url.lastIndexOf("."));
+                        console.log(id);
+                        //$state.go("program" + id);
+                        $window.open("program" + id,"_blank");
                     }
                     
                 }
@@ -53,8 +58,9 @@ angular.module('directives.kendo.menu',[])
 .directive('programPage1', ['$window', '$compile', function ($window, $compile) {
     return {
         restrict: 'EA',
-        controller: ['$scope', '$element', function($scope, $element){
+        controller: ['$scope', '$element', function($scope, $element, $){
             $scope.window = $window.open('', '_blank');
+            console.log($scope.window);
             angular.element($scope.window.document.body).append($compile($element.content())($scope));
         }],
         link: function($scope, element, attrs, ctrl) {
@@ -65,13 +71,12 @@ angular.module('directives.kendo.menu',[])
     };
 
 }])
-.directive('nHref', ['$window', '$compile', function ($window, $compile) {
+.directive('href', [function () {
     return {
         restrict: 'A',
-        compile: [function(element, attrs){
-            console.log(attrs);
+        compile: function(element, attrs){
             element.attr('target', '_blank');
-        }]
+        }
     };
 
 }]);

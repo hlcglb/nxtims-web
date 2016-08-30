@@ -1,11 +1,11 @@
-<div ng-app="program">
+<div id="program" ng-app="program">
     <script type="text/javascript">
     console.log("program script start");
-    var prgm00000 = (function(){
+    (function(){
         console.log("module");
         'use strict';
         function ProgramController($scope, $injector){
-            $injector.get("")
+            console.log("controller");
             var vm = this;
             vm.number = 155800;
             vm.text = "authority test";
@@ -15,15 +15,15 @@
         angular.module("program", ["nxtIms"])
         .controller("ProgramController", ProgramController);
         
-        angular.element("#prgm")
+        angular.element("#program")
     })();
-   
-    console.log(window);
+
     </script>
-    <p>{{controller.test}}</p>
+    <div data-ng-controller="ProgramController"></div>
+    <p>{{vm.id}}</p>
     <div id="prgm" class="content">
         <p>authority</p>
         <p>{{vm.number}}</p>
-        <spna>{{vm.text}}</spna>
+        <span>{{vm.text}}</span>>
     </div>
 </div>

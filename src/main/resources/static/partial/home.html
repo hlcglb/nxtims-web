@@ -4,7 +4,6 @@
     <p>Login to see the next intermodal application</p>
 </div>
 <div ng-show="controller.authenticated">
-    <p>menu list</p>
     <div id="programMenu" class="sideNav">
         <a href="javascript:void(0)" class="closebtn" ng-click="controller.closeNav()">&times;</a>
         <!-- <a href="#">About</a>
@@ -15,11 +14,12 @@
     </div>
     <span class="sideNavBtn" data-ng-click="controller.openNav()">&#9776;</span>
     <div data-kendo-button data-ng-click="controller.logout()">logout</div>
-    <!-- <div data-nxt-message></div>
+    <div data-nxt-message></div>
     <input data-nxt-message></input>
     <div data-kendo-button data-nxt-message></div>
     <label data-nxt-message></label>
     <button data-kendo-button ng-click="controller.progrma.push(newItem)">push!</button>
-    <program-page></program-page>
-    <a n-href>foo</a> -->
+    <program-page></program-page><br>
+    <!-- <a program-page1="program/user">user</a> -->
+    <span href="program/user">user</span>
 </div>
