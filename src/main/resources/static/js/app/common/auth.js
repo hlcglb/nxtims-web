@@ -14,8 +14,7 @@ angular.module('comn.service.auth',['ngCookies'])
 .config(['$httpProvider', function($httpProvider){
     $httpProvider.interceptors.push("AuthenticationInterceptor");
 }])
-.constant('Auth.CookieKey', 'nxtImsAuthorization')
-.provider('Authentication',['Auth.CookieKey', function(CookieKey){
+.provider('Authentication',[function(){
     this.authenticated = false;
     this.loginServiceName = "authentication";
     this.logoutServiceName = "logout";
@@ -48,13 +47,15 @@ angular.module('comn.service.auth',['ngCookies'])
                     function(response) {
                         if (response.data.name) {
                             deferred.resolve("success");
-                            $cookies.put(CookieKey, response.config.headers.authorization);
+                            $cookies.put("nxtImsAuthorization", response.config.headers.authorization);
                             that.setAuthenticate(true);
                         } else {
                             deferred.reject("error");
                             that.setAuthenticate(false);
                         }
                     }, function(data) {
+                        console.log("login exception");
+                        console.log(data);                        
                         deferred.reject("error : " + data.status);
                         that.setAuthenticate(false);
                     }
@@ -66,7 +67,7 @@ angular.module('comn.service.auth',['ngCookies'])
         var unAuthenticate = function(data){
             //clear auth info
             that.setAuthenticate(false);
-            $cookies.remove(CookieKey);
+            $cookies.remove("nxtImsAuthorization");
             
             //start logout
             var deferred = $q.defer();
@@ -93,7 +94,7 @@ angular.module('comn.service.auth',['ngCookies'])
                 });
             }
             else{
-                if($cookies.get(CookieKey)){
+                if($cookies.get("nxtImsAuthorization")){
                     that.setAuthenticate(true);
                     deferred.resolve({
                         isAuth: that.authenticated
@@ -112,7 +113,7 @@ angular.module('comn.service.auth',['ngCookies'])
             return that.authenticated;
         };
         var init= function(){
-            if(!that.authenticated && $cookies.get(CookieKey)) that.setAuthenticate(true);
+            if(!that.authenticated && $cookies.get("nxtImsAuthorization")) that.setAuthenticate(true);
         }             
         return{
             init: init,
@@ -122,12 +123,12 @@ angular.module('comn.service.auth',['ngCookies'])
             isAuthP: isAuthPromise,
         };
     }];
-}]).factory('AuthenticationInterceptor', ['$q', '$injector', '$cookies', 'Auth.CookieKey',
-                                         function ($q, $injector, $cookies, CookieKey) {
+}]).factory('AuthenticationInterceptor', ['$q', '$injector', '$cookies',
+                                         function ($q, $injector, $cookies) {
     return {
         request : function(config){
             //console.log(config);
-            if ($cookies.get(CookieKey)) {
+            if ($cookies.get('nxtImsAuthorization')) {
                 //console.log("token["+$cookies.get('nxtImsAuthorization')+"], config.headers: ", config.headers);
                 //if(!config.headers.authorization) config.headers.authorization = $cookies.get('nxtImsAuthorization');
             }
@@ -136,7 +137,7 @@ angular.module('comn.service.auth',['ngCookies'])
         responseError: function(rejection) {
             if (rejection.status == 401) {
                 // 쿠키값이 존재하면 삭제 하고 로그인페이지로 이동
-                if ($cookies.get(CookieKey)) $cookies.remove(CookieKey);
+                if ($cookies.get('nxtImsAuthorization')) $cookies.remove("nxtImsAuthorization");
                 console.log("[#AuthenticationInterceptor] Access denied (error 401), please login again");
                 /*var $state = $injector.get('$state');
                 $state.go("login");*/
