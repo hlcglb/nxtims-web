@@ -54,6 +54,8 @@ angular.module('comn.service.auth',['ngCookies'])
                             that.setAuthenticate(false);
                         }
                     }, function(data) {
+                        console.log("login exception");
+                        console.log(data);                        
                         deferred.reject("error : " + data.status);
                         that.setAuthenticate(false);
                     }
