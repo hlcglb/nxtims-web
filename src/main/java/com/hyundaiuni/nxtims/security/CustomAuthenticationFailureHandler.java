@@ -7,8 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -17,8 +15,6 @@ import com.hyundaiuni.nxtims.helper.MessageDigestHelper;
 import com.hyundaiuni.nxtims.service.app.UserService;
 
 public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
-    private static final Log log = LogFactory.getLog(CustomAuthenticationFailureHandler.class);
-
     private UserService userService;
 
     public void setUserService(UserService userService) {
@@ -28,7 +24,6 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
         AuthenticationException exception) throws IOException, ServletException {
-        log.info("CustomAuthenticationSuccessHandler exception = " + exception.toString());
 
         if(exception instanceof BadCredentialsException) {
             String headerString = request.getHeader("authorization");

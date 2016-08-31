@@ -58,15 +58,17 @@ public class UserService implements UserDetailsService {
         return authorities;
     }
 
-    public void onAuthenticationSuccess(String userId, String sessionId) {
+    public void onAuthenticationSuccess(String userId, String sessionId, String accessIp) {
         Assert.notNull(userId, "userId must not be null");
         Assert.notNull(sessionId, "sessionId must not be null");
+        Assert.notNull(sessionId, "accessIp must not be null");
 
         String resourceUrl = apiServerUrl + apiUrl;
 
         Map<String, Object> parameter = new HashMap<>();
         parameter.put("USER_ID", userId);
         parameter.put("SESSION_ID", sessionId);
+        parameter.put("ACCESS_IP", accessIp);
 
         apiTemplate.getRestTemplate().postForEntity(resourceUrl + "/onAuthenticationSuccess", parameter, null);
     }
@@ -80,5 +82,18 @@ public class UserService implements UserDetailsService {
         parameter.put("USER_ID", userId);
 
         apiTemplate.getRestTemplate().postForEntity(resourceUrl + "/onAuthenticationFailure", parameter, null);
+    }
+    
+    public void onLogout(String userId, String sessionId) {
+        Assert.notNull(userId, "userId must not be null");
+        Assert.notNull(sessionId, "sessionId must not be null");
+
+        String resourceUrl = apiServerUrl + apiUrl;
+
+        Map<String, Object> parameter = new HashMap<>();
+        parameter.put("USER_ID", userId);
+        parameter.put("SESSION_ID", sessionId);
+
+        apiTemplate.getRestTemplate().postForEntity(resourceUrl + "/onLogout", parameter, null);
     }
 }
