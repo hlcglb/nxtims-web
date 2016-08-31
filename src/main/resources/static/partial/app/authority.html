@@ -1,29 +1,36 @@
-<div id="program" ng-app="program">
+<div id="program" >
     <script type="text/javascript">
-    console.log("program script start");
+    /* console.log("program script start");
+    var controller = function ($scope, $injector){
+        console.log("ui-router controller apply");
+        var vm = this;
+        vm.number = 155800;
+        vm.text = "function authority test";
+    }; */
     (function(){
-        console.log("module");
         'use strict';
         function ProgramController($scope, $injector){
-            console.log("controller");
+            console.log("module controller");
+            console.log(this);
             var vm = this;
-            vm.number = 155800;
-            vm.text = "authority test";
+            vm.number = 3588500;
+            vm.text = "module authority test";
         }
         
         ProgramController.injector = ["$scope", "$injector"];
-        angular.module("program", ["nxtIms"])
-        .controller("ProgramController", ProgramController);
-        
-        angular.element("#program")
+        programModule
+
     })();
 
     </script>
-    <div data-ng-controller="ProgramController"></div>
-    <p>{{vm.id}}</p>
-    <div id="prgm" class="content">
-        <p>authority</p>
-        <p>{{vm.number}}</p>
-        <span>{{vm.text}}</span>>
+    <div class="content">
+        <div></div>
+        <p>{{program.id}}</p>
+        <div id="prgm" class="content">
+            <p>authority</p>
+            <p>{{vm.number}}</p>
+            <span>{{vm.text}}</span>
+            <span>{{text}}</span>
+        </div>
     </div>
 </div>

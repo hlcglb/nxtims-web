@@ -18,7 +18,8 @@ angular.module("nxtIms",
           "service.kendo.data",
           "directives.kendo.menu",
           "nxtIms.login",
-          "nxtIms.home"
+          "nxtIms.home",
+          "programModule"
           ])
 .config(["$stateProvider", "$urlRouterProvider", "$httpProvider", "$locationProvider", "LocaleProvider", "constants",
          function($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider, LocaleProvider, constants) {
@@ -64,8 +65,34 @@ angular.module("nxtIms",
         templateUrl : function(urlAttr){
             return constants.templateUrl + "/app/" + urlAttr.id +".html";
         },
-        controller : ["$scope", "$injector", "$state", function($scope, $injector, $state){var vm = this; vm.id = "progrmaId"}],
-        controllerAs: "vm"
+        controller : ["$scope", "$injector", "$state", "$controller", "$window", "$element",
+                      function($scope, $injector, $state, $controller, $window, $element){
+            // template script controller bind
+            if($window.controller){
+                // function apply
+                //$window.controller.apply(this, arguments);
+            }
+            var vm = this;
+            vm.id = "progrmaId";
+            /*console.log(programModule.mod.controller("tt", function(){}));*/
+            console.log($state.$current.locals["@"].$element[0]);
+            console.log($element);
+            var element =$state.$current.locals["@"].$element[0];
+            /*console.log(angular.module("program")._invokeQueue[0][2][1]);
+            
+            var controller = $controller(angular.module("program")._invokeQueue[0][2][1], {
+                "$scope": $scope,
+                "$element": angular.element(".content")
+            });*/
+            //$injector.invoke(module, this, { "$scope": $scope });
+            /*angular.element(".content").data("$ngControllerController", controller)
+            angular.element(document).ready(function() {
+                console.log("ready in ui-router controller");
+                //console.log(angular.module("program"));
+                
+            });*/
+        }],
+        controllerAs: "program"
     });
     $locationProvider.html5Mode({
         enabled: true 
@@ -74,10 +101,32 @@ angular.module("nxtIms",
     //LocaleProvider.init();
     
 }])
+/*.decorator("$controller", function ($delegate) {
+    return function (constructor, locals) {
+        var controller = $delegate.apply(null, arguments);
+
+        return angular.extend(function () {
+            locals.$scope.controllerName = locals.$$controller;
+            console.log(locals);
+            return controller();
+        }, controller);
+    };
+})*/
+/*.config(["$provide", function ($provide) {
+    $provide.decorator("$controller", [ "$delegate",function ($delegate) {
+            return function(constructor, locals) {
+                console.log(locals);
+                if (typeof constructor == "string") {
+                    //locals.$scope.controllerName =  constructor;
+                }
+                return $delegate(constructor, locals);
+            }
+        }]);
+}])*/
 .run(["$rootScope", "$injector", "Authentication", "Locale", "constants", 
       function($rootScope, $injector, Authentication, Locale, constants){
     Authentication.init();
-    Locale.init("en-us");
+    //Locale.init("en-us");
     // stateChange evnet
     $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams, options) {
         //console.log(event);
@@ -110,3 +159,25 @@ angular.module("nxtIms",
     findPassword: 'find',
     findPasswordUrl: '/find'
 });
+
+var programModule = angular.module("programModule",[])
+    .config(["$controllerProvider", function($controllerProvider){
+        programModule.controller = function(name, constructor){
+            $controllerProvider.register(name, constructor);
+            return (this);
+        }
+    }])
+    .directive('dynamicController', ['$compile', '$parse', function($compile, $parse) {
+        return {
+            restrict: 'A',
+            /*terminal: true,*/
+            priority: 100000,
+            link: function($scope, $element) {
+                console.log($element);
+                var name = $parse($element.attr("dynamicController"))($scope);
+                $element.removeAttr("dynamicController");
+                $element.attr("ng-controller", name);
+                $compile($element)($scope);
+            }
+        };
+    }]);;
