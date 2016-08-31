@@ -170,14 +170,23 @@ var programModule = angular.module("programModule",[])
     .directive('dynamicController', ['$compile', '$parse', function($compile, $parse) {
         return {
             restrict: 'A',
-            /*terminal: true,*/
+            terminal: true,
             priority: 100000,
-            link: function($scope, $element) {
-                console.log($element);
-                var name = $parse($element.attr("dynamicController"))($scope);
-                $element.removeAttr("dynamicController");
-                $element.attr("ng-controller", name);
-                $compile($element)($scope);
+            /*compile: function(tElement, tAttrs, transclude) {
+                //return function postLink(scope, iElement, iAttrs, controller){
+                    console.log(tAttrs);
+                    
+                    var name = tAttrs.dynamicController;
+                    tElement.removeAttr("dynamic-controller");
+                    tElement.attr("ng-controller", name);
+                    //$compile($element)($scope);
+                //}
+            }*/
+            link: function(scope, element, attrs, controller){
+                var name = attrs.dynamicController;
+                element.removeAttr("dynamic-controller");
+                element.attr("ng-controller", name);
+                $compile(element)(scope);
             }
         };
     }]);;

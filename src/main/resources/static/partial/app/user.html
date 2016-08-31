@@ -1,5 +1,5 @@
 <script type="text/javascript">
-/* (function(){
+(function(){
     'use strict';
     function ProgramController($scope, $injector){
         console.log("module controller");
@@ -12,13 +12,11 @@
     ProgramController.injector = ["$scope", "$injector"];
     angular.module("programModule")
     .controller("ProgramController", ProgramController);
-    //angular.bootstrap(angular.element("#program"), ["programModule"]);
-
-})(); */
+})();
 </script>
 
 user
-<div id="program" >
+<div id="program" dynamic-controller="ProgramController as vm">
     <p>{{program.id}}</p>
     <input type="text" data-ng-model="program.id"></input>
     <input type="text" data-ng-model="vm.text"></input>
