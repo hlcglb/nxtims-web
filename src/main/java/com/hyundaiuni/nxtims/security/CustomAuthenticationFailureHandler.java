@@ -33,5 +33,7 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
 
             userService.onAuthenticationFailure(userId);
         }
+        
+        super.onAuthenticationFailure(request, response, exception);
     }
 }
