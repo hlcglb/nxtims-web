@@ -7,12 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 
 import com.hyundaiuni.nxtims.service.app.UserService;
 
-public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
     private UserService userService;
 
     public void setUserService(UserService userService) {
@@ -20,8 +20,8 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     }
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-        Authentication authentication) throws ServletException, IOException {
+    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+        throws IOException, ServletException {
 
         if(authentication.getDetails() != null) {
             if(authentication.getDetails() instanceof WebAuthenticationDetails) {
@@ -29,10 +29,11 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
                 String userId = authentication.getName();
                 String sessionId = authenticationDetails.getSessionId();
-                String accessIp = authenticationDetails.getRemoteAddress();
 
-                userService.onAuthenticationSuccess(userId, sessionId, accessIp);
+                userService.onLogout(userId, sessionId);
             }
         }
+
+        super.onLogoutSuccess(request, response, authentication);
     }
 }

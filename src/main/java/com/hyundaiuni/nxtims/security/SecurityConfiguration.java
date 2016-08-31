@@ -55,6 +55,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public LinkedHashMap<RequestMatcher, List<ConfigAttribute>> requestMap() {
         ResourcesMapFactoryBean factoryBean = new ResourcesMapFactoryBean();
+
         factoryBean.setResourceService(resourceService);
 
         try {
@@ -106,20 +107,27 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public CsrfTokenRepository csrfTokenRepository() {
         HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
+
         repository.setHeaderName("X-XSRF-TOKEN");
+
         return repository;
     }
 
     @Bean
     public CustomAuthenticationSuccessHandler authenticationSuccessHandler() {
         CustomAuthenticationSuccessHandler authenticationSuccessHandler = new CustomAuthenticationSuccessHandler();
+
         authenticationSuccessHandler.setUserService(userService);
+
         return authenticationSuccessHandler;
     }
+
     @Bean
     public CustomAuthenticationFailureHandler authenticationFailureHandler() {
         CustomAuthenticationFailureHandler authenticationFailureHandler = new CustomAuthenticationFailureHandler();
+
         authenticationFailureHandler.setUserService(userService);
+
         return authenticationFailureHandler;
     }
 
@@ -131,6 +139,22 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         customBasicAuthFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
 
         return customBasicAuthFilter;
+    }
+
+    @Bean
+    public CustomAccessDeniedHandler accessDeniedHandler() {
+        CustomAccessDeniedHandler accessDeniedHandler = new CustomAccessDeniedHandler();
+
+        return accessDeniedHandler;
+    }
+
+    @Bean
+    public CustomLogoutSuccessHandler logoutHandler() {
+        CustomLogoutSuccessHandler logoutHandler = new CustomLogoutSuccessHandler();
+
+        logoutHandler.setUserService(userService);
+
+        return logoutHandler;
     }
 
     @Autowired
@@ -145,6 +169,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 BasicAuthenticationFilter.class).addFilterAfter(new CsrfHeaderFilter(),
                     CsrfFilter.class).csrf().csrfTokenRepository(csrfTokenRepository());
 
+        http.exceptionHandling().accessDeniedHandler(accessDeniedHandler());
+
         http.formLogin().loginPage("/login");
+
+        http.logout().logoutUrl("/logout").logoutSuccessHandler(logoutHandler()).deleteCookies("JSESSIONID");
     }
 }

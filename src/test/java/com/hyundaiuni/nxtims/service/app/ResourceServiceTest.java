@@ -18,16 +18,16 @@ import org.springframework.util.CollectionUtils;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ResourcesServiceTest {
+public class ResourceServiceTest {
     @Autowired
-    private ResourceService resourcesService;
+    private ResourceService resourceService;
 
     @Test
     public void testGetRolesAndUrl() {
         Exception ex = null;
 
         try {
-            LinkedHashMap<RequestMatcher, List<ConfigAttribute>> result = resourcesService.getRolesAndUrl();
+            LinkedHashMap<RequestMatcher, List<ConfigAttribute>> result = resourceService.getRolesAndUrl();
 
             if(CollectionUtils.isEmpty(result)) {
                 fail("");

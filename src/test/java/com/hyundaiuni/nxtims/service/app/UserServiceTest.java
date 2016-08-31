@@ -2,6 +2,7 @@ package com.hyundaiuni.nxtims.service.app;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -19,13 +20,13 @@ import com.hyundaiuni.nxtims.service.app.UserService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class CustomUserDetailsServiceTest {
+public class UserServiceTest {
     @Autowired
-    private UserService customUserDetailsService;
+    private UserService userService;
     
     @Test
     public void loadUserByUsernameTest() {
-        UserDetails user = customUserDetailsService.loadUserByUsername("200065");
+        UserDetails user = userService.loadUserByUsername("200065");
         assertEquals(user.getUsername(),"200065");
         
         @SuppressWarnings("unchecked")
@@ -38,10 +39,41 @@ public class CustomUserDetailsServiceTest {
     @Test
     public void loadUserByUsernameTestNotFound() {
         try {
-            customUserDetailsService.loadUserByUsername("20006X");
+            userService.loadUserByUsername("20006X");
         }
         catch(Exception e) {
             assertThat(e).isInstanceOf(UsernameNotFoundException.class);
+        }
+    }
+    
+
+    @Test
+    public void testOnAuthenticationSuccess() {
+        try {
+            userService.onAuthenticationSuccess("test", "DB18EBE12C90845710D544C7A15D7072", "1.1.1");
+        }
+        catch(Exception e) {
+            fail(e.getMessage());
+        }
+    }
+    
+    @Test
+    public void testOnAuthenticationFailure() {
+        try {
+            userService.onAuthenticationFailure("test");
+        }
+        catch(Exception e) {
+            fail(e.getMessage());
+        }
+    }
+    
+    @Test
+    public void testOnLogout() {
+        try {
+            userService.onLogout("test", "DB18EBE12C90845710D544C7A15D7072");
+        }
+        catch(Exception e) {
+            fail(e.getMessage());
         }
     }        
 }
