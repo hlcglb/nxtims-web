@@ -132,13 +132,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public CustomBasicAuthFilter basicAuthFilter() {
-        CustomBasicAuthFilter customBasicAuthFilter = new CustomBasicAuthFilter(authenticationManagerBean());
+    public CustomAuthenticationFilter authenticationFilter() {
+        CustomAuthenticationFilter authenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
 
-        customBasicAuthFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
-        customBasicAuthFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
+        authenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
+        authenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
 
-        return customBasicAuthFilter;
+        return authenticationFilter;
     }
 
     @Bean
@@ -165,7 +165,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.httpBasic().and().addFilterBefore(filterSecurityInterceptor(),
-            FilterSecurityInterceptor.class).addFilterBefore(basicAuthFilter(),
+            FilterSecurityInterceptor.class).addFilterBefore(authenticationFilter(),
                 BasicAuthenticationFilter.class).addFilterAfter(new CsrfHeaderFilter(),
                     CsrfFilter.class).csrf().csrfTokenRepository(csrfTokenRepository());
 

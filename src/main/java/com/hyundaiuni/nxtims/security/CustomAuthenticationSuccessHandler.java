@@ -23,13 +23,15 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
         Authentication authentication) throws ServletException, IOException {
 
-        if(authentication.getDetails() != null) {
-            if(authentication.getDetails() instanceof WebAuthenticationDetails) {
-                WebAuthenticationDetails authenticationDetails = (WebAuthenticationDetails)authentication.getDetails();
+        Object authenticationDetails = authentication.getDetails();
+
+        if(authenticationDetails != null) {
+            if(authenticationDetails instanceof WebAuthenticationDetails) {
+                WebAuthenticationDetails webAuthenticationDetails = (WebAuthenticationDetails)authenticationDetails;
 
                 String userId = authentication.getName();
-                String sessionId = authenticationDetails.getSessionId();
-                String accessIp = authenticationDetails.getRemoteAddress();
+                String sessionId = webAuthenticationDetails.getSessionId();
+                String accessIp = webAuthenticationDetails.getRemoteAddress();
 
                 userService.onAuthenticationSuccess(userId, sessionId, accessIp);
             }
