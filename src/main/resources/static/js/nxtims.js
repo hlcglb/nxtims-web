@@ -65,32 +65,11 @@ angular.module("nxtIms",
         templateUrl : function(urlAttr){
             return constants.templateUrl + "/app/" + urlAttr.id +".html";
         },
-        controller : ["$scope", "$injector", "$state", "$controller", "$window", "$element",
-                      function($scope, $injector, $state, $controller, $window, $element){
-            // template script controller bind
-            if($window.controller){
-                // function apply
-                //$window.controller.apply(this, arguments);
-            }
+        controller : ["$scope", "$injector", "$state", "UserService",
+                      function($scope, $injector, $state, UserService){
+            console.log(UserService.getMenuList());
             var vm = this;
             vm.id = "progrmaId";
-            /*console.log(programModule.mod.controller("tt", function(){}));*/
-            console.log($state.$current.locals["@"].$element[0]);
-            console.log($element);
-            var element =$state.$current.locals["@"].$element[0];
-            /*console.log(angular.module("program")._invokeQueue[0][2][1]);
-            
-            var controller = $controller(angular.module("program")._invokeQueue[0][2][1], {
-                "$scope": $scope,
-                "$element": angular.element(".content")
-            });*/
-            //$injector.invoke(module, this, { "$scope": $scope });
-            /*angular.element(".content").data("$ngControllerController", controller)
-            angular.element(document).ready(function() {
-                console.log("ready in ui-router controller");
-                //console.log(angular.module("program"));
-                
-            });*/
         }],
         controllerAs: "program"
     });
@@ -112,17 +91,6 @@ angular.module("nxtIms",
         }, controller);
     };
 })*/
-/*.config(["$provide", function ($provide) {
-    $provide.decorator("$controller", [ "$delegate",function ($delegate) {
-            return function(constructor, locals) {
-                console.log(locals);
-                if (typeof constructor == "string") {
-                    //locals.$scope.controllerName =  constructor;
-                }
-                return $delegate(constructor, locals);
-            }
-        }]);
-}])*/
 .run(["$rootScope", "$injector", "Authentication", "Locale", "constants", 
       function($rootScope, $injector, Authentication, Locale, constants){
     Authentication.init();
@@ -159,34 +127,3 @@ angular.module("nxtIms",
     findPassword: 'find',
     findPasswordUrl: '/find'
 });
-
-var programModule = angular.module("programModule",[])
-    .config(["$controllerProvider", function($controllerProvider){
-        programModule.controller = function(name, constructor){
-            $controllerProvider.register(name, constructor);
-            return (this);
-        }
-    }])
-    .directive('dynamicController', ['$compile', '$parse', function($compile, $parse) {
-        return {
-            restrict: 'A',
-            terminal: true,
-            priority: 100000,
-            /*compile: function(tElement, tAttrs, transclude) {
-                //return function postLink(scope, iElement, iAttrs, controller){
-                    console.log(tAttrs);
-                    
-                    var name = tAttrs.dynamicController;
-                    tElement.removeAttr("dynamic-controller");
-                    tElement.attr("ng-controller", name);
-                    //$compile($element)($scope);
-                //}
-            }*/
-            link: function(scope, element, attrs, controller){
-                var name = attrs.dynamicController;
-                element.removeAttr("dynamic-controller");
-                element.attr("ng-controller", name);
-                $compile(element)(scope);
-            }
-        };
-    }]);;
