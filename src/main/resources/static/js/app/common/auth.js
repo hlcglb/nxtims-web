@@ -51,11 +51,11 @@ angular.module('comn.service.auth',['ngCookies'])
                             $cookies.put(CookieKey, response.config.headers.authorization);
                             that.setAuthenticate(true);
                         } else {
-                            deferred.reject("error");
+                            deferred.reject("error: " + response.satus + " data: " + response.satus);
                             that.setAuthenticate(false);
                         }
                     }, function(data) {
-                        deferred.reject("error : " + data.status);
+                        deferred.reject(data.data);
                         that.setAuthenticate(false);
                     }
             ).catch(function(error){console.log("[#catch] login catch : " + error); throw error;});
@@ -127,6 +127,7 @@ angular.module('comn.service.auth',['ngCookies'])
     return {
         request : function(config){
             //console.log(config);
+            //console.log($cookies.get("XSRF-TOKEN") && $cookies.get(CookieKey)?true:false);
             if ($cookies.get(CookieKey)) {
                 //console.log("token["+$cookies.get('nxtImsAuthorization')+"], config.headers: ", config.headers);
                 //if(!config.headers.authorization) config.headers.authorization = $cookies.get('nxtImsAuthorization');

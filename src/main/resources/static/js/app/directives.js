@@ -4,16 +4,14 @@
  * @author 정철균
  */
 
-angular.module('directives.kendo.menu',[])
+angular.module('nxtims.directives',[])
 .directive('programMenuTree', ['$window', '$state', function ($window, $state) {
     return {
         scope: true,
         template: ['<div kendo-tree-view="menu.tree" k-options="menu.treeSetting" k-data-source="menu.data" k-ng-delay ="menu.data" ng-click="menu.toggle($event)">',
                    '</div>'].join(''),
-        //templateUrl: "./js/templates/components/mainlayout/menu.html",
         controller: ['$scope', '$timeout', 'KendoDataHelper', 'UserService', 
                      function($scope, $timeout, KendoDataHelper, UserService){
-            //var model = $parse(attrs.attr2);
             var menu = this;
             menu.treeSetting = {
                                 
@@ -42,10 +40,7 @@ angular.module('directives.kendo.menu',[])
                     }
                     else{
                         var url = currData.RESOURCE_URL;
-                        console.log();
                         var id = url.substring(url.lastIndexOf("/"), url.lastIndexOf("."));
-                        console.log(id);
-                        //$state.go("program" + id);
                         $window.open("program" + id,"_blank");
                     }
                     

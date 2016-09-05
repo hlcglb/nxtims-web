@@ -10,13 +10,16 @@ angular.module("nxtIms",
         [ "ngRoute",
           "ui.router",
           "kendo.directives",
+          "kendo.window",
           "comn.service.resource",
           "comn.service.locale",
           "comn.service.auth",
           "comn.service.user",
           "comn.service.message",
-          "service.kendo.data",
-          "directives.kendo.menu",
+          "nxtims.services",
+          "nxtims.directives",
+          "nxtims.components",
+          "nxtims.filters",
           "nxtIms.login",
           "nxtIms.home",
           "programModule"
@@ -28,13 +31,13 @@ angular.module("nxtIms",
     $stateProvider
     .state(constants.login, {
         url : constants.loginUrl,
-        templateUrl : constants.templateUrl + "/login.html",
+        templateUrl : constants.templateUrl + "login.html",
         controller : "NavigationController",
         controllerAs: "controller"
     })
     .state(constants.main, {
         url : constants.mainUrl,
-        templateUrl : constants.templateUrl + "/home.html",
+        templateUrl : constants.templateUrl + "home.html",
         resolve: {
             Menu: ["ResourceService", "Authentication", "UserService",
                    function(ResourceService, Authentication, UserService){
@@ -44,9 +47,7 @@ angular.module("nxtIms",
                     return ResourceService.getPromise()
                     .then(
                             function(resource){
-                                UserService.setUser(resource.USER);
-                                UserService.setMenuList(resource.MENU_LIST);
-                                //resource["LOCALE"] = "ko-kr";
+                                UserService.setResource(resource);
                                 return UserService.getMenuList();
                             }, function(data){return null;})
                     .catch(function(error){
@@ -63,7 +64,7 @@ angular.module("nxtIms",
     .state(constants.program, {
         url : constants.programUrl,
         templateUrl : function(urlAttr){
-            return constants.templateUrl + "/app/" + urlAttr.id +".html";
+            return constants.templateUrl + "app/" + urlAttr.id +".html";
         },
         controller : ["$scope", "$injector", "$state", "UserService",
                       function($scope, $injector, $state, UserService){
@@ -77,35 +78,14 @@ angular.module("nxtIms",
         enabled: true 
     });
     $httpProvider.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
-    //LocaleProvider.init();
     
 }])
-/*.decorator("$controller", function ($delegate) {
-    return function (constructor, locals) {
-        var controller = $delegate.apply(null, arguments);
-
-        return angular.extend(function () {
-            locals.$scope.controllerName = locals.$$controller;
-            console.log(locals);
-            return controller();
-        }, controller);
-    };
-})*/
 .run(["$rootScope", "$injector", "Authentication", "Locale", "constants", 
       function($rootScope, $injector, Authentication, Locale, constants){
     Authentication.init();
     //Locale.init("en-us");
     // stateChange evnet
     $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams, options) {
-        //console.log(event);
-        //console.log(toState);
-        //console.log(toParams);
-        //console.log(fromState);
-        //console.log(fromParams);
-        //console.log(options);
-        /*var $http = $injector.get("$http");
-        console.log($http.defaults.headers.common);*/
-        
         //인증된 사용자 메인으로 리다이렉트
         if(toState.name == constants.login && Authentication.isAuth()){
             console.log("logind state change");
@@ -117,7 +97,10 @@ angular.module("nxtIms",
 }])
 .constant("constants", {
     baseUrl: '/',
-    templateUrl: '/partial',
+    templateUrl: '/partial/',
+    comnTemplUrl: '/partial/common/',
+    prgmTemplUrl: '/partial/program/',
+    popTemplUrl: '/partial/popup/',
     login: 'login',
     loginUrl: '/login',
     main: 'main',
@@ -127,3 +110,13 @@ angular.module("nxtIms",
     findPassword: 'find',
     findPasswordUrl: '/find'
 });
+
+angular.module("notify", [])
+.factory("Notification",[function(){
+    var alert = function(message){
+        
+    }
+    return {
+        
+    }
+}]);
