@@ -1,29 +1,25 @@
-<div id="program" >
-    <script type="text/javascript">
-    /* console.log("program script start");
-    var controller = function ($scope, $injector){
-        console.log("ui-router controller apply");
+
+<script type="text/javascript">
+/* console.log("program script start");
+var controller = function ($scope, $injector){
+    console.log("ui-router controller apply");
+    var vm = this;
+    vm.number = 155800;
+    vm.text = "function authority test";
+}; */
+(function(){
+    'use strict';
+    angular.module("programModule")
+    .controller("ProgramController", ["$scope", function($scope){
         var vm = this;
-        vm.number = 155800;
-        vm.text = "function authority test";
-    }; */
-    (function(){
-        'use strict';
-        function ProgramController($scope, $injector){
-            console.log("module controller");
-            console.log(this);
-            var vm = this;
-            vm.number = 3588500;
-            vm.text = "module authority test";
-        }
-        
-        ProgramController.injector = ["$scope", "$injector"];
-        programModule
+        vm.number = 1234;
+        vm.text = "module authority test";
+    }]);
+})();
 
-    })();
-
-    </script>
-    <div class="content">
+</script>
+<div id="program" data-dynamic-controller="ProgramController as vm">    
+    <div class="">
         <div></div>
         <p>{{program.id}}</p>
         <div id="prgm" class="content">

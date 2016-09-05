@@ -54,29 +54,4 @@ angular.module('directives.kendo.menu',[])
         }
     };
 
-}])
-.directive('programPage1', ['$window', '$compile', function ($window, $compile) {
-    return {
-        restrict: 'EA',
-        controller: ['$scope', '$element', function($scope, $element, $){
-            $scope.window = $window.open('', '_blank');
-            console.log($scope.window);
-            angular.element($scope.window.document.body).append($compile($element.content())($scope));
-        }],
-        link: function($scope, element, attrs, ctrl) {
-            element.on('$destroy', function(){
-                $scope.window.close();
-            })
-        }
-    };
-
-}])
-.directive('href', [function () {
-    return {
-        restrict: 'A',
-        compile: function(element, attrs){
-            element.attr('target', '_blank');
-        }
-    };
-
 }]);
