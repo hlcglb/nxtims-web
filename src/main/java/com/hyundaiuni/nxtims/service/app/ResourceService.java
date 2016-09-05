@@ -21,7 +21,7 @@ import com.hyundaiuni.nxtims.service.RestApiTemplate;
 public class ResourceService {
     @Value("${system.api.server.url}")
     private String apiServerUrl;
-    private String apiUrl = "/api/v1/resources/";
+    private String apiUrl = "/api/v1/app/resources";
 
     @Autowired
     private RestApiTemplate apiTemplate;

@@ -23,7 +23,7 @@ import com.hyundaiuni.nxtims.service.RestApiTemplate;
 public class UserService implements UserDetailsService {
     @Value("${system.api.server.url}")
     private String apiServerUrl;
-    private String apiUrl = "/api/v1/users";
+    private String apiUrl = "/api/v1/app/users";
 
     @Autowired
     private RestApiTemplate apiTemplate;
