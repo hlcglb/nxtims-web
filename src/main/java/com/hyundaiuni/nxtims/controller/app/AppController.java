@@ -37,9 +37,9 @@ public class AppController {
 
     @RequestMapping("/message")
     @ResponseBody
-    public Properties message(@RequestParam String locale) {
-        Assert.notNull(locale, "locale must not be null");
+    public Properties message(@RequestParam String lang) {
+        Assert.notNull(lang, "locale must not be null");
 
-        return messageService.getMessageProperties(locale);
+        return messageService.getMessageProperties(lang);
     }
 }
