@@ -1,9 +1,15 @@
 package com.hyundaiuni.nxtims.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 import org.springframework.web.util.CookieGenerator;
 
@@ -139,4 +145,31 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
         cookieGenerator.setCookieName(cookieName);
         cookieGenerator.removeCookie(response);
     }
+    
+    /**
+     * 특정형식의 String을 Map으로 변환
+     * 
+     * @param query requetParameter
+     * @param paramSeparator parameter 구분자
+     * @param keyValueSeparator key Value 구분자
+     * @param enc character set
+     */    
+    public static Map<String, Object> requestParamtoMap(String query, char paramSeparator, char keyValueSeparator, String enc)
+        throws UnsupportedEncodingException {
+        Map<String, Object> queryPairs = new LinkedHashMap<String, Object>();
+
+        if(StringUtils.isEmpty(query)) {
+            return queryPairs;
+        }
+
+        String[] pairs = StringUtils.split(URLDecoder.decode(query, enc), paramSeparator);
+
+        for(String pair : pairs) {
+            int idx = pair.indexOf(keyValueSeparator);
+
+            queryPairs.put(pair.substring(0, idx), pair.substring(idx + 1));
+        }
+
+        return queryPairs;
+    }        
 }

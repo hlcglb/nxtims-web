@@ -1,9 +1,9 @@
 package com.hyundaiuni.nxtims.service.app;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +15,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.hyundaiuni.nxtims.domain.app.AuthResource;
 import com.hyundaiuni.nxtims.service.RestApiTemplate;
 
 @Service
@@ -31,14 +32,13 @@ public class ResourceService {
 
         String resourceUrl = apiServerUrl + apiUrl;
 
-        @SuppressWarnings("unchecked")
-        List<Map<String, String>> authResourceList = apiTemplate.getRestTemplate().getForObject(resourceUrl,
-            List.class);
+        List<AuthResource> authResourceList = Arrays.asList(
+            apiTemplate.getRestTemplate().getForObject(resourceUrl, AuthResource[].class));
 
         if(!CollectionUtils.isEmpty(authResourceList)) {
-            for(Map<String, String> authResource : authResourceList) {
-                AntPathRequestMatcher requestMatcher = new AntPathRequestMatcher(
-                    MapUtils.getString(authResource, "RESOURCE_URL"), null, true);
+            for(AuthResource authResource : authResourceList) {
+                AntPathRequestMatcher requestMatcher = new AntPathRequestMatcher(authResource.getResourceUrl(), null,
+                    true);
 
                 List<ConfigAttribute> configList = null;
 
@@ -49,12 +49,11 @@ public class ResourceService {
                     configList = new LinkedList<ConfigAttribute>();
                 }
 
-                configList.add(new SecurityConfig("ROLE_" + MapUtils.getString(authResource, "AUTH_ID")));
+                configList.add(new SecurityConfig("ROLE_" + authResource.getAuthId()));
                 result.put(requestMatcher, configList);
             }
         }
 
         return result;
     }
-
 }

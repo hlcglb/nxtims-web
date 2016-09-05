@@ -1,5 +1,6 @@
 package com.hyundaiuni.nxtims.service.app;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.hyundaiuni.nxtims.domain.app.Message;
 import com.hyundaiuni.nxtims.service.RestApiTemplate;
 
 @Service
@@ -28,16 +30,15 @@ public class MessageService {
         urlVariables.put("inquiry", "getMessagesByLanguageCode");
         urlVariables.put("languageCode", locale);
 
-        @SuppressWarnings("unchecked")
-        List<Map<String, String>> messageList = apiTemplate.getRestTemplate().getForObject(resourceUrl, List.class,
-            urlVariables);
+        List<Message> messageList = Arrays.asList(apiTemplate.getRestTemplate().getForObject(resourceUrl, Message[].class,
+            urlVariables));
 
         Properties properties = new Properties();
 
         if(!CollectionUtils.isEmpty(messageList)) {
-            for(Map<String, String> message : messageList) {
-                String key = message.get("MSG_GRP_CD") + "." + message.get("MSG_CD");
-                String value = message.get("MSG_NM");
+            for(Message message : messageList) {
+                String key = message.getMsgGrpCd() + "." + message.getMsgCd();
+                String value = message.getMsgNm();
 
                 properties.setProperty(key, value);
             }

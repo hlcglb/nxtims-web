@@ -1,5 +1,6 @@
 package com.hyundaiuni.nxtims.service.app;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,6 @@ public class AppService {
     @Autowired
     private RestApiTemplate apiTemplate;
 
-    @SuppressWarnings("unchecked")
     public Map<String, Object> getResourceByUserId(String userId) {
         Assert.notNull(userId, "userId must not be null");
 
@@ -39,8 +39,8 @@ public class AppService {
             throw new ServiceException("USER_NOT_FOUND", userId + " not found.");
         }
 
-        List<Resource> menuList = apiTemplate.getRestTemplate().getForObject(resourceUrl + "/menus/{id}", List.class,
-            params);
+        List<Resource> menuList = Arrays.asList(
+            apiTemplate.getRestTemplate().getForObject(resourceUrl + "/menus/{id}", Resource[].class, params));
 
         if(CollectionUtils.isEmpty(menuList)) {
             throw new ServiceException("MENU_NOT_FOUND", "The menus of " + userId + " not found.");
