@@ -57,6 +57,8 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
     public LocaleChangeInterceptor localeChangeInterceptor(){
         LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
         
+        localeChangeInterceptor.setParamName("language");
+        
         return localeChangeInterceptor;
     }
     
