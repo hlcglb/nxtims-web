@@ -36,4 +36,10 @@ public class SampleControllerTests {
         mvc.perform(get(URL + "/200065")).andDo(print()).andExpect(status().isOk()).andExpect(
             content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(jsonPath("$.USER_ID").value("200065"));
     }
+
+    @Test
+    public void testGetMessage() throws Exception {
+        mvc.perform(get(URL + "/message" + "?msgCd=LAB.PRINT")).andDo(print()).andExpect(status().isOk()).andExpect(
+            content().string("출력"));
+    }
 }
