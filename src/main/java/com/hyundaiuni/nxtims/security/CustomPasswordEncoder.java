@@ -4,7 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.hyundaiuni.nxtims.helper.MessageDigestHelper;
+import com.hyundaiuni.nxtims.util.MessageDigestUtils;
 
 public class CustomPasswordEncoder implements PasswordEncoder {
     private static final Log log = LogFactory.getLog(CustomPasswordEncoder.class);
@@ -17,7 +17,7 @@ public class CustomPasswordEncoder implements PasswordEncoder {
         String encodedPassword = null;
 
         try {
-            encodedPassword = MessageDigestHelper.getMessageDigest(rawPassword.toString(), ALGORITHM, CHARSET_NAME);
+            encodedPassword = MessageDigestUtils.getMessageDigest(rawPassword.toString(), ALGORITHM, CHARSET_NAME);
         }
         catch(Exception e) {
             log.error("Password Encoding Exception : ", e);

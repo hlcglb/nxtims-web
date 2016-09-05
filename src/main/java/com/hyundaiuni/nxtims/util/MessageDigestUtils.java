@@ -1,4 +1,4 @@
-package com.hyundaiuni.nxtims.helper;
+package com.hyundaiuni.nxtims.util;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -8,8 +8,8 @@ import org.apache.commons.codec.binary.Base64;
 
 import com.hyundaiuni.nxtims.exception.MessageDigestException;
 
-public class MessageDigestHelper {
-    private MessageDigestHelper() {}
+public class MessageDigestUtils {
+    private MessageDigestUtils() {}
 
     public static String getMessageDigest(String input, String algorithm, String charsetName)
         throws MessageDigestException {

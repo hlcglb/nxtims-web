@@ -21,8 +21,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hyundaiuni.nxtims.helper.MessageDigestHelper;
 import com.hyundaiuni.nxtims.service.app.UserService;
+import com.hyundaiuni.nxtims.util.MessageDigestUtils;
 
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
     private static final Log log = LogFactory.getLog(CustomAuthenticationFailureHandler.class);
@@ -85,7 +85,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         try {
             String replacedAuthHeader = StringUtils.remove(authHeader, "Basic ");
             String decodedAuthHeader = new String(
-                MessageDigestHelper.decodeBase64(replacedAuthHeader.getBytes("UTF-8")));
+                MessageDigestUtils.decodeBase64(replacedAuthHeader.getBytes("UTF-8")));
             userId = StringUtils.substring(decodedAuthHeader, 0, StringUtils.indexOf(decodedAuthHeader, ":"));
         }
         catch(UnsupportedEncodingException e) {
