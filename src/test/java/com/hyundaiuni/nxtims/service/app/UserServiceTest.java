@@ -2,11 +2,12 @@ package com.hyundaiuni.nxtims.service.app;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +17,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.hyundaiuni.nxtims.service.app.UserService;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class UserServiceTest {
+    private static final Log log = LogFactory.getLog(UserServiceTest.class);
+    
     @Autowired
     private UserService userService;
     
@@ -49,31 +50,46 @@ public class UserServiceTest {
 
     @Test
     public void testOnAuthenticationSuccess() {
+        Exception ex = null;
+
         try {
             userService.onAuthenticationSuccess("test", "DB18EBE12C90845710D544C7A15D7072", "1.1.1");
         }
         catch(Exception e) {
-            fail(e.getMessage());
+            log.error(e.getMessage());
+            ex = e;
         }
+
+        assertEquals(null, ex);
     }
     
     @Test
     public void testOnAuthenticationFailure() {
+        Exception ex = null;
+
         try {
             userService.onAuthenticationFailure("test");
         }
         catch(Exception e) {
-            fail(e.getMessage());
+            log.error(e.getMessage());
+            ex = e;
         }
+
+        assertEquals(null, ex);
     }
     
     @Test
     public void testOnLogout() {
+        Exception ex = null;
+        
         try {
             userService.onLogout("test", "DB18EBE12C90845710D544C7A15D7072");
         }
         catch(Exception e) {
-            fail(e.getMessage());
+            log.error(e.getMessage());
+            ex = e;
         }
+
+        assertEquals(null, ex);
     }        
 }

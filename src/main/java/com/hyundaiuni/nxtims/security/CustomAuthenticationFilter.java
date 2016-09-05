@@ -6,12 +6,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 public class CustomAuthenticationFilter extends BasicAuthenticationFilter {
+    private static final Log log = LogFactory.getLog(CustomAuthenticationFilter.class);
+    
     private CustomAuthenticationSuccessHandler authenticationSuccessHandler;
     private CustomAuthenticationFailureHandler authenticationFailureHandler;
 
@@ -34,7 +38,7 @@ public class CustomAuthenticationFilter extends BasicAuthenticationFilter {
             authenticationSuccessHandler.onAuthenticationSuccess(request, response, authResult);
         }
         catch(ServletException e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 
@@ -45,7 +49,7 @@ public class CustomAuthenticationFilter extends BasicAuthenticationFilter {
             authenticationFailureHandler.onAuthenticationFailure(request, response, failed);
         }
         catch(ServletException e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 }
