@@ -8,12 +8,15 @@
 
 angular.module('nxtIms.login',[])
 .constant('Login.CookieKey', 'nxtIms_save_id')
-.controller("NavigationController",["$state", "Authentication", "constants", "$kWindow", "$cookies", "Login.CookieKey",
-                            function($state, Authentication, constants, $kWindow, $cookies, CookieKey) {
+.controller("NavigationController",["$state", "Authentication", "constants", "$kWindow", "$cookies", "Login.CookieKey", "RESTfulService",
+                            function($state, Authentication, constants, $kWindow, $cookies, CookieKey, RESTfulService) {
     console.log("navigation controller");
     var self = this;
+    self.message = RESTfulService.get({service: "message"});
     self.credentials = {};
-    self.login = function() {
+    self.buttonDisabled = false;
+    self.login = function(event) {
+        self.buttonDisabled = true;
         Authentication.login(self.credentials)
         .then(
                 function(message){
@@ -27,10 +30,14 @@ angular.module('nxtIms.login',[])
                     console.log(data);
                     self.error = true;
                     self.errorData = data;
-                    self.notf2.show(data.message, "error");
+                    console.log(self);
+                    self.loginNotify.show(data.message/*kValue: data.message*/, "error"/*"ngTemplate"*/);
                 }
         ).catch(function(error){
             console.log("[#catch] " + error);
+        })
+        .finally(function(){
+            self.buttonDisabled = false;
         });
     };
     self.log = function(){
@@ -51,7 +58,6 @@ angular.module('nxtIms.login',[])
             controller: ["$scope", "$windowInstance", "message", function($scope, $windowInstance, message){
                 $scope.message = message;
                 $scope.$windowInstance = $windowInstance;
-                console.log($scope);
             }],
             resolve: {
                 message: function () {
@@ -104,19 +110,10 @@ angular.module('nxtIms.login',[])
             }
         });
     };
-    
-    self.officeDataSource = {
-       transport: {
-           read: {
-               dataType: "jsonp",
-               url: "//demos.telerik.com/kendo-ui/service/Customers",
-           }
-       }
-    };
-     
-    self.officeOptions = {
-        dataSource: self.officeDataSource,
-        dataTextField: "ContactName",
-        dataValueField: "CustomerID"
-    };
+    self.notifyOptions = {
+                           templates: [{
+                               type: "ngTemplate",
+                               template: '<p style="width: 16em; padding:1em;white-space:nowrap"> {{ngValue}}, #= kValue # </p>'
+                           }]
+                       };
 }]);

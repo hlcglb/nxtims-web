@@ -7,8 +7,8 @@
 'use strict';
 
 angular.module('comn.service.resource',['ngResource'])
-.factory('RESTfulService', ['$resource', '$cookies', 'RESTfulInterceptor', 
-                             function ($resource, $cookies, RESTfulInterceptor) {
+.factory('RESTfulService', ['$resource', 'RESTfulInterceptor', 
+                             function ($resource, RESTfulInterceptor) {
     return $resource('/:service/:method/:id', 
             {
                 service: '@service',
@@ -21,8 +21,8 @@ angular.module('comn.service.resource',['ngResource'])
                 update: {method: 'PUT'}
             });
 }])
-.factory('RESTfulInterceptor', [ '$rootScope', '$q', '$injector', '$window', '$cookies',
-                                         function ($rootScope, $q, $injector, $window, $cookies) {
+.factory('RESTfulInterceptor', [ '$rootScope', '$q',
+                                         function ($rootScope, $q) {
     return {
         log: {
             request : function(config){

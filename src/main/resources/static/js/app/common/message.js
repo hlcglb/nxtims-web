@@ -6,11 +6,17 @@
 
 'use strict';
 
-angular.module('comn.service.message',['comn.service.resource'])
+angular.module('comn.service.message',['comn.service.resource', 'pascalprecht.translate'])
+.config(["$translateProvider", function ($translateProvider) {
+    $translateProvider.useUrlLoader('/message');
+    $translateProvider.useStorage('UrlMessageStorage');
+    $translateProvider.preferredLanguage('ko');
+    $translateProvider.fallbackLanguage('ko');
+}])
 .factory('MessageService', ['RESTfulService', '$q', function (RESTfulService, $q) {
     return{
         getMessage: function(msgCode, successHandler, faileHandler){
-            RESTfulService.get({service: "message", id:msgCode}, 
+            return RESTfulService.get({service: "message", id:msgCode}, 
                     function(messageData){
                         if(angular.isFunction(successHandler)) successHandler(messageData);
                     },
@@ -24,6 +30,14 @@ angular.module('comn.service.message',['comn.service.resource'])
         }
     }
 
+}])
+.factory('UrlMessageStorage', ['$location', function($location) {
+    return {
+        put: function (name, value) {},
+        get: function (name) {
+            return $location.search()['lang']
+        }
+    };
 }])
 .directive('nxtMessage', ['MessageService', function (MessageService) {
     return{
