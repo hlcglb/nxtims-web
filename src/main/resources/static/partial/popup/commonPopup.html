@@ -1,0 +1,26 @@
+<script type="text/javascript">
+(function(){
+    'use strict';
+    angular.module("programModule")
+    .controller("PopupController", ["$scope", function controller($scope){
+        var popup = this;
+        var parent = $scope.$parent;
+        popup.confirm = function(){
+            parent.$windowInstance.close(true);
+        };
+
+        popup.cancel = function(){
+            parent.$windowInstance.close(false);
+        };
+        console.log($scope);
+    }]);
+})();
+</script>
+<div data-dynamic-controller="PopupController as pop">
+    <div>
+        <h3>message</h3>
+        {{message}}
+    </div>
+    <button kendo-button type="button" ng-click="pop.confirm()">Confirm</button>
+    <button kendo-button type="button" ng-click="pop.cancel()">Cancel</button>
+</div>

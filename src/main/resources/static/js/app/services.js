@@ -9,7 +9,10 @@
 /**
  * auth Module
  */
-angular.module('service.kendo.data',[])
+angular.module('nxtims.services',[])
+/*
+ * kendo datasource로 변환 
+ */
 .factory('KendoDataHelper',[function(){
     
     var transform = function(object, handler) {
@@ -61,6 +64,7 @@ angular.module('service.kendo.data',[])
     }
     /**
      * type에 따른 kendo datasource 리턴
+     * 
      */
     var toKendoData = function(data, type){
         

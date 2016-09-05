@@ -62,10 +62,9 @@ angular.module('comn.service.locale',[])
 
     }
     
-
     this.$get = ['$timeout', '$locale', '$interpolate', function($timeout, $locale, $interpolate){
         var url = $interpolate(localeUrlPattern)({locale: $locale.id});
-        console.log(url);
+        //console.log(url);
         var that = this;
         var init = function(localeId){
             url = $interpolate(localeUrlPattern)({locale: localeId});
