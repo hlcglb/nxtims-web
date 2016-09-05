@@ -10,8 +10,9 @@ angular.module('comn.service.message',['comn.service.resource', 'pascalprecht.tr
 .config(["$translateProvider", function ($translateProvider) {
     $translateProvider.useUrlLoader('/message');
     $translateProvider.useStorage('UrlMessageStorage');
-    $translateProvider.preferredLanguage('ko');
-    $translateProvider.fallbackLanguage('ko');
+    $translateProvider.preferredLanguage('ko_KR');
+    $translateProvider.fallbackLanguage('ko_KR');
+    $translateProvider.useSanitizeValueStrategy('escape');
 }])
 .factory('MessageService', ['RESTfulService', '$q', function (RESTfulService, $q) {
     return{
@@ -35,7 +36,7 @@ angular.module('comn.service.message',['comn.service.resource', 'pascalprecht.tr
     return {
         put: function (name, value) {},
         get: function (name) {
-            return $location.search()['lang']
+            return $location.search()['langCode']
         }
     };
 }])

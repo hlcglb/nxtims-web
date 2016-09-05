@@ -8,11 +8,10 @@
 
 angular.module('nxtIms.login',[])
 .constant('Login.CookieKey', 'nxtIms_save_id')
-.controller("NavigationController",["$state", "Authentication", "constants", "$kWindow", "$cookies", "Login.CookieKey", "RESTfulService",
-                            function($state, Authentication, constants, $kWindow, $cookies, CookieKey, RESTfulService) {
+.controller("NavigationController",["$state", "Authentication", "constants", "$kWindow", "$cookies", "Login.CookieKey", "UrlMessageStorage",
+                            function($state, Authentication, constants, $kWindow, $cookies, CookieKey, UrlMessageStorage) {
     console.log("navigation controller");
     var self = this;
-    self.message = RESTfulService.get({service: "message"});
     self.credentials = {};
     self.buttonDisabled = false;
     self.login = function(event) {
@@ -22,7 +21,7 @@ angular.module('nxtIms.login',[])
                 function(message){
                     self.error = false;
                     console.log(message);
-                    self.saveId ? $cookies.put(CookieKey, response.config.headers.authorization) : null;
+                    self.saveId ? $cookies.put(CookieKey, self.credentials.username, 7) : null;
                     //save id 추가해야함
                     $state.go(constants.main);
                 }, 

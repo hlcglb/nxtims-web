@@ -80,11 +80,9 @@ angular.module("nxtIms",
     $httpProvider.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
     
 }])
-.run(["$rootScope", "$injector", "Authentication", "Locale", "constants", "$translate",
-      function($rootScope, $injector, Authentication, Locale, constants, $translate){
+.run(["$rootScope", "$injector", "Authentication", "Locale", "constants",
+      function($rootScope, $injector, Authentication, Locale, constants){
     Authentication.init();
-    $translate.use("ko");
-    //Locale.init("en-us");
     // stateChange evnet
     $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams, options) {
         //인증된 사용자 메인으로 리다이렉트
