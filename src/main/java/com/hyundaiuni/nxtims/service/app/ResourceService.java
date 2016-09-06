@@ -28,7 +28,7 @@ public class ResourceService {
     private RestApiTemplate apiTemplate;
 
     public LinkedHashMap<RequestMatcher, List<ConfigAttribute>> getRolesAndUrl() throws Exception {
-        LinkedHashMap<RequestMatcher, List<ConfigAttribute>> result = new LinkedHashMap<RequestMatcher, List<ConfigAttribute>>();
+        LinkedHashMap<RequestMatcher, List<ConfigAttribute>> result = new LinkedHashMap<>();
 
         String resourceUrl = apiServerUrl + apiUrl;
 
@@ -40,13 +40,13 @@ public class ResourceService {
                 AntPathRequestMatcher requestMatcher = new AntPathRequestMatcher(authResource.getResourceUrl(), null,
                     true);
 
-                List<ConfigAttribute> configList = null;
+                List<ConfigAttribute> configList;
 
                 if(result.containsKey(requestMatcher)) {
                     configList = MapUtils.getObject(result, requestMatcher);
                 }
                 else {
-                    configList = new LinkedList<ConfigAttribute>();
+                    configList = new LinkedList<>();
                 }
 
                 configList.add(new SecurityConfig("ROLE_" + authResource.getAuthId()));
