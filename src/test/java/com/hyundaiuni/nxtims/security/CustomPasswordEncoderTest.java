@@ -25,17 +25,17 @@ public class CustomPasswordEncoderTest {
     public void testMatches() {
         CustomPasswordEncoder encoder = new CustomPasswordEncoder();
         StringBuilder builder1 = new StringBuilder();
-        builder1.append("admin");
+        builder1.append("admin1");
 
         boolean isMatched = encoder.matches(builder1.toString(), encoder.encode(builder1.toString()));
 
         assertThat(isMatched).isTrue();
 
         StringBuilder builder2 = new StringBuilder();
-        builder2.append("admin");
+        builder2.append("admin2");
 
         isMatched = encoder.matches(builder2.toString(), encoder.encode(builder1.toString()));
 
-        assertThat(isMatched).isFalse();
+        assertThat(isMatched).isFalse();        
     }
 }
