@@ -27,7 +27,7 @@ public class ResourceService {
     @Autowired
     private RestApiTemplate apiTemplate;
 
-    public LinkedHashMap<RequestMatcher, List<ConfigAttribute>> getRolesAndUrl() throws Exception {
+    public LinkedHashMap<RequestMatcher, List<ConfigAttribute>> getRolesAndUrl() {
         LinkedHashMap<RequestMatcher, List<ConfigAttribute>> result = new LinkedHashMap<>();
 
         String resourceUrl = apiServerUrl + apiUrl;
