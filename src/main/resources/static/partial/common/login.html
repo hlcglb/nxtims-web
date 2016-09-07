@@ -1,0 +1,154 @@
+<!-- <div class="alert alert-danger" ng-show="controller.error">
+    <span class="invalide">{{controller.errorData.message}}</span>
+</div>
+<form role="form" name="controller.loginForm" ng-submit="controller.login()">
+    <div class="form-group">
+        <span class="k-textbox k-space-left">
+            <input type="text" id="icon-left" id="id" class="ip1" placeholder="User name" ng-model="controller.credentials.username" ng-required="true"/>
+            <span ng-show="myForm.input.$valid">ok</span>
+            <div class="k-icon k-i-tick">&nbsp;</div>
+        </span>
+    </div>
+    <div class="form-group">
+        <span class="k-textbox k-space-left" >
+            <input type="password" id="icon-left" placeholder="Password" ng-model="controller.credentials.password" required="required"/>
+            <div class="k-icon k-i-lock">&nbsp;</div>
+        </span>
+    </div>
+</form>
+<kendo-button type="submit" ng-click="controller.log()" class="k-primary">Login</kendo-button>
+    <kendo-button k-on-click="controller.openWindow()">find info</kendo-button>
+
+<span kendo-notification="controller.notf2" k-append-to="'#container'"></span>
+<div id="container" class="k-content"></div> -->
+<span kendo-notification="controller.loginNotify" k-options="controller.notifyOptions"></span>
+<div class="skipmenu">
+    <dl>
+        <dt class="hidden">바로가기 메뉴</dt>
+        <dd><a href="#gnb" class="skip_link">메뉴바로가기</a></dd>
+        <dd><a href="#container" class="skip_link">본문바로가기</a></dd>
+    </dl>
+</div>
+
+<!-- wrap -->
+<div class="wrap">
+    <div class="logo_tit"><img src="img/common/img_logo1.gif" alt="TEAMS"></div>
+    <div class="loginbox">
+        
+        <div class="bg_line">
+            <div class="l_box">
+                <div class="txt">
+                    <ul>
+                        <li class="t1">Inland trucking</li>
+                        <li class="t2">Domestic Real</li>
+                        <li class="t3">Coasting Feeder</li>
+                        <li class="t4">Warehouse management</li>
+                        <li class="t5">Real time IT System</li>
+                    </ul>
+                    <p class="t">ervice</p>
+                </div>
+            </div>
+            <div class="r_box">
+                
+                <div class="box_cont">
+                    <!-- login -->
+                    <div class="ipbox_t">
+                        <form role="form" name="controller.loginForm" ng-submit="controller.login()">
+                        <ul>
+                            <li><label for="id" class="id">id</label>
+                                <input type="text" id="icon-left" id="id" class="ip1" placeholder="User name" ng-model="controller.credentials.username" ng-required="true" />
+                            </li>
+                            <li>
+                                <label for="password" class="password">password</label>
+                                <input type="password" id="icon-left" placeholder="Password" ng-model="controller.credentials.password" required="required" />
+                            </li>
+                        </ul>
+                        <div class="btnbox">
+                            <span class="btn_l"><a href="#" ng-click="controller.find()" ng-disabled="controller.buttonDisabled">패스워드 찾기</a></span>
+                            <label><input type="checkbox" name="" value="" title="" ng-model="controller.saveId" ng-disabled="controller.buttonDisabled" />아이디 저장하기</label>
+                        </div>
+                        <input kendo-button type="submit" class="btn_login k-primary" ng-disabled="controller.buttonDisabled" value="Log in" />
+                        </form>
+                    </div>
+                    <!-- //login -->
+                    
+                    <div class="ipbox_c">
+                        <ul>
+                            <li>
+                                <h3>Container Tracking{{'LAB.SAVE' | translate}}</h3>
+                            </li>
+                            <li class="sh">
+                                <input name="name" type="text" placeholder="Quick Search" class="ip2" value="" title="" ng-model="controller.tracker" />
+                                <!-- <input type="button" name="" class="btn_search" value="" title="" /> -->
+                                <input kendo-button type="button" class="btn_search" title="Quick Search" k-on-click="controller.tracking()" />
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="ipbox_b">
+                        
+                        <script>
+                            function fn_article(buttonID, containerID) {
+                            
+                              var $element = $('#' + containerID).find('.notice_list');
+                              var $prev = $('#' + buttonID).find('.btn_prev');
+                              var $next = $('#' + buttonID).find('.btn_next');
+                            
+                              var size = new Array();
+                              var cnt = new Array();
+                              var move = $element.children().outerHeight();
+                            
+                              $element.each(function(idx) {
+                                size[idx] = $element.eq(idx).children().length;
+                                cnt[idx] = 0;
+                              });
+                            
+                              $prev.bind('click', function() {
+                                $element.each(function(idx) {
+                                  cnt[idx] == 0 ? cnt[idx] : cnt[idx]--;
+                                  $element.eq(idx).animate({
+                                    'top': '-' + cnt[idx] * move
+                                  });
+                                });
+                                return false;
+                              });
+                            
+                              $next.bind('click', function() {
+                                $element.each(function(idx) {
+                                  cnt[idx] >= size[idx] - 1 ? cnt[idx] : cnt[idx]++;
+                                  $element.eq(idx).animate({
+                                    'top': '-' + cnt[idx] * move
+                                  });
+                                });
+                                return false;
+                              });
+                            }
+                        </script>
+                        
+                        <!-- notice -->
+                        <div class="txtbox" id="notice">
+                            <div class="noticebox">
+                                <ul class="notice_list">
+                                    <li>현대로지스텍스 ERP 개편 안내입니다.</li>
+                                    <li>현대로지스텍스</li>
+                                    <li>현대로지스텍스 ERP 개편 안내입니다.</li>
+                                </ul>
+                            </div>
+                            <span id="bt">
+                                <a href="#" class="btn_prev">이전</a>
+                                <a href="#" class="btn_next">다음</a>
+                            </span>
+                        </div>
+                        <!-- //notice -->
+                        <script>fn_article('bt','notice')</script>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="footer">
+        <p class="txt_copyright">(C) HYUNDAI LOGISTECS CO, LTD..</p>
+    </div>
+</div>

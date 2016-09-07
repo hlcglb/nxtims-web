@@ -1,0 +1,67 @@
+@charset "utf-8";
+/*  
+작성자:김영훈(jalame@naver.com)
+작성일:2016.08.31 
+*/
+@font-face{
+font-family: "NanumBarunGothic";
+src: url('fonts/NanumBarunGothic.eot');
+src: url('fonts/NanumBarunGothic.eot?#iefix') format('embedded-opentype'),
+		 url('fonts/NanumBarunGothic.woff') format('woff'), 
+		 url('fonts/NanumBarunGothic.woff2') format('woff'), 
+		 url('fonts/NanumBarunGothic.ttf') format('truetype');
+font-weight: normal;
+font-style: normal;
+}
+@font-face{
+font-family: "NanumBarunGothicBold";
+src: url('fonts/NanumBarunGothicBold.eot')format('eot');
+src: url('fonts/NanumBarunGothicBold.eot?#iefix') format('embedded-opentype'),
+		 url('fonts/NanumBarunGothicBold.woff') format('woff'), 
+		 url('fonts/NanumBarunGothicBold.woff2') format('woff'), 
+		 url('fonts/NanumBarunGothicBold.ttf') format('truetype');
+font-weight: bold;
+font-style: normal;
+}
+@font-face{
+font-family: "NanumBarunGothicLight";
+src: url('fonts/NanumBarunGothicLight.eot')format('eot');
+src: url('fonts/NanumBarunGothicLight.eot?#iefix') format('embedded-opentype'),
+		 url('fonts/NanumBarunGothicLight.woff') format('woff'), 
+		 url('fonts/NanumBarunGothicLight.woff2') format('woff'), 
+		 url('fonts/NanumBarunGothicLight.ttf') format('truetype');
+font-weight: bold;
+font-style: normal;
+}
+
+*{font-family:"NanumBarunGothic","나눔바른고딕";}
+html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,address,big,cite,code,del,dfn,em,font,img,ins,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,tr,th,td{border:0;margin:0;padding:0;font-family:"NanumBarunGothic","나눔바른고딕";}
+ol,ul,li{list-style:none}
+body{color:#777;font-size:12px}
+html,body{height:100%;}
+table{table-layout:fixed}
+a{color:#777;text-decoration:none}
+a:hover{text-decoration:none}
+input,button{padding:0;margin:0}
+textarea{font-size:12px}
+.png24{tmp:expression(setPng24(this))}
+.al{text-align:left}
+.aj{text-align:justify}
+.ac{text-align:center}
+.ar{text-align:right}
+.vt{vertical-align:top}
+.lsms{letter-spacing:-1px}
+.lsmxs{letter-spacing:-2px}
+.hidden{visibility:hidden;position:absolute;font-size:0;width:0;height:0;line-height:0;background:none;margin:0;padding:0}
+a.skip_link{position:absolute;display:block;width:100%;left:0;text-align:center;top:-10000px;z-index:500;font-size:1.3em}
+a.skip_link:hover,a.skip_link:focus,a.skip_link:active{position:absolute;top:0;font-weight:700;color:#fff;background:#1e1e1e;z-index:50000;border-bottom:1px solid #fff;padding:15px 0}
+.fl{float:left}
+.fr{float:right}
+.block{display:block}
+.clear{display:block;float:none;clear:both;height:0;width:100%;font-size:0!important;line-height:0!important;overflow:hidden;margin:0!important;padding:0!important}
+.displaydone{width:0;height:0;text-indent:-1000em;font:0/0 arial;overflow:hidden}
+.pointer{cursor:pointer}
+legend,caption,hr{display:none}
+img,input,.vm{vertical-align:middle}
+.ac img,.ar img,.vb{vertical-align:bottom}
+* html .ac img,:first-child+html .ac img,* html .ar img,:first-child+html .ar img{vertical-align:bottom;margin-top:1px}

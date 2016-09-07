@@ -14,7 +14,7 @@ angular.module('comn.service.auth',['ngCookies'])
 .config(['$httpProvider', function($httpProvider){
     $httpProvider.interceptors.push("AuthenticationInterceptor");
 }])
-.constant('Auth.CookieKey', 'nxtImsAuthorization')
+.constant('Auth.CookieKey', 'NXTIMS_STATUS')
 .provider('Authentication',['Auth.CookieKey', function(CookieKey){
     this.authenticated = false;
     this.loginServiceName = "authentication";
@@ -48,7 +48,7 @@ angular.module('comn.service.auth',['ngCookies'])
                     function(response) {
                         if (response.data.name) {
                             deferred.resolve("success");
-                            $cookies.put(CookieKey, response.config.headers.authorization);
+                            $cookies.put(CookieKey, "_1%");
                             that.setAuthenticate(true);
                         } else {
                             deferred.reject("error: " + response.satus + " data: " + response.satus);
@@ -109,7 +109,7 @@ angular.module('comn.service.auth',['ngCookies'])
         
         //인증 확인
         var isAuth = function(){
-            return that.authenticated;
+            return that.authenticated && ($cookies.get(CookieKey));
         };
         var init= function(){
             if(!that.authenticated && $cookies.get(CookieKey)) that.setAuthenticate(true);
@@ -139,10 +139,17 @@ angular.module('comn.service.auth',['ngCookies'])
                 // 쿠키값이 존재하면 삭제 하고 로그인페이지로 이동
                 if ($cookies.get(CookieKey)) $cookies.remove(CookieKey);
                 console.log("[#AuthenticationInterceptor] Access denied (error 401), please login again");
+                var $timeout = $injector.get('$timeout');
+
                 var $state = $injector.get('$state');
                 $state.go("login");
+                return $q.reject(rejection);
+
             }
-            return $q.reject(rejection);
+            else{
+                return $q.reject(rejection);
+            }
+            
         }
     }
 }]);
