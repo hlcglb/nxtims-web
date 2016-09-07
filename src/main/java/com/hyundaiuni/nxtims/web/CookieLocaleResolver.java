@@ -43,7 +43,9 @@ public class CookieLocaleResolver extends SessionLocaleResolver {
         Cookie cookie = WebUtils.getCookie(request, cookieName);
 
         try {
-            defaultLocale = LocaleUtils.toLocale(cookie.getValue());
+            if(cookie != null) {
+                defaultLocale = LocaleUtils.toLocale(cookie.getValue());
+            }
         }
         catch(IllegalArgumentException e) {
             log.error(e);
