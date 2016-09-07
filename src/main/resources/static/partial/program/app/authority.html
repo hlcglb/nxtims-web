@@ -1,0 +1,32 @@
+
+<script type="text/javascript">
+/* console.log("program script start");
+var controller = function ($scope, $injector){
+    console.log("ui-router controller apply");
+    var vm = this;
+    vm.number = 155800;
+    vm.text = "function authority test";
+}; */
+(function(){
+    'use strict';
+    angular.module("programModule")
+    .controller("ProgramController", ["$scope", function($scope){
+        var vm = this;
+        vm.number = 1234;
+        vm.text = "module authority test";
+    }]);
+})();
+
+</script>
+<div id="program" data-dynamic-controller="ProgramController as vm">    
+    <div class="">
+        <div></div>
+        <p>{{program.id}}</p>
+        <div id="prgm" class="content">
+            <p>authority</p>
+            <p>{{vm.number}}</p>
+            <span>{{vm.text}}</span>
+            <span>{{text}}</span>
+        </div>
+    </div>
+</div>

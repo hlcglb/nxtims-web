@@ -6,13 +6,14 @@
 
 'use strict';
 
-angular.module('comn.service.message',['comn.service.resource', 'pascalprecht.translate'])
+angular.module('comn.service.message',['comn.service.resource', 'pascalprecht.translate', 'ngSanitize'])
 .config(["$translateProvider", function ($translateProvider) {
     $translateProvider.useUrlLoader('/message');
     $translateProvider.useStorage('UrlMessageStorage');
     $translateProvider.preferredLanguage('ko_KR');
     $translateProvider.fallbackLanguage('ko_KR');
-    $translateProvider.useSanitizeValueStrategy('escape');
+    //security
+    $translateProvider.useSanitizeValueStrategy('escape'); //(https://angular-translate.github.io/docs/#/guide/19_security)
 }])
 .factory('MessageService', ['RESTfulService', '$q', function (RESTfulService, $q) {
     return{
