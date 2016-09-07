@@ -15,29 +15,27 @@ public class CustomPasswordEncoderTest {
         CustomPasswordEncoder encoder = new CustomPasswordEncoder();
         StringBuilder builder = new StringBuilder();
         builder.append("admin");
-        
+
         String encodedPasword = encoder.encode(builder.toString());
-        
+
         assertThat(encodedPasword).isEqualTo("8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918");
     }
-    
+
     @Test
     public void testMatches() {
         CustomPasswordEncoder encoder = new CustomPasswordEncoder();
-        StringBuilder builder = new StringBuilder();
-        builder.append("admin");
-        
-        String encodedPassword = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918";
-        
-        boolean isMatched = encoder.matches(builder.toString(),encodedPassword);
-        
+        StringBuilder builder1 = new StringBuilder();
+        builder1.append("admin1");
+
+        boolean isMatched = encoder.matches(builder1.toString(), encoder.encode(builder1.toString()));
+
         assertThat(isMatched).isTrue();
-        
-        builder = new StringBuilder();
-        builder.append("admin1");        
-        
-        isMatched = encoder.matches(builder.toString(),encodedPassword);
-        
+
+        StringBuilder builder2 = new StringBuilder();
+        builder2.append("admin2");
+
+        isMatched = encoder.matches(builder2.toString(), encoder.encode(builder1.toString()));
+
         assertThat(isMatched).isFalse();        
     }
 }

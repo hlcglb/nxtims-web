@@ -24,6 +24,7 @@ import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
+import com.hyundaiuni.nxtims.exception.SecurityConfigurationException;
 import com.hyundaiuni.nxtims.service.app.ResourceService;
 import com.hyundaiuni.nxtims.service.app.UserService;
 
@@ -42,7 +43,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public FilterSecurityInterceptor filterSecurityInterceptor() {
+    public FilterSecurityInterceptor filterSecurityInterceptor() throws SecurityConfigurationException {
         FilterSecurityInterceptor filterSecurityInterceptor = new FilterSecurityInterceptor();
 
         filterSecurityInterceptor.setAuthenticationManager(authenticationManagerBean());
@@ -53,7 +54,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public LinkedHashMap<RequestMatcher, List<ConfigAttribute>> requestMap() {
+    public LinkedHashMap<RequestMatcher, List<ConfigAttribute>> requestMap() throws SecurityConfigurationException {
         ResourcesMapFactoryBean factoryBean = new ResourcesMapFactoryBean();
 
         factoryBean.setResourceService(resourceService);
@@ -62,12 +63,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             return factoryBean.getObject();
         }
         catch(Exception ex) {
-            throw new RuntimeException(ex);
+            throw new SecurityConfigurationException(ex.getMessage(), ex);
         }
     }
 
     @Bean
-    public CustomFilterInvocationSecurityMetadataSource customFilterInvocationSecurityMetadataSource() {
+    public CustomFilterInvocationSecurityMetadataSource customFilterInvocationSecurityMetadataSource()
+        throws SecurityConfigurationException {
         CustomFilterInvocationSecurityMetadataSource filterInvocationSecurityMetadataSource = new CustomFilterInvocationSecurityMetadataSource(
             requestMap());
 
@@ -95,12 +97,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     @Override
-    public AuthenticationManager authenticationManagerBean() {
+    public AuthenticationManager authenticationManagerBean() throws SecurityConfigurationException {
         try {
             return super.authenticationManagerBean();
         }
         catch(Exception ex) {
-            throw new RuntimeException(ex);
+            throw new SecurityConfigurationException(ex.getMessage(), ex);
         }
     }
 
@@ -132,7 +134,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public CustomAuthenticationFilter authenticationFilter() {
+    public CustomAuthenticationFilter authenticationFilter() throws SecurityConfigurationException {
         CustomAuthenticationFilter authenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
 
         authenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());

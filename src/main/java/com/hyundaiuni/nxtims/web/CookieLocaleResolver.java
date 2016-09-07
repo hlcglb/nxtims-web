@@ -7,12 +7,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import com.hyundaiuni.nxtims.support.LocaleManager;
 import com.hyundaiuni.nxtims.util.WebUtils;
 
 public class CookieLocaleResolver extends SessionLocaleResolver {
+    private static final Log log = LogFactory.getLog(CookieLocaleResolver.class);
+
     private String cookieName;
     private Integer cookieMaxAge;
     private LocaleManager localeManager;
@@ -37,10 +41,15 @@ public class CookieLocaleResolver extends SessionLocaleResolver {
     protected Locale determineDefaultLocale(HttpServletRequest request) {
         Locale defaultLocale = null;
         Cookie cookie = WebUtils.getCookie(request, cookieName);
+
         try {
             defaultLocale = LocaleUtils.toLocale(cookie.getValue());
         }
-        catch(Exception e) {
+        catch(IllegalArgumentException e) {
+            log.error(e);
+        }
+
+        if(defaultLocale == null) {
             defaultLocale = request.getLocale();
         }
 
