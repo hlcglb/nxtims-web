@@ -32,7 +32,7 @@ angular.module('nxtims.services',[])
     /**
      * Json -> kendo tree 구조로 변경
      * RESOURCE_LEVEL로 단계 구분(1부터 최상위 노드) 후 정렬된 데이터만 변경 가능
-     * @Param Array
+     * @Param {Array}
      */
     var transformHierarchical = function(arr) {
         var map = {}, node, roots = [];
@@ -73,9 +73,8 @@ angular.module('nxtims.services',[])
         var dataSource = null;
         switch(type) {
         case 'tree':
-            var treelist = transformHierarchical(data);
             dataSource = new kendo.data.HierarchicalDataSource(
-                    { data: treelist});
+                    { data: data});
             if(dataSource.data().length == 0){
                 dataSource.read();
             }

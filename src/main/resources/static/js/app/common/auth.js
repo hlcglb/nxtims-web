@@ -6,15 +6,27 @@
 
 'use strict';
 
-/*
- * 인증 및 로그인, 로그아웃
+/**
+ * @ngdoc overview
+ * @name comn.service.auth
+ *
+ * @description
+ * # 공통 서비스 인증 모듈
+ *
+ * 사용자 인증 로그인, 로그아웃
+ * 사용자 인증 상태 확인을 위한 상태, 쿠키값 저장 및 삭제
  * 
  */
 angular.module('comn.service.auth',['ngCookies'])
 .config(['$httpProvider', function($httpProvider){
     $httpProvider.interceptors.push("AuthenticationInterceptor");
 }])
-.constant('Auth.CookieKey', 'NXTIMS_STATUS')
+.constant('Auth.CookieKey', 'NXTIMS_STATUS') //로그인 상태 저장 쿠키 키값
+/**
+ * 
+ * @description 로그인 인증 프로바이더
+ * @requires Auth.CookieKey
+ */
 .provider('Authentication',['Auth.CookieKey', function(CookieKey){
     this.authenticated = false;
     this.loginServiceName = "authentication";
@@ -33,7 +45,12 @@ angular.module('comn.service.auth',['ngCookies'])
         
         var that = this;
         
-        //login
+        /**
+         * 인증 로그인
+         *
+         * @param {Object} username, password
+         * @return {promise} login state
+         */
         var authenticate = function(credentials){
             // set header
             var headers = credentials ? {
@@ -62,7 +79,11 @@ angular.module('comn.service.auth',['ngCookies'])
             return deferred.promise;  
         };
         
-        //logout
+        /**
+         * 로그아웃
+         *
+         * @return {promise} logout state
+         */
         var unAuthenticate = function(data){
             //clear auth info
             that.setAuthenticate(false);
@@ -84,7 +105,10 @@ angular.module('comn.service.auth',['ngCookies'])
             return deferred.promise;
         };
         
-        //인증 확인 promise
+        /**
+         * 인증확인 프로미스
+         * @return {promise}
+         */
         function isAuthPromise(option){
             var deferred = $q.defer();
             if(that.authenticated){
@@ -107,7 +131,10 @@ angular.module('comn.service.auth',['ngCookies'])
             return deferred.promise;
         };
         
-        //인증 확인
+        /**
+         * 인증확인
+         * @return {Boolean}
+         */
         var isAuth = function(){
             return that.authenticated && ($cookies.get(CookieKey));
         };
@@ -122,7 +149,17 @@ angular.module('comn.service.auth',['ngCookies'])
             isAuthP: isAuthPromise,
         };
     }];
-}]).factory('AuthenticationInterceptor', ['$q', '$injector', '$cookies', 'Auth.CookieKey',
+}])
+/**
+ * @description 
+ * http Interceptor 401에러 캐치 후 로그인으로 리다이렉트
+ * 
+ * @requires $q
+ * @requires $injector
+ * @requires $cookies
+ * @requires Auth.CookieKey
+ */
+.factory('AuthenticationInterceptor', ['$q', '$injector', '$cookies', 'Auth.CookieKey',
                                          function ($q, $injector, $cookies, CookieKey) {
     return {
         request : function(config){

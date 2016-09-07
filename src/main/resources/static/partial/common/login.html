@@ -53,7 +53,7 @@
                 <div class="box_cont">
                     <!-- login -->
                     <div class="ipbox_t">
-                        <form role="form" name="controller.loginForm" ng-submit="controller.login()">
+                        <form role="form" name="controller.loginForm" ng-submit="controller.login()" >
                         <ul>
                             <li><label for="id" class="id">id</label>
                                 <input type="text" id="icon-left" id="id" class="ip1" placeholder="User name" ng-model="controller.credentials.username" ng-required="true" />
@@ -64,7 +64,7 @@
                             </li>
                         </ul>
                         <div class="btnbox">
-                            <span class="btn_l"><a href="#" ng-click="controller.find()" ng-disabled="controller.buttonDisabled">패스워드 찾기</a></span>
+                            <span class="btn_l"><a href="#" ng-click="controller.find()" ng-disabled="controller.buttonDisabled" >패스워드 찾기</a></span>
                             <label><input type="checkbox" name="" value="" title="" ng-model="controller.saveId" ng-disabled="controller.buttonDisabled" />아이디 저장하기</label>
                         </div>
                         <input kendo-button type="submit" class="btn_login k-primary" ng-disabled="controller.buttonDisabled" value="Log in" />

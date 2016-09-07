@@ -12,7 +12,6 @@ angular.module("nxtIms",
           "kendo.directives",
           "kendo.window",
           "comn.service.resource",
-          "comn.service.locale",
           "comn.service.auth",
           "comn.service.user",
           "comn.service.message",
@@ -25,9 +24,9 @@ angular.module("nxtIms",
           "programModule"
           ])
 .config(["$stateProvider", "$urlRouterProvider", "$httpProvider", "$locationProvider", 
-         "LocaleProvider", "constants", "ProgramInfoProvider",
+         "constants", "ProgramInfoProvider",
          function($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider, 
-                 LocaleProvider, constants, ProgramInfoProvider) {
+                 constants, ProgramInfoProvider) {
     
     ProgramInfoProvider.init();
     //ui-router 
@@ -79,7 +78,7 @@ angular.module("nxtIms",
     .state("program/:id", {
         url : constants.programUrl,
         views: {
-            "": {templateUrl : constants.layoutTemplUrl + "layout.html"},
+            "": {templateUrl : constants.layoutTemplUrl + "prgmLayout.html"},
             "navigation@program/:id": stateNav,
             "application@program/:id": {
                 templateUrl : function(urlAttr){
@@ -88,10 +87,10 @@ angular.module("nxtIms",
                 },
                 controller : ["$scope", "$injector", "$state", "UserService",
                               function($scope, $injector, $state, UserService){
-                    var vm = this;
-                    vm.id = ProgramInfoProvider.getId();
+                    var ctrl = this;
+                    ctrl.id = ProgramInfoProvider.getId();
                 }],
-                controllerAs: "program"
+                controllerAs: "application"
             }
         }
     });
@@ -104,8 +103,8 @@ angular.module("nxtIms",
     
     
 }])
-.run(["$rootScope", "$injector", "Authentication", "Locale", "constants",
-      function($rootScope, $injector, Authentication, Locale, constants){
+.run(["$rootScope", "$injector", "Authentication", "constants",
+      function($rootScope, $injector, Authentication, constants){
     Authentication.init();
     // stateChange evnet
     $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams, options) {
