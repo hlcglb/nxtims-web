@@ -28,10 +28,10 @@ public class MessageDigestUtils {
             }
         }
         catch(NoSuchAlgorithmException e) {
-            throw new MessageDigestException("NoSuchAlgorithmException : " + e.getMessage());
+            throw new MessageDigestException("NoSuchAlgorithmException : " + e.getMessage(), e);
         }
         catch(UnsupportedEncodingException e) {
-            throw new MessageDigestException("UnsupportedEncodingException : " + e.getMessage());
+            throw new MessageDigestException("UnsupportedEncodingException : " + e.getMessage(), e);
         }
 
         return stringBuilder.toString();
