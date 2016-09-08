@@ -44,7 +44,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
             // Bad Credentials
             String userId = getUserId(request.getHeader("authorization"));
 
-            if(!StringUtils.isEmpty(userId)) {
+            if(StringUtils.isNotEmpty(userId)) {
                 userService.onAuthenticationFailure(userId);
             }
 

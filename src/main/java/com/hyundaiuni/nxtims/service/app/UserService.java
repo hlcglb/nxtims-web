@@ -34,10 +34,7 @@ public class UserService implements UserDetailsService {
 
         String resourceUrl = apiServerUrl + apiUrl;
 
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", username);
-
-        User user = apiTemplate.getRestTemplate().getForObject(resourceUrl + "/{id}", User.class, params);
+        User user = apiTemplate.getRestTemplate().getForObject(resourceUrl + "/{id}", User.class, username);
 
         if(user == null) {
             throw new UsernameNotFoundException(username + " not found");

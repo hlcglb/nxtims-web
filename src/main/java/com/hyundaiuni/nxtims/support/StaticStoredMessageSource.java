@@ -34,7 +34,7 @@ public class StaticStoredMessageSource extends AbstractMessageSource implements 
         String availableLocale = localeManager.getAvailableLocale(LocaleUtils.toLocale(locale)).toString();
         Properties properties = getCachedProperties(cachedProperties, availableLocale);
         if(properties == null) {
-            properties = messageService.getMessageProperties(availableLocale);
+            properties = messageService.getMessageListByLanguageCode(availableLocale);
             cachedProperties.put(availableLocale, properties);
         }
 

@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
+import org.springframework.util.Assert;
 
 import com.hyundaiuni.nxtims.domain.app.Message;
+import com.hyundaiuni.nxtims.domain.app.MessageLocale;
 import com.hyundaiuni.nxtims.service.RestApiTemplate;
 
 @Service
@@ -23,27 +26,99 @@ public class MessageService {
     @Autowired
     private RestApiTemplate apiTemplate;
 
-    public Properties getMessageProperties(String locale) {
-        String resourceUrl = apiServerUrl + apiUrl +"?inquiry={inquiry}&languageCode={languageCode}";
+    public Properties getMessageListByLanguageCode(String languageCode) {
+        String resourceUrl = apiServerUrl + apiUrl + "?inquiry={inquiry}&languageCode={languageCode}";
 
         Map<String, String> urlVariables = new HashMap<>();
-        urlVariables.put("inquiry", "getMessagesByLanguageCode");
-        urlVariables.put("languageCode", locale);
+        urlVariables.put("inquiry", "getMessageListByLanguageCode");
+        urlVariables.put("languageCode", languageCode);
 
-        List<Message> messageList = Arrays.asList(apiTemplate.getRestTemplate().getForObject(resourceUrl, Message[].class,
-            urlVariables));
+        List<MessageLocale> messageLocaleList = Arrays.asList(
+            apiTemplate.getRestTemplate().getForObject(resourceUrl, MessageLocale[].class, urlVariables));
 
         Properties properties = new Properties();
 
-        if(!CollectionUtils.isEmpty(messageList)) {
-            for(Message message : messageList) {
-                String key = message.getMsgGrpCd() + "." + message.getMsgCd();
-                String value = message.getMsgNm();
+        if(CollectionUtils.isNotEmpty(messageLocaleList)) {
+            for(MessageLocale messageLocale : messageLocaleList) {
+                String key = messageLocale.getMsgGrpCd() + "." + messageLocale.getMsgCd();
+                String value = messageLocale.getMsgNm();
 
                 properties.setProperty(key, value);
             }
         }
 
         return properties;
+    }
+
+    public List<Message> getMessageListByParam(String query, int offset, int limit) {
+        Assert.notNull(query, "parameter must not be null");
+        Assert.notNull(offset, "offset must not be null");
+        Assert.notNull(limit, "limit must not be null");
+
+        Map<String, Object> urlVariables = new HashMap<>();
+
+        urlVariables.put("inquiry", "getMessageListByParam");
+        urlVariables.put("q", query);
+        urlVariables.put("offset", offset);
+        urlVariables.put("limit", limit);
+
+        String resourceUrl = apiServerUrl + apiUrl + "?inquiry={inquiry}&q={q}&offset={offset}&limit={limit}";
+
+        return Arrays.asList(apiTemplate.getRestTemplate().getForObject(resourceUrl, Message[].class, urlVariables));
+    }
+
+    public List<MessageLocale> getMessageLocaleListByParam(Map<String, Object> parameter) {
+        Assert.notNull(parameter, "parameter must not be null");
+
+        String msgGrpCd = MapUtils.getString(parameter, "msgGrpCd");
+        String msgCd = MapUtils.getString(parameter, "msgCd");
+
+        Assert.notNull(msgGrpCd, "msgGrpCd must not be null");
+        Assert.notNull(msgCd, "msgCd must not be null");
+
+        Map<String, Object> urlVariables = new HashMap<>();
+
+        urlVariables.put("inquiry", "getMessageLocaleListByParam");
+        urlVariables.put("msgGrpCd", msgGrpCd);
+        urlVariables.put("msgCd", msgCd);
+
+        String resourceUrl = apiServerUrl + apiUrl + "?inquiry={inquiry}&msgGrpCd={msgGrpCd}&msgCd={msgCd}";
+
+        return Arrays.asList(
+            apiTemplate.getRestTemplate().getForObject(resourceUrl, MessageLocale[].class, urlVariables));
+    }
+
+    public Message getMessageByMsgPk(String msgPk) {
+        Assert.notNull(msgPk, "msgPk must not be null");
+
+        String resourceUrl = apiServerUrl + apiUrl + "/{msgPk}";
+
+        return apiTemplate.getRestTemplate().getForObject(resourceUrl, Message.class, msgPk);
+    }
+
+    public Message insertMessage(Message message) {
+        Assert.notNull(message, "message must not be null");
+
+        String resourceUrl = apiServerUrl + apiUrl;
+
+        return apiTemplate.getRestTemplate().postForObject(resourceUrl, message, Message.class);
+    }
+
+    public Message updateMessage(String msgPk, Message message) {
+        Assert.notNull(message, "message must not be null");
+
+        String resourceUrl = apiServerUrl + apiUrl + "/{msgPk}";
+
+        apiTemplate.getRestTemplate().put(resourceUrl, message, msgPk);
+
+        return getMessageByMsgPk(msgPk);
+    }
+
+    public void deleteMessage(String msgPk) {
+        Assert.notNull(msgPk, "msgPk must not be null");
+
+        String resourceUrl = apiServerUrl + apiUrl + "/{msgPk}";
+
+        apiTemplate.getRestTemplate().delete(resourceUrl, msgPk);
     }
 }

@@ -40,6 +40,6 @@ public class AppController {
     public Properties message(@RequestParam String lang) {
         Assert.notNull(lang, "locale must not be null");
 
-        return messageService.getMessageProperties(lang);
+        return messageService.getMessageListByLanguageCode(lang);
     }
 }
