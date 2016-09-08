@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Auth implements Serializable {
-    private static final long serialVersionUID = 6430679059199263863L;
+    private static final long serialVersionUID = -5088984642210923982L;
     
     @JsonProperty(value = "AUTH_ID")
     private String authId;
