@@ -6,14 +6,16 @@
 
 'use strict';
 
-var programModule = angular.module("programModule",[])
+var programModule = angular.module("programModule",[]);
+angular.module("programModule")
 .config(["$controllerProvider", function($controllerProvider){
     //동적 컨트롤 설정
     programModule.controller = function(name, constructor){
         $controllerProvider.register(name, constructor);
         return (this);
     }
-}])
+}]);
+angular.module("programModule")
 .factory('Function',[function(){
     var transform = function(object, handler) {
         if(jQuery.isPlainObject(object) || angular.isArray(object)) {
@@ -38,10 +40,11 @@ var programModule = angular.module("programModule",[])
         isEmpty: isEmpty
     };
 
-}])
+}]);
 /**
  * 동적 컨트롤러 바인딩 directive
  */
+angular.module("programModule")
 .directive('dynamicController', ['$compile', '$parse', function($compile, $parse) {
     return {
         restrict: 'A',
@@ -56,12 +59,14 @@ var programModule = angular.module("programModule",[])
                     angular.noop() : $compile(element)(scope);
         }
     };
-}])
+}]);
+angular.module("programModule")
 .directive('programPath', [function() {
     return {
         restrict: 'A',
         controller: ['Function', 'UserService', 'ProgramInfo', function(Function, UserService, ProgramInfo){
             var ctrl = this;
+            ctrl.prgmPath = "";
             var path = [];
             var menu = UserService.getMenuList();
             var currPrgmId = ProgramInfo.getId();
@@ -77,7 +82,6 @@ var programModule = angular.module("programModule",[])
                 }
             })
             var length = path.length;
-            console.log(length);
             for(var i=0; i < length ; i++){
                 (i == length-1) ? ctrl.prgmPath += "<strong>" + path.pop() + "[" + currPrgmId + "]<strong>" : ctrl.prgmPath += path.pop() + "<span>&gt;</span>";
             }
@@ -87,3 +91,43 @@ var programModule = angular.module("programModule",[])
         }
     };
 }]);
+
+/**
+ * 공통 코드 컴포넌트
+ * 
+ * @require @attribute {String} code - service name
+ * @attribute {String} text @default 'text'
+ * @attribute {String} value @default 'value'
+ * @attribute {String} property @default null
+ */
+angular.module("programModule")
+.component('commonCodeTest', {
+    template: '<select kendo-drop-down-list k-options="$ctrl.options"></select>',
+    bindings: {
+        code: '@',
+        text: '@',
+        value: '@',
+        property: '@'
+    },
+    controller: ['RESTfulService', function(RESTfulService){
+        var ctrl = this; 
+        ctrl.dataSource = {
+            transport: {
+                read: function(options){
+                    RESTfulService.get({service: ctrl.code}
+                    ,function success(data){
+                        ctrl.property ? options.success(data[ctrl.property]) : options.success(data);
+                    }
+                    ,function error(data){
+                        options.error(data);
+                    });
+                }
+            }
+        };
+        ctrl.options = {
+            dataSource: ctrl.dataSource,
+            dataTextField: ctrl.text || "text",
+            dataValueField: ctrl.value || "value"
+        };
+    }]
+});
