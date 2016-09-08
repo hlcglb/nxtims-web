@@ -14,13 +14,47 @@ var controller = function ($scope, $injector){
         var vm = this;
         vm.number = 1234;
         vm.text = "module authority test";
+        vm.grid2Data = [];
+        vm.grid2columns = [];
+        vm.search = function(){
+            /* if(confirm("조회 하시겠습니까?"))
+                alert("search"); */
+            console.log(vm.grid);
+            vm.grid.setDataSource(new kendo.data.DataSource({
+                type: "odata",
+                transport: {
+                    read: "//demos.telerik.com/kendo-ui/service/Northwind.svc/Employees",
+                    update: function(option){
+                        console.log(option);
+                    }
+                },
+                pageSize: 7,
+                serverPaging: true,
+                serverSorting: true
+            }));
+            vm.grid2Data = [{FirstName: "Nancy", LastName:"Davolio", Country: "USA", City: "Seattle", Title: "Sales Representative"}];
+            //not working
+            //vm.grid2.setDataSource([{FirstName: "Nancy", LastName:"Davolio", Country: "USA", City: "Seattle", Title: "Sales Representative"}]);
+        };
     }]);
 })();
 
 </script>
-<div id="program" data-dynamic-controller="ProgramController as vm">    
-    <div class="">
-        <div></div>
+<div id="program" data-dynamic-controller="ProgramController as vm">
+    <div class="btn_cbox">
+        <div class="bnt_l">
+        </div>
+        <div class="bnt_r">
+            <kendo-button k-scope-field="vm.btn_Search" k-on-click="vm.search()">조회</kendo-button>
+            <input type="button" k-scope-field="vm.btn_Create" name="" class="btn_a3" value="신 규" title="" />
+        </div>
+    </div>
+    <div class="searchbox">
+        <label for="name">serachbox</label>
+        <input name="name" class="k-textbox" />
+    </div>
+    
+    <div class="datatable1">
         <p>{{program.id}}</p>
         <div id="prgm" class="content">
             <p>authority</p>
@@ -28,5 +62,13 @@ var controller = function ($scope, $injector){
             <span>{{vm.text}}</span>
             <span>{{text}}</span>
         </div>
+        <common-code-test code="resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST"></common-code-test>
     </div>
+    <div class="datatable2">
+        <kendo-grid  k-scope-field="vm.grid" ims-grid k-options="imsgrid.options" ></kendo-grid>
+    </div>
+    <div class="datatable2">
+        <kendo-grid  k-scope-field="vm.grid2" ims-grid k-options="imsgrid.options" k-data-source="vm.grid2Data" k-columns="vm.grid2columns"></kendo-grid>
+    </div>
+
 </div>
