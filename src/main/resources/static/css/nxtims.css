@@ -9,3 +9,5 @@
 [ng\:cloak], [ng-cloak], .ng-cloak {
     display: none !important;
 }
+
+#allmenu_box .all_cont .k-treeview {color:#fff; font-size:16px;}

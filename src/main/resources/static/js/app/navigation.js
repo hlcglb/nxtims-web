@@ -7,14 +7,19 @@
 'use strict';
 
 angular.module('nxtIms.navigation',[])
-.constant('Login.CookieKey', 'NXTIMS_SAVE_ID')
-.constant('PAGE_SESSION', 'NXTIMS_PAG_IN')
+.constant('Login.CookieKey', 'NXTIMS_SAVE_ID') //아이디 저장 cookie key
+.constant('PAGE_SESSION', 'NXTIMS_PAG_IN')     //이동할 페이지 정보 저장 session key
+/**
+ * 페이지 이동 
+ * session storage에 ID/PATH저장 후 새탭에서 사용
+ */
 .provider('ProgramInfo',['$windowProvider', 'PAGE_SESSION', function($windowProvider, PAGE_SESSION){
     var $window = $windowProvider.$get();
     var init = null;
     this.programInfo;
     this.init = function(){
-        this.programInfo = angular.fromJson($window.sessionStorage.getItem(PAGE_SESSION));
+        var cookiValue = $window.sessionStorage.getItem(PAGE_SESSION);
+        this.programInfo = cookiValue && angular.fromJson($window.atob(cookiValue));
         if(this.programInfo == null || angular.isUndefined(this.programInfo)){
             this.programInfo = {
                pageNo: "",
@@ -22,7 +27,6 @@ angular.module('nxtIms.navigation',[])
                    /*,pageList: [] //페이지리스트*/
             }
         }
-        console.log(this.programInfo);
     }
     this.getId = function(){
         return this.programInfo.pageNo;
@@ -46,7 +50,7 @@ angular.module('nxtIms.navigation',[])
                 that.programInfo.pageNo = no;
                 that.programInfo.pagePath = path;
                 //that.programInfo.pageList.push(no);
-                $window.sessionStorage.setItem(PAGE_SESSION, angular.toJson(that.programInfo));
+                $window.sessionStorage.setItem(PAGE_SESSION, $window.btoa(angular.toJson(that.programInfo)));
             }
             return true; //!isPage; //true: page is not
         };
@@ -74,6 +78,14 @@ angular.module('nxtIms.navigation',[])
         };
     }];
 }])
+/**
+ * @description
+ * 프로그램 메뉴버튼 동작 directive
+ * 
+ * @requires $window
+ * @requires $state
+ * @requires constants (nxtIms 모듈에서 정의한)
+ */
 .directive('programMenu', ['$window', '$state', 'constants', function ($window, $state, constants) {
     return {
         scope: false,
@@ -96,9 +108,9 @@ angular.module('nxtIms.navigation',[])
                 angular.element("#allmenu_box").stop().animate({'left': '-' + 313 + 'px' }, 300, function() {
                     angular.element('#allmenu_box').css({'display': 'none' });
                 });
-                angular.element("#allmenu_box .all_cont").height(c_height);
+                angular.element('#allmenu_box').off('scroll touchmove mousewheel');
                 //var iscroll = new iScroll("wrapper", { hScroll:false });
-                angular.element("html, body").addClass('body_hidden');
+                angular.element("html, body").removeClass('body_hidden');
             };
             ctrl.allmenu_close = function(event){
                 angular.element("#allmenu_box").stop().animate({'left': '-' + 313 + 'px' }, 300, function() {
@@ -111,7 +123,7 @@ angular.module('nxtIms.navigation',[])
 
 }])
 /**
- * 프로그램 메뉴 트리 뷰
+ * 프로그램 메뉴 트리 뷰 directive
  */
 .directive('programMenuTree', ['$window', '$state', 'ProgramInfo', 'Authentication',
                                function ($window, $state, ProgramInfo, Authentication) {
@@ -126,15 +138,15 @@ angular.module('nxtIms.navigation',[])
                                 
             };
             $timeout(function(){
-                menu.data = KendoDataHelper.toKendoData(angular.copy(UserService.getMenuList()), "tree");
-            },50);
+                menu.data = KendoDataHelper.toKendoData(UserService.getMenuList(), "tree");
+            },100);
             
         }],
         controllerAs: 'menu',
         link: function($scope, element, attrs, ctrl) {
             element.css({
-                "display": "inline-block",
-                "overflow": "hidden"
+                /*"display": "inline-block",
+                "overflow": "hidden"*/
             });
             ctrl.toggle = function(e){
                 //e.preventDefault();
@@ -167,13 +179,23 @@ angular.module('nxtIms.navigation',[])
     };
 
 }])
-.controller("NavigationController",["$state", "Authentication", "constants", "$kWindow", "$cookies", "Login.CookieKey",
-                            function($state, Authentication, constants, $kWindow, $cookies, CookieKey) {
-    console.log("navigation controller");
+/**
+ * navigation controller
+ */
+.controller("NavigationController",["$state", "Authentication", "constants", "$kWindow", "$cookies", "Login.CookieKey", "$timeout",
+                            function($state, Authentication, constants, $kWindow, $cookies, CookieKey, $timeout) {
+
     var self = this;
     self.credentials = {};
     self.buttonDisabled = false; //button diabled
     
+    /*
+     * 아이디 저장 쿠키 존재여부 확인 후 셋팅
+     */
+    if($cookies.get(CookieKey)){
+        self.credentials.username = atob($cookies.get(CookieKey));
+        self.saveId = true;
+    }
     //login
     self.login = function(event) {
         self.buttonDisabled = true;
@@ -182,8 +204,12 @@ angular.module('nxtIms.navigation',[])
                 function(message){
                     self.error = false;
                     console.log(message);
-                    self.saveId ? $cookies.put(CookieKey, self.credentials.username, 7) : null;
-                    //save id 추가해야함
+                    if(!$cookies.get(CookieKey) && self.saveId){
+                        // 쿠키가 없고 아이디저장 체크된 상태이면 쿠키 7일간 저장
+                        var now = new Date();
+                        now.setDate(now.getDate() + 7);
+                        $cookies.put(CookieKey, btoa(self.credentials.username), {expires: now});
+                    }
                     $state.go(constants.main);
                 }, 
                 function(data){
@@ -197,7 +223,11 @@ angular.module('nxtIms.navigation',[])
             console.log("[#catch] " + error);
         })
         .finally(function(){
-            self.buttonDisabled = false;
+            // 로그인 버튼 2번 클릭 방지
+            $timeout(function(){
+                self.buttonDisabled = false;
+            },500);
+            
         });
     };
     
