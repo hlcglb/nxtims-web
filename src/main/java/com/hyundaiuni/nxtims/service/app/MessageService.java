@@ -1,6 +1,6 @@
 package com.hyundaiuni.nxtims.service.app;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +33,9 @@ public class MessageService {
         urlVariables.put("inquiry", "getMessageListByLanguageCode");
         urlVariables.put("languageCode", languageCode);
 
-        List<MessageLocale> messageLocaleList = Arrays.asList(
+        List<MessageLocale> messageLocaleList = new ArrayList<>();
+
+        CollectionUtils.addAll(messageLocaleList,
             apiTemplate.getRestTemplate().getForObject(resourceUrl, MessageLocale[].class, urlVariables));
 
         Properties properties = new Properties();
@@ -64,7 +66,12 @@ public class MessageService {
 
         String resourceUrl = apiServerUrl + apiUrl + "?inquiry={inquiry}&q={q}&offset={offset}&limit={limit}";
 
-        return Arrays.asList(apiTemplate.getRestTemplate().getForObject(resourceUrl, Message[].class, urlVariables));
+        List<Message> messageList = new ArrayList<>();
+
+        CollectionUtils.addAll(messageList,
+            apiTemplate.getRestTemplate().getForObject(resourceUrl, Message[].class, urlVariables));
+
+        return messageList;
     }
 
     public List<MessageLocale> getMessageLocaleListByParam(Map<String, Object> parameter) {
@@ -84,8 +91,12 @@ public class MessageService {
 
         String resourceUrl = apiServerUrl + apiUrl + "?inquiry={inquiry}&msgGrpCd={msgGrpCd}&msgCd={msgCd}";
 
-        return Arrays.asList(
+        List<MessageLocale> messageLocaleList = new ArrayList<>();
+
+        CollectionUtils.addAll(messageLocaleList,
             apiTemplate.getRestTemplate().getForObject(resourceUrl, MessageLocale[].class, urlVariables));
+
+        return messageLocaleList;
     }
 
     public Message getMessageByMsgPk(String msgPk) {

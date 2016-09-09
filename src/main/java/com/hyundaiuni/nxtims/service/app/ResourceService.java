@@ -1,6 +1,6 @@
 package com.hyundaiuni.nxtims.service.app;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +32,9 @@ public class ResourceService {
 
         String resourceUrl = apiServerUrl + apiUrl;
 
-        List<AuthResource> authResourceList = Arrays.asList(
+        List<AuthResource> authResourceList = new ArrayList<>();
+        
+        CollectionUtils.addAll(authResourceList,
             apiTemplate.getRestTemplate().getForObject(resourceUrl, AuthResource[].class));
 
         if(CollectionUtils.isNotEmpty(authResourceList)) {

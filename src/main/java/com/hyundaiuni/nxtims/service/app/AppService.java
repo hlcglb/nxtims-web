@@ -1,10 +1,11 @@
 package com.hyundaiuni.nxtims.service.app;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,9 @@ public class AppService {
             throw new ServiceException("USER_NOT_FOUND", "Application does not find users", null);
         }
 
-        List<Resource> menuList = Arrays.asList(
+        List<Resource> menuList = new ArrayList<>();
+
+        CollectionUtils.addAll(menuList,
             apiTemplate.getRestTemplate().getForObject(resourceUrl + "/menus/{id}", Resource[].class, params));
 
         Map<String, Object> result = new HashMap<>();
