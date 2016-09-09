@@ -113,6 +113,7 @@ angular.module("programModule")
         var ctrl = this; 
         ctrl.dataSource = {
             transport: {
+                serverFiltering: true,
                 read: function(options){
                     RESTfulService.get({service: ctrl.code}
                     ,function success(data){
@@ -126,6 +127,39 @@ angular.module("programModule")
         };
         ctrl.options = {
             dataSource: ctrl.dataSource,
+            placeholder: "Select item",
+            dataTextField: ctrl.text || "text",
+            dataValueField: ctrl.value || "value"
+        };
+    }]
+});
+angular.module("programModule")
+.component('commonCodeCombo', {
+    template: '<select kendo-combo-box k-options="$ctrl.options"></select>',
+    bindings: {
+        code: '@',
+        text: '@',
+        value: '@',
+        property: '@'
+    },
+    controller: ['RESTfulService', function(RESTfulService){
+        var ctrl = this; 
+        ctrl.dataSource = {
+            transport: {
+                read: function(options){
+                    RESTfulService.get({service: ctrl.code}
+                    ,function success(data){
+                        ctrl.property ? options.success(data[ctrl.property]) : options.success(data);
+                    }
+                    ,function error(data){
+                        options.error(data);
+                    });
+                }
+            }
+        };
+        ctrl.options = {
+            dataSource: ctrl.dataSource,
+            placeholder: "Select item",
             dataTextField: ctrl.text || "text",
             dataValueField: ctrl.value || "value"
         };

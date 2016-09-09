@@ -7,16 +7,34 @@
 'use strict';
 
 angular.module('comn.service.resource',['ngResource'])
-.factory('RESTfulService', ['$resource', 'RESTfulInterceptor', 
+.config(['$resourceProvider', function($resourceProvider){
+    $resourceProvider.defaults.stripTrailingSlashes = false;
+}])
+.factory('RESTfulService1', ['$resource', 'RESTfulInterceptor', 
                              function ($resource, RESTfulInterceptor) {
-    return $resource('/:service/:method/:id', 
+    return $resource('/:area/:service/:id', 
             {
+                area: '@area',
                 service: '@service',
-                method: '@method',
                 id: '@id'
             }, 
             {
                 get: {method: 'GET', interceptor: RESTfulInterceptor.log},
+                query: {method: 'GET', isArray: true},
+                post: {method: 'POST'},
+                update: {method: 'PUT'}
+            });
+}])
+.factory('RESTfulService', ['$resource', 'RESTfulInterceptor', 
+                             function ($resource, RESTfulInterceptor) {
+    return $resource('/:area/:service', 
+            {
+                area: '@area',
+                service: '@service'
+            }, 
+            {
+                get: {method: 'GET', interceptor: RESTfulInterceptor.log},
+                getList: {method: 'GET', isArray: true},
                 post: {method: 'POST'},
                 update: {method: 'PUT'}
             });

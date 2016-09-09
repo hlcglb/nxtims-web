@@ -1,12 +1,5 @@
-
 <script type="text/javascript">
-/* console.log("program script start");
-var controller = function ($scope, $injector){
-    console.log("ui-router controller apply");
-    var vm = this;
-    vm.number = 155800;
-    vm.text = "function authority test";
-}; */
+
 (function(){
     'use strict';
     angular.module("programModule")
@@ -14,6 +7,14 @@ var controller = function ($scope, $injector){
         var vm = this;
         vm.number = 1234;
         vm.text = "module authority test";
+        vm.label = {
+            msgGrpCd: "그룹 코드",
+            msgCd: "메세지 코드"
+        }
+        vm.disabled = true;
+        vm.disableChange = function(){
+            vm.disabled ? vm.disabled = false : vm.disabled = true;
+        }
         vm.grid1Data = [];
         vm.grid2Data = [];
         vm.grid2columns = [];
@@ -103,25 +104,21 @@ var controller = function ($scope, $injector){
 <div id="program" data-dynamic-controller="ProgramController as vm">
     <div class="btn_cbox">
         <div class="bnt_l">
+            <input type="button" k-scope-field="vm.btn_Create" name="" class="btn_a1" value="활성토글" title="" ng-click="vm.disableChange()" />
         </div>
         <div class="bnt_r">
-            <kendo-button k-scope-field="vm.btn_Search" k-on-click="vm.search()">조회</kendo-button>
-            <input type="button" k-scope-field="vm.btn_Create" name="" class="btn_a3" value="신 규" title="" />
+            <kendo-button k-scope-field="vm.btn_Search" class="btn_a1" k-on-click="vm.search()">조 회</kendo-button>
+            <kendo-button k-scope-field="vm.btn_Search" class="btn_a3" k-on-click="vm.search()" ng-disabled="vm.disabled"
+                sprite-css-class ="'k-icon k-i-refresh'">동적활성버튼</kendo-button>
+            <kendo-button k-scope-field="vm.btn_Search" class="btn_a3" k-on-click="vm.search()" disabled="disabled">태그</kendo-button>
+            <input sprite-css-class ="'k-icon k-i-refresh'" type="button" name="" class="btn_a3" value="동적활성버튼" title="" ng-click="vm.search()" ng-disabled="vm.disabled"/>
+            <input type="button" name="" class="btn_a3" value="ng태그" title="" ng-click="vm.search()" ng-disabled="true"/>
+            <input type="button" name="" class="btn_a3" value="태그" title="" ng-click="vm.search()" disabled="disabled"/>
         </div>
     </div>
     <div class="searchbox">
         <label for="name">serachbox</label>
         <input name="name" class="k-textbox" />
-    </div>
-    
-    <div class="datatable1">
-        <p>{{program.id}}</p>
-        <div id="prgm" class="content">
-            <p>authority</p>
-            <p>{{vm.number}}</p>
-            <span>{{vm.text}}</span>
-            <span>{{text}}</span>
-        </div>
         <table>
             <colgroup>
                 <col width="100px"><col width="">
@@ -131,63 +128,35 @@ var controller = function ($scope, $injector){
             </colgroup>
             <tbody>
                 <tr>
-                    <th>부서</th>
+                    <th ng-bind="vm.label.msgGrpCd">부서</th>
                     <td>
-                        <select class="sel2" title="">
-                            <option></option>
+                        <select class="sel2" title="" ng-disabled="vm.disabled">
+                            <option value="MSG">메세지</option>
+                            <option value="LAB">라벨</option>
                         </select>
                     </td>
-                    <th>부서1</th>
+                    <th ng-bind="vm.label.msgCd">부서1</th>
                     <td>
-                        <select kendo-combo-box class="sel2" title="">
-                            <option></option>
+                        <select kendo-combo-box class="sel2" ng-disabled="vm.disabled" title="">
+                            <option value="MSG">메세지</option>
+                            <option value="LAB">라벨</option>
                         </select>
                     </td>
-                    <th>부서1</th>
+                    <th ng-bind="vm.label.msgGrpCd"></th>
                     <td>
-                        <label>부서1</label>
-                        <common-code-test code="resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST"></common-code-test>
+                        <common-code-test code="resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST" ng-disabled="vm.disabled"></common-code-test>
                     </td>
-                    <th>부서1</th>
+                    <th ng-bind="vm.label.msgCd"></th>
                     <td>
-                        <common-code-Combo code="resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST"></common-code-Combo>
+                        <common-code-Combo code="resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST" ng-disabled="vm.disabled"></common-code-Combo>
                     </td>
                 </tr>
             </tbody>
         </table>
-        <div class="k-content">
-            <ul class="fieldlist">
-                <li>
-                    <label for="test">test</label>
-                    <span><common-code-test id="test" code="resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST"></common-code-test></span>
-                    
-                    <label for="test1">test</label>
-                    <common-code-Combo id="test1" code="resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST"></common-code-Combo>
-                    <div>
-                    <label for="test">test</label>
-                    <input class="k-textbox" />
-                    
-                    <span><label for="test1">test</label><input kendo-date-picker/></span>
-                    <apan><label for="test">test</label><input class="k-textbox" /></apan>
-                    <span><label for="test1">test</label><input kendo-date-picker/></span>
-                    <apan><label for="test">test</label><input class="k-textbox" /></apan>
-                    <span><label for="test1">test</label><input kendo-date-picker/></span>
-                    <apan><label for="test">test</label><input class="k-textbox" /></apan>
-                    <span><label for="test1">test</label><input kendo-date-picker/></span>
-                    <apan><label for="test">test</label><input class="k-textbox" /></apan>
-                    <span><label for="test1">test</label><input kendo-date-picker/></span>
-                    <apan><label for="test">test</label><input class="k-textbox" /></apan>
-                    
-                </li>
-                <li>
-                    
-                </li>
-            </ul>
-        </div>
-        <label for="test">test</label>
-        <common-code-test id="test" code="resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST"></common-code-test>
-        <label for="test1">test</label>
-        <common-code-Combo id="test1" code="resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST"></common-code-Combo>
+    </div>
+    
+    <div class="datatable1">
+        
     </div>
     <div class="datatable2">
         <kendo-grid  k-scope-field="vm.grid" ims-grid k-options="imsgrid.options" k-data-source="vm.grid1Data" k-ng-delay="vm.grid2Data" ></kendo-grid>
