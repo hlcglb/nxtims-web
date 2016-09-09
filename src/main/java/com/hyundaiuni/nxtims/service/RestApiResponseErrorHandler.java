@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.ResponseErrorHandler;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -44,11 +45,14 @@ public class RestApiResponseErrorHandler implements ResponseErrorHandler {
 
                     log.debug("Error Code: " + MapUtils.getString(error, "CODE"));
                     log.debug("Error Text: " + MapUtils.getString(error, "MESSAGE"));
+                    log.debug("Error Arguments: " + MapUtils.getString(error, "ARGUMENTS"));
 
                     String errorCode = MapUtils.getString(error, "CODE");
                     String errorMessage = MapUtils.getString(error, "MESSAGE");
+                    String[] errorArguments = StringUtils.delimitedListToStringArray(
+                        MapUtils.getString(error, "ARGUMENTS"), "^");
 
-                    throw new ServiceException(errorCode, errorMessage);
+                    throw new ServiceException(errorCode, errorMessage, errorArguments);
                 }
                 catch(JsonParseException e) {
                     log.error("RestApiResponseErrorHandler Exception : ", e);

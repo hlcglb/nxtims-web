@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 
 import com.hyundaiuni.nxtims.domain.app.Resource;
 import com.hyundaiuni.nxtims.domain.app.User;
@@ -36,15 +35,11 @@ public class AppService {
         User user = apiTemplate.getRestTemplate().getForObject(resourceUrl + "/{id}", User.class, params);
 
         if(user == null) {
-            throw new ServiceException("USER_NOT_FOUND", userId + " not found.");
+            throw new ServiceException("USER_NOT_FOUND", "Application does not find users", null);
         }
 
         List<Resource> menuList = Arrays.asList(
             apiTemplate.getRestTemplate().getForObject(resourceUrl + "/menus/{id}", Resource[].class, params));
-
-        if(CollectionUtils.isEmpty(menuList)) {
-            throw new ServiceException("MENU_NOT_FOUND", "The menus of " + userId + " not found.");
-        }
 
         Map<String, Object> result = new HashMap<>();
         result.put("USER", user);

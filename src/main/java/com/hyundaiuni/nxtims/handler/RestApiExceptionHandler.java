@@ -39,7 +39,7 @@ public class RestApiExceptionHandler implements MessageSourceAware {
 
         error.put("CODE", e.getCode());
         error.put("MESSAGE",
-            messageSource.getMessage(e.getCode(), null, e.getMessage(), LocaleContextHolder.getLocale()));
+            messageSource.getMessage(e.getCode(), e.getArgs(), e.getMessage(), LocaleContextHolder.getLocale()));
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
