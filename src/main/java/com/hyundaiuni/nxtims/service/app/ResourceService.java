@@ -1,9 +1,11 @@
 package com.hyundaiuni.nxtims.service.app;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -14,8 +16,10 @@ import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.hyundaiuni.nxtims.domain.app.AuthResource;
+import com.hyundaiuni.nxtims.domain.app.Resource;
 import com.hyundaiuni.nxtims.service.RestApiTemplate;
 
 @Service
@@ -30,10 +34,10 @@ public class ResourceService {
     public LinkedHashMap<RequestMatcher, List<ConfigAttribute>> getRolesAndUrl() {
         LinkedHashMap<RequestMatcher, List<ConfigAttribute>> result = new LinkedHashMap<>();
 
-        String resourceUrl = apiServerUrl + apiUrl;
+        String resourceUrl = apiServerUrl + apiUrl + "?inquiry=getResourceAuthAll";
 
         List<AuthResource> authResourceList = new ArrayList<>();
-        
+
         CollectionUtils.addAll(authResourceList,
             apiTemplate.getRestTemplate().getForObject(resourceUrl, AuthResource[].class));
 
@@ -57,5 +61,61 @@ public class ResourceService {
         }
 
         return result;
+    }
+
+    public List<Resource> getResourceListByParam(String query, int offset, int limit) {
+        Assert.notNull(query, "parameter must not be null");
+        Assert.notNull(offset, "offset must not be null");
+        Assert.notNull(limit, "limit must not be null");
+
+        Map<String, Object> urlVariables = new HashMap<>();
+
+        urlVariables.put("inquiry", "getMessageListByParam");
+        urlVariables.put("q", query);
+        urlVariables.put("offset", offset);
+        urlVariables.put("limit", limit);
+
+        String resourceUrl = apiServerUrl + apiUrl + "?inquiry={inquiry}&q={q}&offset={offset}&limit={limit}";
+
+        List<Resource> resourceList = new ArrayList<>();
+
+        CollectionUtils.addAll(resourceList,
+            apiTemplate.getRestTemplate().getForObject(resourceUrl, Resource[].class, urlVariables));
+
+        return resourceList;
+    }
+
+    public Resource getResourceById(String resourceId) {
+        Assert.notNull(resourceId, "resourceId must not be null");
+
+        String resourceUrl = apiServerUrl + apiUrl + "/{resourceId}";
+
+        return apiTemplate.getRestTemplate().getForObject(resourceUrl, Resource.class, resourceId);
+    }
+
+    public Resource insertResource(Resource resource) {
+        Assert.notNull(resource, "message must not be null");
+
+        String resourceUrl = apiServerUrl + apiUrl;
+
+        return apiTemplate.getRestTemplate().postForObject(resourceUrl, resource, Resource.class);
+    }
+
+    public Resource updateResource(String resourceId, Resource resource) {
+        Assert.notNull(resource, "message must not be null");
+
+        String resourceUrl = apiServerUrl + apiUrl + "/{resourceId}";
+
+        apiTemplate.getRestTemplate().put(resourceUrl, resource, resourceId);
+
+        return getResourceById(resourceId);
+    }
+
+    public void deleteResource(String resourceId) {
+        Assert.notNull(resourceId, "resourceId must not be null");
+
+        String resourceUrl = apiServerUrl + apiUrl + "/{resourceId}";
+
+        apiTemplate.getRestTemplate().delete(resourceUrl, resourceId);
     }
 }
