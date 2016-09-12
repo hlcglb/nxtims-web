@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -155,5 +156,44 @@ public class ResourceServiceTest {
         }
 
         assertEquals(null, ex);
-    }    
+    }
+    
+    @Test
+    public void testSaveResource() {
+        Exception ex = null;
+
+        try {
+            List<Resource> resourceList = new ArrayList<>();
+            
+            Resource updateResource = new Resource();
+
+            updateResource.setResourceId("000007");
+            updateResource.setResourceNm("SAMPLE");
+            updateResource.setResourceType("02");
+            updateResource.setResourceUrl("/sample/****");
+            updateResource.setUseYn("Y");
+            updateResource.setTransactionType("U");
+            
+            resourceList.add(updateResource);
+            
+            Resource updateResource2 = new Resource();
+
+            updateResource2.setResourceId("000007");
+            updateResource2.setResourceNm("SAMPLE");
+            updateResource2.setResourceType("02");
+            updateResource2.setResourceUrl("/sample/**");
+            updateResource2.setUseYn("Y");
+            updateResource2.setTransactionType("U");
+            
+            resourceList.add(updateResource2);            
+            
+            resourceService.saveResources(resourceList);
+        }
+        catch(Exception e) {
+            log.error(e.getMessage());
+            ex = e;
+        }
+
+        assertEquals(null, ex);
+    } 
 }

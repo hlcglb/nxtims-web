@@ -1,5 +1,7 @@
 package com.hyundaiuni.nxtims.controller.app;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +55,13 @@ public class ResourceController {
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteResource(@PathVariable("resourceId") String resourceId) {
         resourceService.deleteResource(resourceId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    public ResponseEntity<?> saveResources(@RequestBody List<Resource> resourceList) {
+        resourceService.saveResources(resourceList);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

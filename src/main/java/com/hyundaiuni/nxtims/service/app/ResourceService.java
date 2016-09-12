@@ -70,7 +70,7 @@ public class ResourceService {
 
         Map<String, Object> urlVariables = new HashMap<>();
 
-        urlVariables.put("inquiry", "getMessageListByParam");
+        urlVariables.put("inquiry", "getResourceListByParam");
         urlVariables.put("q", query);
         urlVariables.put("offset", offset);
         urlVariables.put("limit", limit);
@@ -94,7 +94,7 @@ public class ResourceService {
     }
 
     public Resource insertResource(Resource resource) {
-        Assert.notNull(resource, "message must not be null");
+        Assert.notNull(resource, "resource must not be null");
 
         String resourceUrl = apiServerUrl + apiUrl;
 
@@ -102,7 +102,7 @@ public class ResourceService {
     }
 
     public Resource updateResource(String resourceId, Resource resource) {
-        Assert.notNull(resource, "message must not be null");
+        Assert.notNull(resource, "resource must not be null");
 
         String resourceUrl = apiServerUrl + apiUrl + "/{resourceId}";
 
@@ -117,5 +117,13 @@ public class ResourceService {
         String resourceUrl = apiServerUrl + apiUrl + "/{resourceId}";
 
         apiTemplate.getRestTemplate().delete(resourceUrl, resourceId);
+    }
+
+    public void saveResources(List<Resource> resourceList) {
+        if(CollectionUtils.isNotEmpty(resourceList)) {
+            String resourceUrl = apiServerUrl + apiUrl + "/save";
+
+            apiTemplate.getRestTemplate().postForEntity(resourceUrl, resourceList, void.class);
+        }
     }
 }
