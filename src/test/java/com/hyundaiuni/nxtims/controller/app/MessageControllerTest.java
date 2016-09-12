@@ -42,7 +42,7 @@ import com.hyundaiuni.nxtims.util.WebUtils;
 public class MessageControllerTest {
     private static final Log log = LogFactory.getLog(MessageControllerTest.class);
 
-    private static final String URL = "/app/messages";
+    private static final String URL = "/api/app/messages";
 
     @Autowired
     private WebApplicationContext context;

@@ -40,7 +40,7 @@ import com.hyundaiuni.nxtims.util.WebUtils;
 public class ResourceControllerTest {
     private static final Log log = LogFactory.getLog(ResourceControllerTest.class);
 
-    private static final String URL = "/app/resources";
+    private static final String URL = "/api/app/resources";
 
     @Autowired
     private WebApplicationContext context;

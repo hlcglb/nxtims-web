@@ -43,8 +43,8 @@ public class ResourceService {
 
         if(CollectionUtils.isNotEmpty(authResourceList)) {
             for(AuthResource authResource : authResourceList) {
-                AntPathRequestMatcher requestMatcher = new AntPathRequestMatcher(authResource.getResourceUrl(), null,
-                    true);
+                AntPathRequestMatcher requestMatcher = new AntPathRequestMatcher(authResource.getResourceUrl(),
+                    authResource.getHttpMethod(), true);
 
                 List<ConfigAttribute> configList;
 

@@ -8,7 +8,7 @@
 
 angular.module('comn.service.message',['comn.service.resource', 'pascalprecht.translate', 'ngSanitize'])
 .config(["$translateProvider", function ($translateProvider) {
-    $translateProvider.useUrlLoader('/message');
+    $translateProvider.useUrlLoader('/api/login/message');
     $translateProvider.useStorage('UrlMessageStorage');
     $translateProvider.preferredLanguage('ko_KR');
     $translateProvider.fallbackLanguage('ko_KR');

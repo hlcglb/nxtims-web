@@ -15,6 +15,7 @@ import com.hyundaiuni.nxtims.service.app.AppService;
 import com.hyundaiuni.nxtims.service.app.MessageService;
 
 @RestController
+@RequestMapping("/api/login")
 public class AppController {
     @Autowired
     private AppService appService;

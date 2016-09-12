@@ -29,7 +29,7 @@ angular.module('comn.service.auth',['ngCookies'])
  */
 .provider('Authentication',['Auth.CookieKey', function(CookieKey){
     this.authenticated = false;
-    this.loginServiceName = "authentication";
+    this.loginServiceName = "/api/login/authentication";
     this.logoutServiceName = "logout";
     
     

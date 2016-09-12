@@ -31,7 +31,7 @@ public class AppServiceTest {
             appService.getResourceByUserId("20006X");
         }
         catch(Exception e) {
-            assertThat(e).isInstanceOf(ServiceException.class).hasMessageContaining("not found");
+            assertThat(e).isInstanceOf(ServiceException.class).hasMessageContaining("not find");
         }
 
         Exception ex = null;
