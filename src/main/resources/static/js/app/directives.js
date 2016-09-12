@@ -12,7 +12,7 @@ angular.module('nxtims.directives')
         controller: ['$element', function(element){
             var ctrl = this;
             ctrl.options = {
-                            dataSource: null,/*{
+                            /*{
                                 type: "odata",
                                 transport: {
                                     read: "//demos.telerik.com/kendo-ui/service/Northwind.svc/Employees"
@@ -23,13 +23,17 @@ angular.module('nxtims.directives')
                                 serverPaging: true,
                                 serverSorting: true
                             },*/
-                            editable: true,
+                            /*editable: false,*/
                             selectable: "row",
                             sortable: true,
                             pageable: true,
                             dataBound: function() {
                                 this.expandRow(this.tbody.find("tr.k-master-row").first());
                             },
+                            
+                            /*edit: function(e){
+                                //console.log(e.model.isNew());
+                            },*/
                             height: 453,
                             groupable: false,
                             resizable: true,

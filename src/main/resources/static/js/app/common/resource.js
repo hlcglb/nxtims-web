@@ -39,6 +39,20 @@ angular.module('comn.service.resource',['ngResource'])
                 update: {method: 'PUT'}
             });
 }])
+.factory('RESTfulServiceTest', ['$resource', 'RESTfulInterceptor', 
+                             function ($resource, RESTfulInterceptor) {
+    return function(url){
+        return $resource(url, 
+            {
+            }, 
+            {
+                get: {method: 'GET', interceptor: RESTfulInterceptor.log},
+                query: {method: 'GET', isArray: true},
+                post: {method: 'POST'},
+                update: {method: 'PUT'}
+            });
+    }
+}])
 .factory('RESTfulInterceptor', [ '$rootScope', '$q',
                                          function ($rootScope, $q) {
     return {
@@ -63,13 +77,13 @@ angular.module('comn.service.resource',['ngResource'])
         }
     }
 }])
-.factory('ResourceService', ['RESTfulService', function (RESTfulService) {
+.factory('ResourceService', ['RESTfulServiceTest', function (RESTfulService) {
     return{
         get: function(){
-            RESTfulService.get({service: "resource"});
+            RESTfulService("").get();
         },
         getPromise: function(){
-            return RESTfulService.get({service: "resource"}).$promise;
+            return RESTfulService("").get().$promise;
         }
     }
 

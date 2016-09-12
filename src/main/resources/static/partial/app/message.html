@@ -40,6 +40,15 @@
         vm.gridDtlData = [];
         vm.gridMstColumns = [];
         vm.gridDtlColumns = [];
+        vm.addRow = function(property){
+            console.log(property);
+            vm[property].addRow();
+        }
+        vm.removeRow = function(property){
+            vm[property].removeRow(vm[property].select());
+            vm.gridMst.select("tr:eq(1)");
+            console.log(vm[property].select());
+        }
         vm.search = function(){
             /* if(confirm("조회 하시겠습니까?"))
                 alert("search"); */
@@ -53,79 +62,78 @@
                     offset: 0, limit: 100}).$promise;
                 var param = ""
                 list1.then(
-                        function(data){
-                            vm.gridMstData = {
-                                              data: angular.fromJson(angular.toJson(data)),
-                                              pageSize: 10,
-                                              serverPaging: true,
-                                              serverSorting: true
-                            }
-                            return RESTfulService.getList({area: "app", service: "messages", 
-                                inquiry: "getMessageLocaleListByParam", 
-                                msgGrpCd: "MSG", 
-                                msgCd: data[0].MSG_CD}).$promise;
-                        },
-                        function(error){
-                            
+                    function(data){
+                        vm.gridMstData = {
+                              data: angular.fromJson(angular.toJson(data)),
+                              /* schema: {
+                                  model: {
+                                      id: "messageDataMst",
+                                      fields: {
+                                          id: { type: "string", editable: false },
+                                          itemDescr: { type: "string", editable: false },
+                                          cat: { type: "string", editable: false },
+                                          mfg: { type: "string", editable: false },
+                                          mfgPartNo: { type: "string", editable: false },
+                                          itmStat2: { type: "string", editable: false },
+                                          price: { type: "number" },
+                                          qty: { type: "number" }
+                                      },
+                                                                      total: function() {
+                                            return this.get("qty") *  this.get("price");
+                                          }
+                                  }
+                              }, */
+                              pageSize: 10,
+                              serverPaging: true,
+                              serverSorting: true
                         }
-                )
-                .then(function(data){
-                    vm.gridDtlData = {data: angular.fromJson(angular.toJson(data)),
-                                      pageSize: 10,
-                                      serverPaging: true,
-                                      serverSorting: true
+                    },
+                    function(error){
+                        
                     }
-                },function(error){
+                )
+                .then(function(){
+                    vm.gridMst.select("tr:eq(1)");
+                    console.log(vm.gridMst.select());
+                });
+        };
+        vm.gridMstChange = function(data, dataItem, columns) {
+            //console.log(dataItem);
+            vm.gridDtlData = {transport: {
+                read: function(options){
+                    RESTfulService.getList({area: "app", service: "messages", 
+                        inquiry: "getMessageLocaleListByParam", 
+                        msgGrpCd: dataItem.MSG_GRP_CD, 
+                        msgCd: dataItem.MSG_CD}).$promise
+                    .then(function(data){
+                        options.success(angular.fromJson(angular.toJson(data)))
+                    }
+                    ,function(error){
+                        options.error(error);
+                    });
                     
-                })
-                /* $q.all([list1, list2])
-                .then(
-                function success(data){
+                },
+                parameterMap: function(data, type) {
                     console.log(data);
-                    vm.grid1Data = angular.fromJson(angular.toJson(data[0]));
-                    vm.grid2Data = angular.fromJson(angular.toJson(data[1]));
-                }
-                ,function error(data){
-                    console.log("erroer");
-                }) */
-            /* vm.grid.setDataSource(new kendo.data.DataSource({
-                transport: {
-                    read: function(options){
-                        var service = RESTfulService.getList({area: "app", service: "messages", 
-                            inquiry: "getMessageListByParam", 
-                            q: "msgGrpCd=MSG", 
-                            offset: 0, limit: 10});
-                        service.$promise.then(
-                        function success(data){
-                            console.log(data);
-                            options.success(angular.fromJson(angular.toJson(data)));
-                        }
-                        ,function error(data){
-                            options.error(data);
-                        });
-                        //console.log(data);
-                    },//"//demos.telerik.com/kendo-ui/service/Northwind.svc/Employees",
-                    update: function(option){
-                        console.log(option);
+                    console.log(type);
+                    if (type == "read") {
+                        console.log(data);
                     }
                 },
-                pageSize: 7,
-                serverPaging: true,
-                serverSorting: true
-            })); */
-            /* vm.grid2Data = {data: [{FirstName: "Nancy", LastName:"Davolio", Country: "USA", City: "Seattle", Title: "Sales Representative"},
-                            {FirstName: "Nancy", LastName:"Davolio", Country: "USA", City: "Seattle", Title: "Sales Representative"},
-                            {FirstName: "Nancy", LastName:"Davolio", Country: "USA", City: "Seattle", Title: "Sales Representative"},
-                            {FirstName: "Nancy", LastName:"Davolio", Country: "USA", City: "Seattle", Title: "Sales Representative"},
-                            {FirstName: "Nancy", LastName:"Davolio", Country: "USA", City: "Seattle", Title: "Sales Representative"},
-                            {FirstName: "Nancy", LastName:"Davolio", Country: "USA", City: "Seattle", Title: "Sales Representative"},
-                            {FirstName: "Nancy", LastName:"Davolio", Country: "USA", City: "Seattle", Title: "Sales Representative"},
-                            {FirstName: "Nancy", LastName:"Davolio", Country: "USA", City: "Seattle", Title: "Sales Representative"},
-                            {FirstName: "Nancy", LastName:"Davolio", Country: "USA", City: "Seattle", Title: "Sales Representative"}
-            ],pageSize: 7
-            }; */
-            //not working
-            //vm.grid2.setDataSource([{FirstName: "Nancy", LastName:"Davolio", Country: "USA", City: "Seattle", Title: "Sales Representative"}]);
+                create : function(options){
+                    console.log(options);
+                },
+                update: function(options){
+                    console.log(options);
+                },
+                destroy: function(options){
+                    console.log(options);
+                }
+            },
+            pageSize: 10,
+            serverPaging: true,
+            serverSorting: true}
+            //console.log(columns); //option selectable : 'cell'
         };
     }]);
 })();
@@ -210,11 +218,47 @@
     <div class="datatable1">
         
     </div>
-    <div class="datatable2">
-        <kendo-grid  k-scope-field="vm.grid" ims-grid k-options="imsgrid.options" k-data-source="vm.gridMstData" k-ng-delay="vm.gridMstData" k-columns="vm.gridMstColumns"></kendo-grid>
+    <div class="totalbox">
+        <div class="l_box">
+            <div class="total"><strong>Order 총 <span>298</span></strong> 건</div>
+            <ul>
+                <li><a href="#"><img src="img/common/btn_icon1.gif" alt=""></a></li>
+                <li><a href="#"><img src="img/common/btn_icon2.gif" alt="+" ng-click="vm.addRow('gridMst')"></a></li>
+                <li><a href="#"><img src="img/common/btn_icon3.gif" alt="-" ng-click="vm.removeRow('gridMst')"></a></li>
+                <li><a href="#"><img src="img/common/btn_icon4.gif" alt="x"></a></li>
+            </ul>
+        </div>
     </div>
     <div class="datatable2">
-        <kendo-grid  k-scope-field="vm.grid2" ims-grid k-options="imsgrid.options" k-data-source="vm.gridDtlData" k-ng-delay="vm.gridDtlData" k-columns="vm.gridDtlColumns"></kendo-grid>
+        <kendo-grid  k-scope-field="vm.gridMst" 
+                     ims-grid k-options="imsgrid.options" 
+                     k-data-source="vm.gridMstData" 
+                     k-ng-delay="vm.gridMstData" 
+                     k-columns="vm.gridMstColumns" 
+                     k-on-change="vm.gridMstChange(data, dataItem, columns)"></kendo-grid>
     </div>
-
+    <div class="totalbox">
+        <div class="l_box">
+            <div class="total"><strong>Order 총 <span>298</span></strong> 건</div>
+            <ul>
+                <li><a href="#"><img src="img/common/btn_icon1.gif" alt=""></a></li>
+                <li><a href="#"><img src="img/common/btn_icon2.gif" alt="+" ng-click="vm.addRow('gridDtl')"></a></li>
+                <li><a href="#"><img src="img/common/btn_icon3.gif" alt="-" ng-click="vm.removeRow('gridDtl')"></a></li>
+                <li><a href="#"><img src="img/common/btn_icon4.gif" alt="x"></a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="datatable2">
+        <kendo-grid  k-scope-field="vm.gridDtl" 
+                     ims-grid k-options="imsgrid.options" 
+                     k-data-source="vm.gridDtlData" 
+                     k-ng-delay="vm.gridDtlData" 
+                     k-columns="vm.gridDtlColumns"></kendo-grid>
+    </div>
+<kendo-grid  k-scope-field="vm.gridMst" 
+                     ims-grid k-options="imsgrid.options" 
+                     k-data-source="vm.gridMstData" 
+                     k-ng-delay="vm.gridMstData" 
+                     k-columns="vm.gridMstColumns" 
+                     k-on-change="vm.gridMstChange(data, dataItem, columns)"></kendo-grid>
 </div>
