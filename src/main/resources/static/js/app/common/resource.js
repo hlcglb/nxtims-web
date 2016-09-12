@@ -80,10 +80,10 @@ angular.module('comn.service.resource',['ngResource'])
 .factory('ResourceService', ['RESTfulServiceTest', function (RESTfulService) {
     return{
         get: function(){
-            RESTfulService("").get();
+            RESTfulService("/api/login/resource").get();
         },
         getPromise: function(){
-            return RESTfulService("").get().$promise;
+            return RESTfulService("/api/login/resource").get().$promise;
         }
     }
 
