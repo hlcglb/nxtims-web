@@ -16,6 +16,8 @@ angular.module('nxtims.directives')
                                 type: "odata",
                                 transport: {
                                     read: "//demos.telerik.com/kendo-ui/service/Northwind.svc/Employees"
+                                    parameterMap: function(data, type){
+                                    }
                                 },
                                 pageSize: 7,
                                 serverPaging: true,

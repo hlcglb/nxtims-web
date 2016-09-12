@@ -40,7 +40,6 @@ angular.module("nxtIms",
                     return ResourceService.getPromise()
                     .then(
                             function(resource){
-                                console.log(resource);
                                 UserService.setResource(resource);
                                 return UserService.getMenuList();
                             }, function(data){return null;})
