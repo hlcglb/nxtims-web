@@ -80,7 +80,7 @@ angular.module("programModule")
                     path.push(object.RESOURCE_NM);
                     parentId = object.PARENT_ID;
                 }
-            })
+            });
             var length = path.length;
             for(var i=0; i < length ; i++){
                 (i == length-1) ? ctrl.prgmPath += "<strong>" + path.pop() + "[" + currPrgmId + "]<strong>" : ctrl.prgmPath += path.pop() + "<span>&gt;</span>";

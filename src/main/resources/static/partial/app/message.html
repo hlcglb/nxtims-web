@@ -15,25 +15,51 @@
         vm.disableChange = function(){
             vm.disabled ? vm.disabled = false : vm.disabled = true;
         }
-        vm.grid1Data = [];
-        vm.grid2Data = [];
-        vm.grid2columns = [];
+        
+        //multiselecte
+        vm.selectOptions = {
+                                placeholder: "Select products...",
+                                dataTextField: "ProductName",
+                                dataValueField: "ProductID",
+                                valuePrimitive: true,
+                                autoBind: false,
+                                dataSource: {
+                                    type: "odata",
+                                    serverFiltering: true,
+                                    transport: {
+                                        read: {
+                                            url: "//demos.telerik.com/kendo-ui/service/Northwind.svc/Products",
+                                        }
+                                    }
+                                }
+                            };
+        vm.selectedIds = [ 4, 7 ];
+        
+        //grid
+        vm.gridMstData = [];
+        vm.gridDtlData = [];
+        vm.gridMstColumns = [];
+        vm.gridDtlColumns = [];
         vm.search = function(){
             /* if(confirm("조회 하시겠습니까?"))
                 alert("search"); */
-            console.log(vm.grid);
                 var list1 = RESTfulService.getList({area: "app", service: "messages", 
                     inquiry: "getMessageListByParam", 
                     q: "msgGrpCd=MSG", 
-                    offset: 0, limit: 10}).$promise;
+                    offset: 0, limit: 100}).$promise;
                 var list2 = RESTfulService.getList({area: "app", service: "messages", 
                     inquiry: "getMessageListByParam", 
                     q: "msgGrpCd=MSG", 
-                    offset: 0, limit: 10}).$promise;
+                    offset: 0, limit: 100}).$promise;
                 var param = ""
                 list1.then(
                         function(data){
-                            vm.grid1Data = angular.fromJson(angular.toJson(data));
+                            vm.gridMstData = {
+                                              data: angular.fromJson(angular.toJson(data)),
+                                              pageSize: 10,
+                                              serverPaging: true,
+                                              serverSorting: true
+                            }
                             return RESTfulService.getList({area: "app", service: "messages", 
                                 inquiry: "getMessageLocaleListByParam", 
                                 msgGrpCd: "MSG", 
@@ -44,7 +70,11 @@
                         }
                 )
                 .then(function(data){
-                    vm.grid2Data = angular.fromJson(angular.toJson(data));
+                    vm.gridDtlData = {data: angular.fromJson(angular.toJson(data)),
+                                      pageSize: 10,
+                                      serverPaging: true,
+                                      serverSorting: true
+                    }
                 },function(error){
                     
                 })
@@ -119,6 +149,8 @@
     <div class="searchbox">
         <label for="name">serachbox</label>
         <input name="name" class="k-textbox" />
+        <select kendo-multi-select k-options="vm.selectOptions" k-ng-model="vm.selectedIds"></select>
+        <input kendo-numeric-text-box k-min="0" k-max="100" k-ng-model="vm.value"/>
         <table>
             <colgroup>
                 <col width="100px"><col width="">
@@ -151,6 +183,26 @@
                         <common-code-Combo code="resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST" ng-disabled="vm.disabled"></common-code-Combo>
                     </td>
                 </tr>
+                <tr>
+                    <th ng-bind="vm.label.msgGrpCd">부서</th>
+                    <td>
+                        <select kendo-drop-down-list class="sel2" ng-disabled="vm.disabled" title="">
+                            <option value="MSG">메세지</option>
+                            <option value="LAB">라벨</option>
+                        </select>
+                    </td>
+                    <th ></th>
+                    <td>
+                        <input kendo-numeric-text-box k-min="0" k-max="100" k-ng-model="vm.value" style="width: 100%;" />
+                    </td>
+                    <th></th>
+                    <td>
+                        <select kendo-multi-select k-options="vm.selectOptions" k-ng-model="vm.selectedIds"></select>
+                    </td>
+                    <th ></th>
+                    <td>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -159,10 +211,10 @@
         
     </div>
     <div class="datatable2">
-        <kendo-grid  k-scope-field="vm.grid" ims-grid k-options="imsgrid.options" k-data-source="vm.grid1Data" k-ng-delay="vm.grid2Data" ></kendo-grid>
+        <kendo-grid  k-scope-field="vm.grid" ims-grid k-options="imsgrid.options" k-data-source="vm.gridMstData" k-ng-delay="vm.gridMstData" k-columns="vm.gridMstColumns"></kendo-grid>
     </div>
     <div class="datatable2">
-        <kendo-grid  k-scope-field="vm.grid2" ims-grid k-options="imsgrid.options" k-data-source="vm.grid2Data" k-ng-delay="vm.grid2Data" k-columns="vm.grid2columns"></kendo-grid>
+        <kendo-grid  k-scope-field="vm.grid2" ims-grid k-options="imsgrid.options" k-data-source="vm.gridDtlData" k-ng-delay="vm.gridDtlData" k-columns="vm.gridDtlColumns"></kendo-grid>
     </div>
 
 </div>
