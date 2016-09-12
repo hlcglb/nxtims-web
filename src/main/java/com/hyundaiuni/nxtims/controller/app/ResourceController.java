@@ -17,7 +17,7 @@ import com.hyundaiuni.nxtims.domain.app.Resource;
 import com.hyundaiuni.nxtims.service.app.ResourceService;
 
 @RestController
-@RequestMapping("/app/resources")
+@RequestMapping("/api/app/resources")
 public class ResourceController {
     @Autowired
     private ResourceService resourceService;

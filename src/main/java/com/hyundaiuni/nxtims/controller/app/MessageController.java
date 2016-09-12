@@ -18,7 +18,7 @@ import com.hyundaiuni.nxtims.domain.app.Message;
 import com.hyundaiuni.nxtims.service.app.MessageService;
 
 @RestController
-@RequestMapping("/app/messages")
+@RequestMapping("/api/app/messages")
 public class MessageController {
     @Autowired
     private MessageService messageService;
