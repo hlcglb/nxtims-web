@@ -161,14 +161,14 @@ angular.module('nxtIms.navigation',[])
                     }
                     else{
                         var url = currData.RESOURCE_URL;
-                        url = url.replace("/partial","");
+                        url = url.replace(".html","").replace("/partial","");
                         var id = url.substring(url.lastIndexOf("/"), url.lastIndexOf("."));
                         if(ProgramInfo.setId(currData.RESOURCE_ID, url)){
                             if(!Authentication.isAuth()){ 
                                 // 메뉴클릭시 권한 없을때 ui router event 전송
                                 $scope.$emit("$stateChangeStart", {}, {name: url}, null, $state.current, $state.params);
                             }
-                            else $window.open("program" + id,currData.RESOURCE_NM);
+                            else $window.open("/program" + url,currData.RESOURCE_NM);
                         }
                             
                     }

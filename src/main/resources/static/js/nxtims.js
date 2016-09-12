@@ -27,7 +27,6 @@ angular.module("nxtIms",
          "constants", "ProgramInfoProvider",
          function($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider, 
                  constants, ProgramInfoProvider) {
-    
     ProgramInfoProvider.init();
     //ui-router 
     $urlRouterProvider.otherwise(constants.login);
@@ -72,18 +71,15 @@ angular.module("nxtIms",
             }
         }
     })
-    .state(constants.main + ".navigation", {
-        
-    })
-    .state("program/:id", {
+    .state("program", {
         url : constants.programUrl,
         views: {
             "": {templateUrl : constants.layoutTemplUrl + "prgmLayout.html"},
-            "navigation@program/:id": stateNav,
-            "application@program/:id": {
+            "navigation@program": stateNav,
+            "application@program": {
                 templateUrl : function(urlAttr){
-                    var path = ProgramInfoProvider.getPath();
-                    return constants.prgmTemplUrl + path;
+                    console.log(urlAttr.programUrl);
+                    return constants.prgmTemplUrl + urlAttr.programUrl + ".html";
                 },
                 controller : ["$scope", "$injector", "$state", "UserService",
                               function($scope, $injector, $state, UserService){
@@ -95,8 +91,7 @@ angular.module("nxtIms",
         }
     });
     $locationProvider.html5Mode({
-        enabled: true,
-        requireBase: false
+        enabled: true
     });
     $httpProvider.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
     
@@ -127,14 +122,13 @@ angular.module("nxtIms",
     templateUrl: '/partial/',
     layoutTemplUrl: '/partial/common/layout/',
     comnTemplUrl: '/partial/common/',
-    prgmTemplUrl: '/partial/program/',
+    prgmTemplUrl: '/partial/',
     popTemplUrl: '/partial/common/popup/',
     login: 'login',
     loginUrl: '/login',
     main: 'main',
     mainUrl: '/main',
-    program: 'program/:id',
-    programUrl: '/program/:id',
+    programUrl: '/program/{programUrl:.*}',
     findPassword: 'find',
     findPasswordUrl: '/find'
 });

@@ -15,6 +15,27 @@
         vm.disableChange = function(){
             vm.disabled ? vm.disabled = false : vm.disabled = true;
         }
+        
+        //multiselecte
+        vm.selectOptions = {
+                                placeholder: "Select products...",
+                                dataTextField: "ProductName",
+                                dataValueField: "ProductID",
+                                valuePrimitive: true,
+                                autoBind: false,
+                                dataSource: {
+                                    type: "odata",
+                                    serverFiltering: true,
+                                    transport: {
+                                        read: {
+                                            url: "//demos.telerik.com/kendo-ui/service/Northwind.svc/Products",
+                                        }
+                                    }
+                                }
+                            };
+        vm.selectedIds = [ 4, 7 ];
+        
+        //grid
         vm.gridMstData = [];
         vm.gridDtlData = [];
         vm.gridMstColumns = [];
@@ -128,6 +149,8 @@
     <div class="searchbox">
         <label for="name">serachbox</label>
         <input name="name" class="k-textbox" />
+        <select kendo-multi-select k-options="vm.selectOptions" k-ng-model="vm.selectedIds"></select>
+        <input kendo-numeric-text-box k-min="0" k-max="100" k-ng-model="vm.value"/>
         <table>
             <colgroup>
                 <col width="100px"><col width="">
@@ -170,9 +193,11 @@
                     </td>
                     <th ></th>
                     <td>
+                        <input kendo-numeric-text-box k-min="0" k-max="100" k-ng-model="vm.value" style="width: 100%;" />
                     </td>
                     <th></th>
                     <td>
+                        <select kendo-multi-select k-options="vm.selectOptions" k-ng-model="vm.selectedIds"></select>
                     </td>
                     <th ></th>
                     <td>
