@@ -7,42 +7,17 @@
         vm.text = "module user test";
     }
     
-}
-var xlf = document.getElementById('xlf');
-function handleFile(e) {
-    var files = e.target.files;
-    var f = files[0];
-    {
-        var reader = new FileReader();
-        var name = f.name;
-        reader.onload = function(e) {
-            if(typeof console !== 'undefined') console.log("onload", new Date());
-            var data = e.target.result;
-            var wb;
-            wb = X.read(data, {type: 'binary'});
-            process_wb(wb);
-            }
-        };
-        reader.readAsBinaryString(f);
-    }
-
-
-if(xlf.addEventListener) xlf.addEventListener('change', handleFile, false);
+    ProgramController.injector = ["$scope", "$injector"];
+    angular.module("programModule")
+    .controller("ProgramController", ProgramController);
+})();
 </script>
+<div id="program" data-dynamic-controller="ProgramController as vm">
+    <p>{{program.id}}</p>
+    <input type="text" class="k-textbox" data-ng-model="program.id"></input>
+    <input type="text" data-ng-model="vm.text"></input>
+    <p>{{vm.number}}</p>
+    <p>{{vm.text}}</p>
+    <p>{{vm.number | currency}}</p>
 
-
-<div data-dynamic-controller = "CalendarController as cal">
-    <calendar front="2016/09/07" back="2016/09/10"></calendar>
-    BackDate :: {{BackDate}}
-    FrontDate :: {{startDate}}
-    Back :: {{Back}}
-    Front :: {{Front}}
-    <button onClick="reset()" class="k-button">rest</button>
-    <button onClick="paste()" class="k-button">paste</button>
-    <input type="file" onClick="file()" id="xlf"  />
-<div id='editableDiv' contenteditable='true'>Paste</div>
-<a class='k-button k-grid-add' href='#' onlick='customCommand()'>Add new record</a>
-<grid></grid>
 </div>
-
-
