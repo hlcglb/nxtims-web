@@ -1,23 +1,131 @@
 <script type="text/javascript">
 (function(){
     'use strict';
-    function ProgramController($scope, $injector){
-        var vm = this;
-        vm.number = 3588500;
-        vm.text = "module user test";
-    }
-    
-    ProgramController.injector = ["$scope", "$injector"];
     angular.module("programModule")
-    .controller("ProgramController", ProgramController);
+    .controller("CalendarController", function ($scope){
+        
+    });
 })();
-</script>
-<div id="program" data-dynamic-controller="ProgramController as vm">
-    <p>{{program.id}}</p>
-    <input type="text" class="k-textbox" data-ng-model="program.id"></input>
-    <input type="text" data-ng-model="vm.text"></input>
-    <p>{{vm.number}}</p>
-    <p>{{vm.text}}</p>
-    <p>{{vm.number | currency}}</p>
 
+function setTestData(){
+    setdata = [];
+    var testData = [
+      {ProductID: 1, ProductName: "TEST1", UnitPrice : "12", UnitsInStock:"19", Discontinued:"false"},
+      {ProductID: 2, ProductName: "TEST2", UnitPrice : "23", UnitsInStock:"43", Discontinued:"true"},
+      {ProductID: 3, ProductName: "TEST3", UnitPrice : "34", UnitsInStock:"23", Discontinued:"false"},
+      {ProductID: 4, ProductName: "TEST4", UnitPrice : "56", UnitsInStock:"14", Discontinued:"false"},
+      {ProductID: 5, ProductName: "TEST5", UnitPrice : "78", UnitsInStock:"16", Discontinued:"true"}  
+    ];
+    for(key in testData[0]) {
+        setdata[key] = key;
+    }
+    console.log(setdata);
+
+
+    localStorage["grid_data"] = JSON.stringify(testData);
+    
+}
+function getTestData(paste){
+    var Data = [];   
+    alert(setdata);
+   for(var i = 0; i < paste.length; i++){   
+       var cells = paste[i].split('\t');
+    var product = {
+          ProductID: cells[0],
+          ProductName: cells[1],
+          UnitPrice : cells[2],
+          UnitsInStock : cells[3],
+          Discontinued : cells[4]
+        };
+       Data.push(product);
+     }
+    localStorage["grid_data"] = JSON.stringify(Data);
+}
+
+$(document).ready(function(){
+    if(localStorage["grid_date"] == undefined){
+        setTestData();
+    }
+})
+function paste(e){
+    var clipboardData, pastedData;
+    e.stopPropagation();
+    e.preventDefault();
+    clipboardData = e.clipboardData || window.clipboardData;
+    pastedData = clipboardData.getData('Text');
+    var dataSplit = pastedData.split("\n");  
+    var data = dataSplit.join("\t");
+   getTestData(dataSplit);
+   $("#grid").data("kendoGrid").dataSource.read();
+}
+document.getElementById('editableDiv').addEventListener('paste', paste);
+
+function reset(){
+    setTestData();
+    $("#grid").data("kendoGrid").dataSource.read();
+}
+
+</script>
+
+<script>
+var X = XLSX;
+var XW = {
+    /* worker message */
+    msg: 'xlsx',
+    /* worker scripts */
+    rABS: './xlsxworker2.js',
+    noxfer: './xlsxworker.js'
+};
+
+function to_json(workbook) {
+    var roa;
+    workbook.SheetNames.forEach(function(sheetName) {
+        roa = X.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+    });
+    return roa;
+}
+
+function process_wb(wb) {
+    localStorage["grid_data"] = JSON.stringify(to_json(wb), 2);;
+    console.log(localStorage["grid_data"]);
+    $("#grid").data("kendoGrid").dataSource.read();
+    
+}
+var xlf = document.getElementById('xlf');
+function handleFile(e) {
+    var files = e.target.files;
+    var f = files[0];
+    {
+        var reader = new FileReader();
+        var name = f.name;
+        reader.onload = function(e) {
+            if(typeof console !== 'undefined') console.log("onload", new Date());
+            var data = e.target.result;
+            var wb;
+            wb = X.read(data, {type: 'binary'});
+            process_wb(wb);
+            }
+        };
+        reader.readAsBinaryString(f);
+    }
+
+
+if(xlf.addEventListener) xlf.addEventListener('change', handleFile, false);
+</script>
+
+
+<div data-dynamic-controller = "CalendarController as cal">
+    <calendar front="2016/09/07" back="2016/09/10"></calendar>
+    BackDate :: {{BackDate}}
+    FrontDate :: {{startDate}}
+    Back :: {{Back}}
+    Front :: {{Front}}
+    <button onClick="reset()" class="k-button">rest</button>
+    <button onClick="paste()" class="k-button">paste</button>
+    <input type="file" onClick="file()" id="xlf"  />
+<div id='editableDiv' contenteditable='true'>Paste</div>
+<a class='k-button k-grid-add' href='#' onlick='customCommand()'>Add new record</a>
+<grid></grid>
 </div>
+
+
