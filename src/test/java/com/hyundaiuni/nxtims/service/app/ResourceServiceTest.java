@@ -17,7 +17,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.access.ConfigAttribute;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.CollectionUtils;
@@ -44,12 +43,6 @@ public class ResourceServiceTest {
             if(CollectionUtils.isEmpty(result)) {
                 fail("");
             }
-
-            AntPathRequestMatcher requestMatcher = new AntPathRequestMatcher("/", null, true);
-            
-            if(!result.containsKey(requestMatcher)) {
-                fail("");
-            }            
         }
         catch(Exception e) {
             ex = e;
@@ -65,7 +58,7 @@ public class ResourceServiceTest {
 
         try {
             Map<String, Object> parameter = new HashMap<>();
-            parameter.put("resourceNm", "SAMPLE");
+            parameter.put("resourceNm", "컨테이너운송");
             
             String requestString = WebUtils.mapToRequestParam(parameter, ',', '=', "UTF-8");
 
@@ -167,10 +160,10 @@ public class ResourceServiceTest {
             
             Resource updateResource = new Resource();
 
-            updateResource.setResourceId("000007");
-            updateResource.setResourceNm("SAMPLE");
-            updateResource.setResourceType("02");
-            updateResource.setResourceUrl("/sample/****");
+            updateResource.setResourceId("000000");
+            updateResource.setResourceNm("컨테이너운송");
+            updateResource.setResourceType("01");
+            updateResource.setResourceUrl("");
             updateResource.setUseYn("Y");
             updateResource.setTransactionType("U");
             
@@ -178,10 +171,10 @@ public class ResourceServiceTest {
             
             Resource updateResource2 = new Resource();
 
-            updateResource2.setResourceId("000007");
-            updateResource2.setResourceNm("SAMPLE");
-            updateResource2.setResourceType("02");
-            updateResource2.setResourceUrl("/sample/**");
+            updateResource2.setResourceId("000000");
+            updateResource2.setResourceNm("컨테이너운송");
+            updateResource2.setResourceType("01");
+            updateResource2.setResourceUrl("");
             updateResource2.setUseYn("Y");
             updateResource2.setTransactionType("U");
             

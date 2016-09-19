@@ -116,6 +116,7 @@ public class MessageService {
     }
 
     public Message updateMessage(String msgPk, Message message) {
+        Assert.notNull(msgPk, "msgPk must not be null");
         Assert.notNull(message, "message must not be null");
 
         String resourceUrl = apiServerUrl + apiUrl + "/{msgPk}";

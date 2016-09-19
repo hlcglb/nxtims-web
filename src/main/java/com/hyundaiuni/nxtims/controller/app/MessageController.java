@@ -67,9 +67,7 @@ public class MessageController {
 
     @RequestMapping(value = "/{msgPk}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateMessage(@PathVariable("msgPk") String msgPk, @RequestBody Message message) {
-        messageService.updateMessage(msgPk, message);
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(messageService.updateMessage(msgPk, message), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{msgPk}", method = RequestMethod.DELETE)
