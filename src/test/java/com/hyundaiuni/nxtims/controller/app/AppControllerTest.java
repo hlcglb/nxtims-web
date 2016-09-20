@@ -68,7 +68,7 @@ public class AppControllerTest {
         Exception ex = null;
 
         try {
-            mvc.perform(get(URL + "/code")).andDo(
+            mvc.perform(get(URL + "/code?lang=ko_KR")).andDo(
                 print()).andExpect(status().isOk()).andExpect(
                     content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(jsonPath("$..CODE_DTL_CD").isArray());
         }
