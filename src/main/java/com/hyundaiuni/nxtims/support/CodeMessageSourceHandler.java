@@ -1,10 +1,8 @@
 package com.hyundaiuni.nxtims.support;
 
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
@@ -28,21 +26,12 @@ public class CodeMessageSourceHandler implements MessageSourceAware {
         this.messageSource = messageSource;
     }
 
-    public List<CodeDetail> getCodeDetailAll(String language) {
-        Locale locale = null;
-
-        if(StringUtils.isEmpty(language)) {
-            locale = LocaleContextHolder.getLocale();
-        }
-        else {
-            locale = LocaleUtils.toLocale(language);
-        }
-
+    public List<CodeDetail> getCodeDetailAll() {
         if(CollectionUtils.isNotEmpty(codeDetailList)) {
             for(CodeDetail codeDetail : codeDetailList) {
                 if(StringUtils.isNotEmpty(codeDetail.getMsgGrpCd()) && StringUtils.isNotEmpty(codeDetail.getMsgCd())) {
                     String codeDtlNm = messageSource.getMessage(codeDetail.getMsgGrpCd() + "." + codeDetail.getMsgCd(),
-                        null, codeDetail.getCodeDtlNm(), locale);
+                        null, codeDetail.getCodeDtlNm(), LocaleContextHolder.getLocale());
 
                     codeDetail.setCodeDtlNm(codeDtlNm);
                 }

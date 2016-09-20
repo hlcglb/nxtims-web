@@ -51,9 +51,7 @@ public class AppController {
     }
 
     @RequestMapping("/code")
-    public List<CodeDetail> code(@RequestParam("lang") String language) {
-        Assert.notNull(language, "language must not be null");
-        
-        return codeMessageSourceHandler.getCodeDetailAll(language);
+    public List<CodeDetail> code() {
+        return codeMessageSourceHandler.getCodeDetailAll();
     }
 }
