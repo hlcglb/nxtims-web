@@ -85,7 +85,7 @@ public class ResourceService {
         return resourceList;
     }
 
-    public Resource getResourceById(String resourceId) {
+    public Resource getResource(String resourceId) {
         Assert.notNull(resourceId, "resourceId must not be null");
 
         String resourceUrl = apiServerUrl + apiUrl + "/{resourceId}";
@@ -108,7 +108,7 @@ public class ResourceService {
 
         apiTemplate.getRestTemplate().put(resourceUrl, resource, resourceId);
 
-        return getResourceById(resourceId);
+        return getResource(resourceId);
     }
 
     public void deleteResource(String resourceId) {

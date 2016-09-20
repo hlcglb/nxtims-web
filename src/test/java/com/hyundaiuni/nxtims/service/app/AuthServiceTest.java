@@ -69,7 +69,7 @@ public class AuthServiceTest {
         Exception ex = null;
         
         try {
-            authService.getAuthByAuthId("ADMIN");
+            authService.getAuth("ADMIN");
         }
         catch(Exception e) {
             log.error(e.getMessage());
@@ -79,7 +79,7 @@ public class AuthServiceTest {
         assertEquals(null, ex);
         
         try {
-            authService.getAuthByAuthId("TEST");
+            authService.getAuth("TEST");
         }
         catch(Exception e) {
             log.error(e.getMessage());

@@ -77,7 +77,7 @@ public class ResourceServiceTest {
         Exception ex = null;
 
         try {
-            resourceService.getResourceById("000000");
+            resourceService.getResource("000000");
         }
         catch(Exception e) {
             log.error(e.getMessage());

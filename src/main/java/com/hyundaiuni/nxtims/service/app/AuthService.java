@@ -64,15 +64,7 @@ public class AuthService {
 
         return authResourceList;
     }
-
-    public Auth getAuthByAuthId(String authId) {
-        Assert.notNull(authId, "authId must not be null");
-
-        String resourceUrl = apiServerUrl + apiUrl + "/{authId}";
-
-        return apiTemplate.getRestTemplate().getForObject(resourceUrl, Auth.class, authId);
-    }
-
+    
     public List<Resource> getNotExistsAuthResourceListByAuthId(String authId) {
         Assert.notNull(authId, "authId must not be null");
 
@@ -89,6 +81,14 @@ public class AuthService {
             apiTemplate.getRestTemplate().getForObject(resourceUrl, Resource[].class, urlVariables));
 
         return resourceList;
+    }    
+
+    public Auth getAuth(String authId) {
+        Assert.notNull(authId, "authId must not be null");
+
+        String resourceUrl = apiServerUrl + apiUrl + "/{authId}";
+
+        return apiTemplate.getRestTemplate().getForObject(resourceUrl, Auth.class, authId);
     }
 
     public Auth insertAuth(Auth auth) {
@@ -107,7 +107,7 @@ public class AuthService {
 
         apiTemplate.getRestTemplate().put(resourceUrl, auth, authId);
 
-        return getAuthByAuthId(authId);
+        return getAuth(authId);
     }
 
     public void deleteAuth(String authId) {

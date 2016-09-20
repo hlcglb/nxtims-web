@@ -33,10 +33,10 @@ public class ResourceController {
     }
 
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
-    public ResponseEntity<?> getResourceById(@PathVariable("resourceId") String resourceId) {
+    public ResponseEntity<?> getResource(@PathVariable("resourceId") String resourceId) {
         Assert.notNull(resourceId, "resourceId must not be null");
 
-        return new ResponseEntity<>(resourceService.getResourceById(resourceId), HttpStatus.OK);
+        return new ResponseEntity<>(resourceService.getResource(resourceId), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST)
