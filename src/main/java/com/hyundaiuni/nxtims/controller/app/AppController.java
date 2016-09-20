@@ -1,6 +1,7 @@
 package com.hyundaiuni.nxtims.controller.app;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -11,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hyundaiuni.nxtims.domain.app.CodeDetail;
 import com.hyundaiuni.nxtims.service.app.AppService;
 import com.hyundaiuni.nxtims.service.app.MessageService;
+import com.hyundaiuni.nxtims.support.CodeFactoryBean;
 
 @RestController
 @RequestMapping("/api/login")
@@ -22,6 +25,9 @@ public class AppController {
 
     @Autowired
     private MessageService messageService;
+    
+    @Autowired
+    private CodeFactoryBean codeFactoryBean;
 
     @RequestMapping("/authentication")
     public Principal authentication(Principal user) {
@@ -43,4 +49,9 @@ public class AppController {
 
         return messageService.getMessageListByLanguageCode(lang);
     }
+    
+    @RequestMapping("/code")
+    public List<CodeDetail> code(){
+        return codeFactoryBean.getObject();
+    }    
 }
