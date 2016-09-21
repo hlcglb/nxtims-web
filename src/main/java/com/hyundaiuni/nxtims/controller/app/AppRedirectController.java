@@ -10,8 +10,9 @@ public class AppRedirectController {
         return "forward:/";
     }
     
-    @RequestMapping(value = "/program/{path:[^\\.]*}/{path:[^\\.]*}")
+    @RequestMapping(value = "/view/**")
     public String program() {
-        return "forward:/partial";
+        return "forward:/";
     }
+
 }

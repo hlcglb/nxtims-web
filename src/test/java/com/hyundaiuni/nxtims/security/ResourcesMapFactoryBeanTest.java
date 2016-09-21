@@ -11,7 +11,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.access.ConfigAttribute;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.CollectionUtils;
@@ -37,12 +36,6 @@ public class ResourcesMapFactoryBeanTest {
             if(CollectionUtils.isEmpty(result)) {
                 fail("");
             }
-
-            AntPathRequestMatcher requestMatcher = new AntPathRequestMatcher("/", null, true);
-            
-            if(!result.containsKey(requestMatcher)) {
-                fail("");
-            }            
         }
         catch(Exception e) {
             ex = e;

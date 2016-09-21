@@ -109,13 +109,13 @@ angular.module("programModule")
         value: '@',
         property: '@'
     },
-    controller: ['RESTfulService', function(RESTfulService){
+    controller: ['RESTfulServiceTest', function(RESTfulService){
         var ctrl = this; 
         ctrl.dataSource = {
             transport: {
                 serverFiltering: true,
                 read: function(options){
-                    RESTfulService.get({service: ctrl.code}
+                    RESTfulService(ctrl.code).get({}
                     ,function success(data){
                         ctrl.property ? options.success(data[ctrl.property]) : options.success(data);
                     }
@@ -142,12 +142,12 @@ angular.module("programModule")
         value: '@',
         property: '@'
     },
-    controller: ['RESTfulService', function(RESTfulService){
+    controller: ['RESTfulServiceTest', function(RESTfulService){
         var ctrl = this; 
         ctrl.dataSource = {
             transport: {
                 read: function(options){
-                    RESTfulService.get({service: ctrl.code}
+                    RESTfulService(ctrl.code).get({}
                     ,function success(data){
                         ctrl.property ? options.success(data[ctrl.property]) : options.success(data);
                     }

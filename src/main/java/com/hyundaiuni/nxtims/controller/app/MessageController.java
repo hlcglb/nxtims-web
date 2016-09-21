@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hyundaiuni.nxtims.domain.app.Message;
+import com.hyundaiuni.nxtims.exception.ServiceException;
 import com.hyundaiuni.nxtims.service.app.MessageService;
 
 @RestController
@@ -54,26 +55,35 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/{msgPk}", method = RequestMethod.GET)
-    public ResponseEntity<?> getMessageByMsgPk(@PathVariable("msgPk") String msgPk) {
+    public ResponseEntity<?> getMessage(@PathVariable("msgPk") String msgPk) {
         Assert.notNull(msgPk, "msgPk must not be null");
 
-        return new ResponseEntity<>(messageService.getMessageByMsgPk(msgPk), HttpStatus.OK);
+        return new ResponseEntity<>(messageService.getMessage(msgPk), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> insertMessage(@RequestBody Message message) {
+        Assert.notNull(message, "message must not be null");
+        
         return new ResponseEntity<>(messageService.insertMessage(message), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{msgPk}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateMessage(@PathVariable("msgPk") String msgPk, @RequestBody Message message) {
-        messageService.updateMessage(msgPk, message);
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        Assert.notNull(msgPk, "msgPk must not be null");
+        Assert.notNull(message, "message must not be null");
+        
+        if(!msgPk.equals(message.getMsgPk())){
+            throw new ServiceException("MSG.INVALID_PATH_VARIABLE", "There is invalid path variable.", null);
+        }          
+        
+        return new ResponseEntity<>(messageService.updateMessage(message), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{msgPk}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteMessage(@PathVariable("msgPk") String msgPk) {
+        Assert.notNull(msgPk, "msgPk must not be null");
+        
         messageService.deleteMessage(msgPk);
 
         return new ResponseEntity<>(HttpStatus.OK);

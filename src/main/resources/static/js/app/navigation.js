@@ -168,7 +168,7 @@ angular.module('nxtIms.navigation',[])
                                 // 메뉴클릭시 권한 없을때 ui router event 전송
                                 $scope.$emit("$stateChangeStart", {}, {name: url}, null, $state.current, $state.params);
                             }
-                            else $window.open("/program" + url,currData.RESOURCE_NM);
+                            else $window.open("/view" + url,currData.RESOURCE_NM);
                         }
                             
                     }

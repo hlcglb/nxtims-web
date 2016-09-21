@@ -43,7 +43,7 @@ angular.module("nxtIms",
                                 return UserService.getMenuList();
                             }, function(data){return null;})
                     .catch(function(error){
-                        console.log("[#catch] main resolved user resource : " + error);
+                        console.log("[#catch] nav resolved user resource : " + error);
                         throw error;
                     });
                 }
@@ -78,8 +78,8 @@ angular.module("nxtIms",
             "navigation@program": stateNav,
             "application@program": {
                 templateUrl : function(urlAttr){
-                    console.log(urlAttr.programUrl);
-                    return constants.prgmTemplUrl + urlAttr.programUrl + ".html";
+                    console.log(urlAttr.viewUrl);
+                    return constants.prgmTemplUrl + urlAttr.viewUrl + ".html";
                 },
                 controller : ["$scope", "$injector", "$state", "UserService",
                               function($scope, $injector, $state, UserService){
@@ -94,10 +94,7 @@ angular.module("nxtIms",
         enabled: true
     });
     $httpProvider.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
-    
-    
-    
-    
+
 }])
 .run(["$rootScope", "$injector", "Authentication", "constants",
       function($rootScope, $injector, Authentication, constants){
@@ -128,7 +125,7 @@ angular.module("nxtIms",
     loginUrl: '/login',
     main: 'main',
     mainUrl: '/main',
-    programUrl: '/program/{programUrl:.*}',
+    programUrl: '/view/{viewUrl:.*}',
     findPassword: 'find',
     findPasswordUrl: '/find'
 });
