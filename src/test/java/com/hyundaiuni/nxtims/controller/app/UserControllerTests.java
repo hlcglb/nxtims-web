@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
@@ -29,15 +30,16 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.hyundaiuni.nxtims.domain.app.Resource;
+import com.hyundaiuni.nxtims.domain.app.Auth;
+import com.hyundaiuni.nxtims.domain.app.User;
 import com.hyundaiuni.nxtims.util.WebUtils;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ResourceControllerTest {
-    private static final Log log = LogFactory.getLog(ResourceControllerTest.class);
-
-    private static final String URL = "/api/app/resources";
+public class UserControllerTests {
+    private static final Log log = LogFactory.getLog(UserControllerTests.class);
+    
+    private static final String URL = "/api/app/users";
 
     @Autowired
     private WebApplicationContext context;
@@ -59,18 +61,18 @@ public class ResourceControllerTest {
     }
     
     @Test
-    public void testGetResourceListByParam(){
+    public void testGetUserListByParam() {
         Exception ex = null;
 
         try {
             Map<String, Object> parameter = new HashMap<>();
-            parameter.put("resourceNm", "컨테이너운송");
 
             String query = WebUtils.mapToRequestParam(parameter, ',', '=', "UTF-8");
 
-            mvc.perform(get(URL + "?inquiry=getResourceListByParam&q=" + query + "&offset=0&limit=10")).andDo(
+            mvc.perform(get(URL + "?inquiry=getUserListByParam&q=" + query + "&offset=0&limit=10")).andDo(
                 print()).andExpect(status().isOk()).andExpect(
-                    content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(jsonPath("$..RESOURCE_NM").isArray());
+                    content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(
+                        jsonPath("$..USER_ID").isArray());
         }
         catch(Exception e) {
             log.error(e.getMessage());
@@ -78,59 +80,15 @@ public class ResourceControllerTest {
         }
 
         assertEquals(null, ex);
-    }
+    }    
 
     @Test
-    public void testGetResourceById(){
+    public void testGetUser() {
         Exception ex = null;
 
         try {
-            mvc.perform(get(URL + "/000000")).andDo(print()).andExpect(status().isOk()).andExpect(
-                content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(
-                    jsonPath("$.RESOURCE_NM").value("컨테이너운송"));
-        }
-        catch(Exception e) {
-            log.error(e.getMessage());
-            ex = e;
-        }
-
-        assertEquals(null, ex);
-    }
-
-    @Test
-    public void testCUDResource() {
-        Exception ex = null;
-
-        try {
-            Resource resource = new Resource();
-
-            resource.setResourceNm("TEST");
-            resource.setResourceType("03");
-            resource.setResourceUrl("---");
-            resource.setUseYn("Y");
-
-            MvcResult result = mvc.perform(
-                post(URL).contentType(MediaType.APPLICATION_JSON_UTF8).content(JsonTestUtils.jsonStringFromObject(resource))).andDo(
-                    print()).andExpect(status().isOk()).andExpect(
-                        content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(
-                            jsonPath("$.RESOURCE_NM").value("TEST")).andReturn();
-
-            log.info(result.getResponse().getContentAsString());
-
-            String query = result.getResponse().getContentAsString();
-
-            Resource retrieveResource = JsonTestUtils.jsonStringToObject(query, Resource.class);
-
-            log.info(retrieveResource.getLinkResourceId());
-
-            String resourceId = retrieveResource.getResourceId();
-
-            resource.setResourceNm("TEST1");;
-
-            mvc.perform(put(URL + "/{resourceId}", resourceId).contentType(MediaType.APPLICATION_JSON_UTF8).content(
-                JsonTestUtils.jsonStringFromObject(retrieveResource))).andDo(print()).andExpect(status().isOk());
-
-            mvc.perform(delete(URL + "/{resourceId}", resourceId)).andDo(print()).andExpect(status().isOk());
+            mvc.perform(get(URL + "/test")).andDo(print()).andExpect(status().isOk()).andExpect(
+                content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(jsonPath("$.USER_ID").value("test"));
         }
         catch(Exception e) {
             log.error(e.getMessage());
@@ -141,31 +99,69 @@ public class ResourceControllerTest {
     }
     
     @Test
-    public void testSaveResource() {
+    public void testCUDUser(){
         Exception ex = null;
 
         try {
-            List<Resource> resourceList = new ArrayList<>();
+            User user = new User();
+            
+            user.setUserId("XXXXXX");
+            user.setUserNm("XXXXXX");
+            user.setUserPwd("12345qwert");
+            user.setUseYn("Y");
+            
+            Auth auth = new Auth();
+            auth.setAuthId("ANONYMOUS");
+            
+            List<Auth> authList = new ArrayList<>();
+            authList.add(auth);
+            
+            user.setAuthList(authList);
 
-            Resource updateResource = new Resource();
+            MvcResult result = mvc.perform(
+                post(URL).contentType(MediaType.APPLICATION_JSON_UTF8).content(JsonTestUtils.jsonStringFromObject(user))).andDo(
+                    print()).andExpect(status().isOk()).andExpect(
+                        content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(
+                            jsonPath("$.USER_ID").value("XXXXXX")).andReturn();
 
-            updateResource.setResourceId("000000");
-            updateResource.setResourceNm("컨테이너운송");
-            updateResource.setResourceType("01");
-            updateResource.setResourceUrl("");
-            updateResource.setUseYn("Y");
-            updateResource.setTransactionType("U");
+            log.info(result.getResponse().getContentAsString());
 
-            resourceList.add(updateResource);
+            String query = result.getResponse().getContentAsString();
 
-            mvc.perform(post(URL + "/save").contentType(MediaType.APPLICATION_JSON_UTF8).content(
-                JsonTestUtils.jsonStringFromObject(resourceList))).andDo(print()).andExpect(status().isOk());
+            User retrieveUser = JsonTestUtils.jsonStringToObject(query, User.class);
+
+            log.info(retrieveUser.getUserId());
+
+            String userId = retrieveUser.getUserId();
+
+            user.setUserPwd("qwert12345");
+            
+            authList = user.getAuthList();
+            
+            if(CollectionUtils.isNotEmpty(authList)) {
+                for(Auth tempAuth : authList) {
+                    tempAuth.setTransactionType("D");
+                }
+            }
+            
+            Auth auth1 = new Auth();
+            auth1.setAuthId("EMPLOYEE");
+            auth1.setTransactionType("C");
+            
+            authList.add(auth1);
+            
+            user.setAuthList(authList);            
+
+            mvc.perform(put(URL + "/{userId}", userId).contentType(MediaType.APPLICATION_JSON_UTF8).content(
+                JsonTestUtils.jsonStringFromObject(user))).andDo(print()).andExpect(status().isOk());
+
+            mvc.perform(delete(URL + "/{userId}", userId)).andDo(print()).andExpect(status().isOk());
         }
         catch(Exception e) {
             log.error(e.getMessage());
             ex = e;
         }
 
-        assertEquals(null, ex);
+        assertEquals(null, ex);        
     }    
 }

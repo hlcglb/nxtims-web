@@ -10,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,8 +30,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hyundaiuni.nxtims.domain.app.CodeDetail;
 import com.hyundaiuni.nxtims.domain.app.CodeMaster;
 import com.hyundaiuni.nxtims.util.WebUtils;
@@ -146,7 +143,7 @@ public class CodeControllerTest {
             codeMaster.setCodeDetaileList(codeDetaileList);
 
             MvcResult result = mvc.perform(
-                post(URL).contentType(MediaType.APPLICATION_JSON_UTF8).content(jsonStringFromObject(codeMaster))).andDo(
+                post(URL).contentType(MediaType.APPLICATION_JSON_UTF8).content(JsonTestUtils.jsonStringFromObject(codeMaster))).andDo(
                     print()).andExpect(status().isOk()).andExpect(
                         content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(
                             jsonPath("$.CODE_MST_CD").value("TEST")).andReturn();
@@ -155,7 +152,7 @@ public class CodeControllerTest {
 
             String query = result.getResponse().getContentAsString();
 
-            CodeMaster retrieveCodeMaster = jsonStringToObject(query, CodeMaster.class);
+            CodeMaster retrieveCodeMaster = JsonTestUtils.jsonStringToObject(query, CodeMaster.class);
 
             log.info(retrieveCodeMaster.getCodeMstCd());
 
@@ -170,7 +167,7 @@ public class CodeControllerTest {
             }
 
             mvc.perform(put(URL + "/{codeMstCd}", codeMstCd).contentType(MediaType.APPLICATION_JSON_UTF8).content(
-                jsonStringFromObject(retrieveCodeMaster))).andDo(print()).andExpect(status().isOk());
+                JsonTestUtils.jsonStringFromObject(retrieveCodeMaster))).andDo(print()).andExpect(status().isOk());
 
             mvc.perform(delete(URL + "/{codeMstCd}", codeMstCd)).andDo(print()).andExpect(status().isOk());
         }
@@ -180,15 +177,5 @@ public class CodeControllerTest {
         }
 
         assertEquals(null, ex);
-    }
-
-    private String jsonStringFromObject(Object object) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(object);
-    }
-
-    private <T> T jsonStringToObject(String result, Class<T> valueType) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(result, valueType);
     }
 }

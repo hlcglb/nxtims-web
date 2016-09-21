@@ -2,10 +2,16 @@ package com.hyundaiuni.nxtims.service.app;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
@@ -16,6 +22,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import com.hyundaiuni.nxtims.domain.app.Auth;
+import com.hyundaiuni.nxtims.domain.app.User;
+import com.hyundaiuni.nxtims.exception.ServiceException;
+import com.hyundaiuni.nxtims.util.WebUtils;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -91,5 +102,111 @@ public class UserServiceTest {
         }
 
         assertEquals(null, ex);
-    }        
+    }
+    
+    @Test
+    public void testGetUserListByParam() {
+        Exception ex = null;
+
+        try {
+            Map<String, Object> parameter = new HashMap<>();
+            
+            String requestString = WebUtils.mapToRequestParam(parameter, ',', '=', "UTF-8");
+
+            userService.getUserListByParam(requestString, 0, 10);
+        }
+        catch(Exception e) {
+            log.error(e.getMessage());
+            ex = e;
+        }
+
+        assertEquals(null, ex);
+    }
+    
+    @Test
+    public void testGetUser() {
+        User user = userService.getUser("20006X");
+
+        if(user != null) {
+            fail("");
+        }
+
+        assertThat(userService.getUser("test")).isInstanceOf(User.class);
+    }
+    
+    @Test
+    public void testInsertUser(){
+        try {
+            User user = new User();
+            
+            user.setUserId("XXXXXX");
+            user.setUserNm("XXXXXX");
+            user.setUserPwd("12345qwert");
+            user.setUseYn("Y");
+            
+            Auth auth = new Auth();
+            auth.setAuthId("ANONYMOUS");
+            
+            List<Auth> authList = new ArrayList<>();
+            authList.add(auth);
+            
+            user.setAuthList(authList);
+            
+            userService.insertUser(user);
+            
+            userService.deleteUser(user.getUserId());
+        }
+        catch(Exception e) {
+            log.error(e.getMessage());
+            assertThat(e).isInstanceOf(ServiceException.class).hasMessageContaining("not found");
+        }
+    }
+    
+    @Test
+    public void testUpdateUser(){
+        try {
+            User user = new User();
+            
+            user.setUserId("XXXXXX");
+            user.setUserNm("XXXXXX");
+            user.setUserPwd("12345qwert");
+            user.setUseYn("Y");
+            
+            Auth auth = new Auth();
+            auth.setAuthId("ANONYMOUS");
+            
+            List<Auth> authList = new ArrayList<>();
+            authList.add(auth);
+            
+            user.setAuthList(authList);
+            
+            userService.insertUser(user);
+            
+            user.setUserPwd("qwert12345");
+            
+            authList = user.getAuthList();
+            
+            if(CollectionUtils.isNotEmpty(authList)) {
+                for(Auth tempAuth : authList) {
+                    tempAuth.setTransactionType("D");
+                }
+            }
+            
+            Auth auth1 = new Auth();
+            auth1.setAuthId("EMPLOYEE");
+            auth1.setTransactionType("C");
+            
+            authList.add(auth1);
+            
+            user.setAuthList(authList);
+            
+            userService.updateUser(user);
+            
+            userService.deleteUser(user.getUserId());
+        }
+        catch(Exception e) {
+            log.error(e.getMessage());
+            assertThat(e).isInstanceOf(ServiceException.class).hasMessageContaining("not found");
+        }
+    }       
 }

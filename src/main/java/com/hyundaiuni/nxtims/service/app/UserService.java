@@ -1,10 +1,13 @@
 package com.hyundaiuni.nxtims.service.app;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -80,7 +83,7 @@ public class UserService implements UserDetailsService {
 
         apiTemplate.getRestTemplate().postForEntity(resourceUrl + "/onAuthenticationFailure", parameter, null);
     }
-    
+
     public void onLogout(String userId, String sessionId) {
         Assert.notNull(userId, "userId must not be null");
         Assert.notNull(sessionId, "sessionId must not be null");
@@ -93,4 +96,60 @@ public class UserService implements UserDetailsService {
 
         apiTemplate.getRestTemplate().postForEntity(resourceUrl + "/onLogout", parameter, null);
     }
+
+    public List<User> getUserListByParam(String query, int offset, int limit) {
+        Assert.notNull(query, "parameter must not be null");
+        Assert.notNull(offset, "offset must not be null");
+        Assert.notNull(limit, "limit must not be null");
+
+        Map<String, Object> urlVariables = new HashMap<>();
+
+        urlVariables.put("inquiry", "getUserListByParam");
+        urlVariables.put("q", query);
+        urlVariables.put("offset", offset);
+        urlVariables.put("limit", limit);
+
+        String resourceUrl = apiServerUrl + apiUrl + "?inquiry={inquiry}&q={q}&offset={offset}&limit={limit}";
+
+        List<User> UserList = new ArrayList<>();
+
+        CollectionUtils.addAll(UserList,
+            apiTemplate.getRestTemplate().getForObject(resourceUrl, User[].class, urlVariables));
+
+        return UserList;
+    }
+
+    public User getUser(String userId) {
+        Assert.notNull(userId, "userId must not be null");
+
+        String resourceUrl = apiServerUrl + apiUrl + "/{userId}";
+
+        return apiTemplate.getRestTemplate().getForObject(resourceUrl, User.class, userId);
+    }
+    
+    public User insertUser(User user) {
+        Assert.notNull(user, "user must not be null");
+
+        String resourceUrl = apiServerUrl + apiUrl;
+
+        return apiTemplate.getRestTemplate().postForObject(resourceUrl, user, User.class);
+    }
+
+    public User updateUser(User user) {
+        Assert.notNull(user, "user must not be null");
+
+        String resourceUrl = apiServerUrl + apiUrl + "/{userId}";
+
+        apiTemplate.getRestTemplate().put(resourceUrl, user, user.getUserId());
+
+        return getUser(user.getUserId());
+    }
+
+    public void deleteUser(String userId) {
+        Assert.notNull(userId, "userId must not be null");
+
+        String resourceUrl = apiServerUrl + apiUrl + "/{userId}";
+
+        apiTemplate.getRestTemplate().delete(resourceUrl, userId);
+    }    
 }
