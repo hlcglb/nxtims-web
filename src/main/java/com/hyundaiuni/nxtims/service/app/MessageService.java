@@ -99,7 +99,7 @@ public class MessageService {
         return messageLocaleList;
     }
 
-    public Message getMessageByMsgPk(String msgPk) {
+    public Message getMessage(String msgPk) {
         Assert.notNull(msgPk, "msgPk must not be null");
 
         String resourceUrl = apiServerUrl + apiUrl + "/{msgPk}";
@@ -116,13 +116,14 @@ public class MessageService {
     }
 
     public Message updateMessage(String msgPk, Message message) {
+        Assert.notNull(msgPk, "msgPk must not be null");
         Assert.notNull(message, "message must not be null");
 
         String resourceUrl = apiServerUrl + apiUrl + "/{msgPk}";
 
         apiTemplate.getRestTemplate().put(resourceUrl, message, msgPk);
 
-        return getMessageByMsgPk(msgPk);
+        return getMessage(msgPk);
     }
 
     public void deleteMessage(String msgPk) {

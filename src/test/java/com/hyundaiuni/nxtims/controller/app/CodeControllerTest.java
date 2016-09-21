@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
@@ -32,15 +33,16 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hyundaiuni.nxtims.domain.app.Resource;
+import com.hyundaiuni.nxtims.domain.app.CodeDetail;
+import com.hyundaiuni.nxtims.domain.app.CodeMaster;
 import com.hyundaiuni.nxtims.util.WebUtils;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ResourceControllerTest {
-    private static final Log log = LogFactory.getLog(ResourceControllerTest.class);
+public class CodeControllerTest {
+    private static final Log log = LogFactory.getLog(CodeControllerTest.class);
 
-    private static final String URL = "/api/app/resources";
+    private static final String URL = "/api/app/code";
 
     @Autowired
     private WebApplicationContext context;
@@ -60,20 +62,20 @@ public class ResourceControllerTest {
 
         assertEquals(null, ex);
     }
-    
+
     @Test
-    public void testGetResourceListByParam(){
+    public void testGetCodeMasterListByParam() {
         Exception ex = null;
 
         try {
             Map<String, Object> parameter = new HashMap<>();
-            parameter.put("resourceNm", "컨테이너운송");
 
             String query = WebUtils.mapToRequestParam(parameter, ',', '=', "UTF-8");
 
-            mvc.perform(get(URL + "?inquiry=getResourceListByParam&q=" + query + "&offset=0&limit=10")).andDo(
+            mvc.perform(get(URL + "?inquiry=getCodeMasterListByParam&q=" + query + "&offset=0&limit=10")).andDo(
                 print()).andExpect(status().isOk()).andExpect(
-                    content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(jsonPath("$..RESOURCE_NM").isArray());
+                    content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(
+                        jsonPath("$..CODE_MST_CD").isArray());
         }
         catch(Exception e) {
             log.error(e.getMessage());
@@ -84,13 +86,31 @@ public class ResourceControllerTest {
     }
 
     @Test
-    public void testGetResourceById(){
+    public void testGetCodeDetailListByCodeMstCd() {
         Exception ex = null;
 
         try {
-            mvc.perform(get(URL + "/000000")).andDo(print()).andExpect(status().isOk()).andExpect(
+            mvc.perform(get(URL + "?inquiry=getCodeDetailListByCodeMstCd&codeMstCd=RESOURCE_TYPE")).andDo(
+                print()).andExpect(status().isOk()).andExpect(
+                    content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(
+                        jsonPath("$..CODE_DTL_CD").isArray());
+        }
+        catch(Exception e) {
+            log.error(e.getMessage());
+            ex = e;
+        }
+
+        assertEquals(null, ex);
+    }
+
+    @Test
+    public void testGetCodeMasterByCodeMstCd() {
+        Exception ex = null;
+
+        try {
+            mvc.perform(get(URL + "/RESOURCE_TYPE")).andDo(print()).andExpect(status().isOk()).andExpect(
                 content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(
-                    jsonPath("$.RESOURCE_NM").value("컨테이너운송"));
+                    jsonPath("$.CODE_MST_CD").value("RESOURCE_TYPE"));
         }
         catch(Exception e) {
             log.error(e.getMessage());
@@ -101,39 +121,58 @@ public class ResourceControllerTest {
     }
 
     @Test
-    public void testCUDResource() {
+    public void testSaveCode() {
         Exception ex = null;
 
         try {
-            Resource resource = new Resource();
+            CodeMaster codeMaster = new CodeMaster();
+            codeMaster.setCodeMstCd("TEST");
+            codeMaster.setCodeMstNm("TEST");
 
-            resource.setResourceNm("TEST");
-            resource.setResourceType("03");
-            resource.setResourceUrl("---");
-            resource.setUseYn("Y");
+            CodeDetail codeDetail1 = new CodeDetail();
+            codeDetail1.setCodeMstCd(codeMaster.getCodeMstCd());
+            codeDetail1.setCodeDtlCd("01");
+            codeDetail1.setCodeDtlNm("01");
+
+            CodeDetail codeDetail2 = new CodeDetail();
+            codeDetail2.setCodeMstCd(codeMaster.getCodeMstCd());
+            codeDetail2.setCodeDtlCd("02");
+            codeDetail2.setCodeDtlNm("02");
+
+            List<CodeDetail> codeDetaileList = new ArrayList<>();
+            codeDetaileList.add(codeDetail1);
+            codeDetaileList.add(codeDetail2);
+
+            codeMaster.setCodeDetaileList(codeDetaileList);
 
             MvcResult result = mvc.perform(
-                post(URL).contentType(MediaType.APPLICATION_JSON_UTF8).content(jsonStringFromObject(resource))).andDo(
+                post(URL).contentType(MediaType.APPLICATION_JSON_UTF8).content(jsonStringFromObject(codeMaster))).andDo(
                     print()).andExpect(status().isOk()).andExpect(
                         content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(
-                            jsonPath("$.RESOURCE_NM").value("TEST")).andReturn();
+                            jsonPath("$.CODE_MST_CD").value("TEST")).andReturn();
 
             log.info(result.getResponse().getContentAsString());
 
             String query = result.getResponse().getContentAsString();
 
-            Resource retrieveResource = jsonStringToObject(query, Resource.class);
+            CodeMaster retrieveCodeMaster = jsonStringToObject(query, CodeMaster.class);
 
-            log.info(retrieveResource.getLinkResourceId());
+            log.info(retrieveCodeMaster.getCodeMstCd());
 
-            String resourceId = retrieveResource.getResourceId();
+            String codeMstCd = retrieveCodeMaster.getCodeMstCd();
 
-            resource.setResourceNm("TEST1");;
+            List<CodeDetail> retrieveCodeDetaileList = retrieveCodeMaster.getCodeDetaileList();
 
-            mvc.perform(put(URL + "/{resourceId}", resourceId).contentType(MediaType.APPLICATION_JSON_UTF8).content(
-                jsonStringFromObject(retrieveResource))).andDo(print()).andExpect(status().isOk());
+            if(CollectionUtils.isNotEmpty(retrieveCodeDetaileList)) {
+                for(CodeDetail retrieveCodeDetail : retrieveCodeDetaileList) {
+                    retrieveCodeDetail.setTransactionType("D");
+                }
+            }
 
-            mvc.perform(delete(URL + "/{resourceId}", resourceId)).andDo(print()).andExpect(status().isOk());
+            mvc.perform(put(URL + "/{codeMstCd}", codeMstCd).contentType(MediaType.APPLICATION_JSON_UTF8).content(
+                jsonStringFromObject(retrieveCodeMaster))).andDo(print()).andExpect(status().isOk());
+
+            mvc.perform(delete(URL + "/{codeMstCd}", codeMstCd)).andDo(print()).andExpect(status().isOk());
         }
         catch(Exception e) {
             log.error(e.getMessage());
@@ -142,35 +181,6 @@ public class ResourceControllerTest {
 
         assertEquals(null, ex);
     }
-    
-    @Test
-    public void testSaveResource() {
-        Exception ex = null;
-
-        try {
-            List<Resource> resourceList = new ArrayList<>();
-
-            Resource updateResource = new Resource();
-
-            updateResource.setResourceId("000000");
-            updateResource.setResourceNm("컨테이너운송");
-            updateResource.setResourceType("01");
-            updateResource.setResourceUrl("");
-            updateResource.setUseYn("Y");
-            updateResource.setTransactionType("U");
-
-            resourceList.add(updateResource);
-
-            mvc.perform(post(URL + "/save").contentType(MediaType.APPLICATION_JSON_UTF8).content(
-                jsonStringFromObject(resourceList))).andDo(print()).andExpect(status().isOk());
-        }
-        catch(Exception e) {
-            log.error(e.getMessage());
-            ex = e;
-        }
-
-        assertEquals(null, ex);
-    }    
 
     private String jsonStringFromObject(Object object) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();

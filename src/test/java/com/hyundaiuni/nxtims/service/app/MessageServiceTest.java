@@ -104,7 +104,7 @@ public class MessageServiceTest {
         Exception ex = null;
 
         try {
-            messageService.getMessageByMsgPk("0000000013");
+            messageService.getMessage("0000000013");
         }
         catch(Exception e) {
             log.error(e.getMessage());
@@ -124,21 +124,21 @@ public class MessageServiceTest {
             message.setMsgGrpCd("MSG");
             message.setMsgCd("JUNIT");
             message.setMsgNm("JUNIT");
-            message.setUserId("TEST");
+            message.setSessionUserId("TEST");
 
             MessageLocale messageLocaleKo = new MessageLocale();
             messageLocaleKo.setMsgGrpCd(message.getMsgGrpCd());
             messageLocaleKo.setMsgCd(message.getMsgCd());
             messageLocaleKo.setMsgNm("JUNIT");
             messageLocaleKo.setLangCd("ko_KR");
-            messageLocaleKo.setUserId("TEST");
+            messageLocaleKo.setSessionUserId("TEST");
 
             MessageLocale messageLocaleEn = new MessageLocale();
             messageLocaleEn.setMsgGrpCd(message.getMsgGrpCd());
             messageLocaleEn.setMsgCd(message.getMsgCd());
             messageLocaleEn.setMsgNm("JUNIT");
             messageLocaleEn.setLangCd("en_US");
-            messageLocaleEn.setUserId("TEST");
+            messageLocaleEn.setSessionUserId("TEST");
 
             List<MessageLocale> msgLocList = new ArrayList<>();
             msgLocList.add(messageLocaleKo);
@@ -168,21 +168,21 @@ public class MessageServiceTest {
             message.setMsgGrpCd("MSG");
             message.setMsgCd("JUNIT");
             message.setMsgNm("JUNIT");
-            message.setUserId("TEST");
+            message.setSessionUserId("TEST");
 
             MessageLocale messageLocaleKo = new MessageLocale();
             messageLocaleKo.setMsgGrpCd(message.getMsgGrpCd());
             messageLocaleKo.setMsgCd(message.getMsgCd());
             messageLocaleKo.setMsgNm("JUNIT");
             messageLocaleKo.setLangCd("ko_KR");
-            messageLocaleKo.setUserId("TEST");
+            messageLocaleKo.setSessionUserId("TEST");
 
             MessageLocale messageLocaleEn = new MessageLocale();
             messageLocaleEn.setMsgGrpCd(message.getMsgGrpCd());
             messageLocaleEn.setMsgCd(message.getMsgCd());
             messageLocaleEn.setMsgNm("JUNIT");
             messageLocaleEn.setLangCd("en_US");
-            messageLocaleEn.setUserId("TEST");
+            messageLocaleEn.setSessionUserId("TEST");
 
             List<MessageLocale> msgLocList = new ArrayList<>();
             msgLocList.add(messageLocaleKo);
