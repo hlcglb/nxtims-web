@@ -95,15 +95,14 @@ public class CodeService {
         return apiTemplate.getRestTemplate().postForObject(resourceUrl, codeMaster, CodeMaster.class);
     }
 
-    public CodeMaster updateCode(String codeMstCd, CodeMaster codeMaster) {
-        Assert.notNull(codeMstCd, "codeMstCd must not be null");
+    public CodeMaster updateCode(CodeMaster codeMaster) {
         Assert.notNull(codeMaster, "codeMaster must not be null");
 
         String resourceUrl = apiServerUrl + apiUrl + "/{codeMstCd}";
 
-        apiTemplate.getRestTemplate().put(resourceUrl, codeMaster, codeMstCd);
+        apiTemplate.getRestTemplate().put(resourceUrl, codeMaster, codeMaster.getCodeMstCd());
 
-        return getCode(codeMstCd);
+        return getCode(codeMaster.getCodeMstCd());
     }
 
     public void deleteCode(String codeMstCd) {

@@ -27,6 +27,8 @@ public class MessageService {
     private RestApiTemplate apiTemplate;
 
     public Properties getMessageListByLanguageCode(String languageCode) {
+        Assert.notNull(languageCode, "languageCode must not be null");
+        
         String resourceUrl = apiServerUrl + apiUrl + "?inquiry={inquiry}&languageCode={languageCode}";
 
         Map<String, String> urlVariables = new HashMap<>();
@@ -115,15 +117,14 @@ public class MessageService {
         return apiTemplate.getRestTemplate().postForObject(resourceUrl, message, Message.class);
     }
 
-    public Message updateMessage(String msgPk, Message message) {
-        Assert.notNull(msgPk, "msgPk must not be null");
+    public Message updateMessage(Message message) {
         Assert.notNull(message, "message must not be null");
 
         String resourceUrl = apiServerUrl + apiUrl + "/{msgPk}";
 
-        apiTemplate.getRestTemplate().put(resourceUrl, message, msgPk);
+        apiTemplate.getRestTemplate().put(resourceUrl, message, message.getMsgPk());
 
-        return getMessage(msgPk);
+        return getMessage(message.getMsgPk());
     }
 
     public void deleteMessage(String msgPk) {

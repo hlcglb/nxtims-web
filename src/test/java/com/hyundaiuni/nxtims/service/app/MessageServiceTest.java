@@ -200,7 +200,7 @@ public class MessageServiceTest {
                 }
             }
 
-            messageService.updateMessage(retrieveMessage.getMsgPk(), retrieveMessage);
+            messageService.updateMessage(retrieveMessage);
             messageService.deleteMessage(retrieveMessage.getMsgPk());
         }
         catch(Exception e) {

@@ -99,15 +99,14 @@ public class AuthService {
         return apiTemplate.getRestTemplate().postForObject(resourceUrl, auth, Auth.class);
     }
 
-    public Auth updateAuth(String authId, Auth auth) {
-        Assert.notNull(authId, "authId must not be null");
+    public Auth updateAuth(Auth auth) {
         Assert.notNull(auth, "auth must not be null");
 
         String resourceUrl = apiServerUrl + apiUrl + "/{authId}";
 
-        apiTemplate.getRestTemplate().put(resourceUrl, auth, authId);
+        apiTemplate.getRestTemplate().put(resourceUrl, auth, auth.getAuthId());
 
-        return getAuth(authId);
+        return getAuth(auth.getAuthId());
     }
 
     public void deleteAuth(String authId) {

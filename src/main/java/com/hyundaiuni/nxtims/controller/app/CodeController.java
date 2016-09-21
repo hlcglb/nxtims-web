@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hyundaiuni.nxtims.domain.app.CodeMaster;
+import com.hyundaiuni.nxtims.exception.ServiceException;
 import com.hyundaiuni.nxtims.service.app.CodeService;
 
 @RestController
@@ -46,19 +47,30 @@ public class CodeController {
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> insertCode(@RequestBody CodeMaster codeMaster) {
+        Assert.notNull(codeMaster, "codeMaster must not be null");
+        
         return new ResponseEntity<>(codeService.insertCode(codeMaster), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{codeMstCd}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateCode(@PathVariable("codeMstCd") String codeMstCd,
         @RequestBody CodeMaster codeMaster) {
-        codeService.updateCode(codeMstCd, codeMaster);
+        Assert.notNull(codeMstCd, "codeMstCd must not be null");
+        Assert.notNull(codeMaster, "codeMaster must not be null");
+        
+        if(!codeMstCd.equals(codeMaster.getCodeMstCd())){
+            throw new ServiceException("MSG.INVALID_PATH_VARIABLE", "There is invalid path variable.", null);
+        }         
+        
+        codeService.updateCode(codeMaster);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{codeMstCd}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteCode(@PathVariable("codeMstCd") String codeMstCd) {
+        Assert.notNull(codeMstCd, "codeMstCd must not be null");
+        
         codeService.deleteCode(codeMstCd);
 
         return new ResponseEntity<>(HttpStatus.OK);

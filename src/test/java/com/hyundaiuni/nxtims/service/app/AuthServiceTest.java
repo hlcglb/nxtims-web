@@ -228,7 +228,7 @@ public class AuthServiceTest {
                 }
             }            
             
-            authService.updateAuth(tempAuth.getAuthId(), tempAuth);
+            authService.updateAuth(tempAuth);
             authService.deleteAuth(tempAuth.getAuthId());
         }
         catch(Exception e) {

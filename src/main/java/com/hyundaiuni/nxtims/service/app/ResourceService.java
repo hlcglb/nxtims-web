@@ -101,14 +101,14 @@ public class ResourceService {
         return apiTemplate.getRestTemplate().postForObject(resourceUrl, resource, Resource.class);
     }
 
-    public Resource updateResource(String resourceId, Resource resource) {
+    public Resource updateResource(Resource resource) {
         Assert.notNull(resource, "resource must not be null");
 
         String resourceUrl = apiServerUrl + apiUrl + "/{resourceId}";
 
-        apiTemplate.getRestTemplate().put(resourceUrl, resource, resourceId);
+        apiTemplate.getRestTemplate().put(resourceUrl, resource, resource.getResourceId());
 
-        return getResource(resourceId);
+        return getResource(resource.getResourceId());
     }
 
     public void deleteResource(String resourceId) {

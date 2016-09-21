@@ -36,6 +36,8 @@ public class AppController {
 
     @RequestMapping("/resource")
     public Map<String, Object> resource(Principal user) {
+        Assert.notNull(user, "user must not be null");
+        
         String userId = user.getName();
 
         Map<String, Object> model = appService.getResourceByUserId(userId);

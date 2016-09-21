@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hyundaiuni.nxtims.domain.app.Resource;
+import com.hyundaiuni.nxtims.exception.ServiceException;
 import com.hyundaiuni.nxtims.service.app.ResourceService;
 
 @RestController
@@ -41,17 +42,28 @@ public class ResourceController {
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> insertResource(@RequestBody Resource resource) {
+        Assert.notNull(resource, "resource must not be null");
+        
         return new ResponseEntity<>(resourceService.insertResource(resource), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateResource(@PathVariable("resourceId") String resourceId,
         @RequestBody Resource resource) {
-        return new ResponseEntity<>(resourceService.updateResource(resourceId, resource), HttpStatus.OK);
+        Assert.notNull(resourceId, "resourceId must not be null");
+        Assert.notNull(resource, "resource must not be null");
+        
+        if(!resourceId.equals(resource.getResourceId())){
+            throw new ServiceException("MSG.INVALID_PATH_VARIABLE", "There is invalid path variable.", null);
+        }        
+        
+        return new ResponseEntity<>(resourceService.updateResource(resource), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteResource(@PathVariable("resourceId") String resourceId) {
+        Assert.notNull(resourceId, "resourceId must not be null");
+        
         resourceService.deleteResource(resourceId);
 
         return new ResponseEntity<>(HttpStatus.OK);
