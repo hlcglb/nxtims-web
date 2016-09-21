@@ -18,13 +18,19 @@ body { background-color:#fff; }
 #header .topmenu .top_search :-ms-input-placeholder { color:#716767; }
 #header .topmenu ul { float:left; }
 #header .topmenu li { float:left; }
-#header .topmenu li.w1 { width:112px; }
-#header .topmenu li.w1 span.alarm { position:relative; display:inline-block; padding:19px 0 0 39px; width:73px; height:42px; background:url(img/bg_alarm.gif) left top no-repeat; }
-#header .topmenu li.w1 span.alarm span { display:block; text-indent:-999999em; overflow:hidden; }
-#header .topmenu li.w1 span.alarm strong { position:absolute; left:62px; top:18px; color:#fff; font-size:11px; height:17px; line-height:17px; padding:0 5px; background-color:#428bca; border-radius:5px; -moz-box-border-radius:5px;-webkit-box-border-radius:5px; }
+#header .topmenu li span.profile { position:relative; display:inline-block; padding:24px 0 0 45px; width:112px; height:42px; background:url(img/bg_profile.gif) left top no-repeat;  font-size:16px;}
+#header .topmenu li span.alarm { position:relative; display:inline-block; padding:19px 0 0 25px; width:73px; height:42px; background:url(img/bg_alarm.gif) left top no-repeat; }
+#header .topmenu li span.alarm span { display:block; text-indent:-999999em; overflow:hidden; }
+#header .topmenu li span.alarm strong { position:absolute; left:62px; top:18px; color:#fff; font-size:11px; height:17px; line-height:17px; padding:0 5px; background-color:#428bca; border-radius:5px; -moz-box-border-radius:5px;-webkit-box-border-radius:5px; }
 #header .allmenu { position:absolute; left:44px; top:20px; color:#0f0e0e; font-size:18px; }
 #header .allmenu img { vertical-align:middle; margin:0 5px 0 0; }
 #header .allmenu a { color:#0f0e0e; }
+
+#foot { position:fixed; bottom:0; width:100%; min-width:1024px; height:48px; background-color:#333131;}
+#foot .messege { position:absolute; left:44px; top:15px; font-size:16px; color:#fff; padding:2px 0 0 0; }
+#foot .messege span { font-size:17px; background:url(img/bg_messege.gif) left top no-repeat; padding:3px 23px 0 41px; margin: 0 27px 0 0; }
+#foot .messege a {letter-spacing:0;color:#fff; }
+#foot .messege strong { color:#fcba7e; }
 
 #allmenu_box { display:none; position:fixed; left:-313px; top:0; z-index:9999999; width:100%; height:100%; }
 #allmenu_box .allbg { position:fixed; left:0; right:0; top:0; bottom:0; margin:auto; z-index:1; width:100%; height:100%; overflow:hidden; background:#000; opacity:0; filter:alpha(opacity=0); -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";}

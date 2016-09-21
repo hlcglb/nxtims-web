@@ -15,24 +15,6 @@ angular.module('comn.service.message',['comn.service.resource', 'pascalprecht.tr
     //security
     $translateProvider.useSanitizeValueStrategy('escape'); //(https://angular-translate.github.io/docs/#/guide/19_security)
 }])
-.factory('MessageService', ['RESTfulService', '$q', function (RESTfulService, $q) {
-    return{
-        getMessage: function(msgCode, successHandler, faileHandler){
-            return RESTfulService.get({service: "message", id:msgCode}, 
-                    function(messageData){
-                        if(angular.isFunction(successHandler)) successHandler(messageData);
-                    },
-                    function(error){
-                        if(angular.isFunction(faileHandler)) faileHandler(error.data)
-                    }
-            );
-        },
-        getPromise: function(msgCode){
-            return RESTfulService.get({service: "message", id:msgCode}).$promise;
-        }
-    }
-
-}])
 .factory('UrlMessageStorage', ['$location', function($location) {
     return {
         put: function (name, value) {},

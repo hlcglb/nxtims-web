@@ -5,6 +5,7 @@
     angular.module("programModule")
     .controller("ProgramController", ["$scope", "RESTfulService", "$resource", "$q", function($scope, RESTfulService, $resource, $q){
         var vm = this;
+        var Message = RESTfulService("api/app/messages");
         vm.number = 1234;
         vm.text = "module authority test";
         vm.label = {
@@ -36,105 +37,161 @@
         vm.selectedIds = [ 4, 7 ];
         
         //grid
-        vm.gridMstData = [];
-        vm.gridDtlData = [];
-        vm.gridMstColumns = [];
-        vm.gridDtlColumns = [];
+        //mst
+        vm.gridMstData = new kendo.data.DataSource({
+            data: [],
+            schema: {
+                model: {
+                    id: "MSG_PK",
+                    fields: {
+                        MSG_PK: { type: "string", editable: false, nullable: true },
+                        MSG_GRP_CD: { type: "string", editable: true, validation: { required: true }},
+                        MSG_CD: { type: "string", editable: true, validation: { required: true } },
+                        MSG_NM: { type: "string", editable: true },
+                        USER_ID: { type: "string", editable: false },
+                        MSG_LOC_LIST: { type: "string", editable: false }
+                    }
+                }
+            },
+            pageSize: 10
+        });
+        vm.gridMstColumns = [
+            {field: "MSG_PK", title: "{{'LAB.SAVE' | translate}}"},
+            {field: "MSG_GRP_CD", title: "Group Code"},
+            {field: "MSG_CD", title: "Code"},
+            {field: "MSG_NM", title: "Message"},
+            {field: "USER_ID", title: "User ID"},
+            {field: "MSG_LOC_LIST"},
+            {command: ["edit"], title: "&nbsp;", width: "150px" }];
+        
+        //detaile
+        vm.gridDtlData = new kendo.data.DataSource({
+            data: [],
+            schema: {
+                model: {
+                    id: "MSG_LOC_PK",
+                    fields: {
+                        MSG_LOC_PK: { type: "string", editable: false, nullable: true},
+                        MSG_GRP_CD: { type: "string", editable: false, validation: { required: true }},
+                        MSG_CD: { type: "string", editable: false, validation: { required: true }},
+                        LANG_CD: { type: "string", editable: true, validation: { required: true } },
+                        MSG_NM: { type: "string", editable: true },
+                        USER_ID: { type: "string", editable: false },
+                        TRANSACTION_TYPE: { type: "string", editable: false }
+                    }
+                }
+            },
+            pageSize: 10,
+            change: function(e){
+                console.log("datasource change");
+                console.log(e);
+            } 
+        });
+        vm.gridDtlColumns = [{field: "MSG_LOC_PK"},
+                             {field: "MSG_GRP_CD", title: "Group Code"},
+                             {field: "MSG_CD", title: "Msg Code"},
+                             {field: "LANG_CD", title: "Lang Code"},
+                             {field: "MSG_NM", title: "Message"},
+                             {field: "USER_ID", title: "User ID"},
+                             {field: "TRANSACTION_TYPE"}];
+        
+        //event
         vm.addRow = function(property){
             console.log(property);
             vm[property].addRow();
+            if(property == "gridDtl"){
+                console.log(vm.gridDtlData.data());
+                vm.gridDtlData.data().at(0).set("MSG_LOC_PK", vm.mstSelectedItem.MSG_PK);
+                vm.gridDtlData.data().at(0).set("MSG_GRP_CD", "MSG");
+                vm.gridDtlData.data().at(0).set("MSG_CD", vm.mstSelectedItem.MSG_CD);
+                console.log(vm.gridDtlData.data());
+            }
         }
         vm.removeRow = function(property){
             vm[property].removeRow(vm[property].select());
-            vm.gridMst.select("tr:eq(1)");
+            //vm.gridMst.select("tr:eq(0)");
             console.log(vm[property].select());
         }
         vm.search = function(){
             /* if(confirm("조회 하시겠습니까?"))
                 alert("search"); */
-                var list1 = RESTfulService.getList({area: "app", service: "messages", 
+                var list1 = Message.query({
                     inquiry: "getMessageListByParam", 
                     q: "msgGrpCd=MSG", 
-                    offset: 0, limit: 100}).$promise;
-                var list2 = RESTfulService.getList({area: "app", service: "messages", 
-                    inquiry: "getMessageListByParam", 
-                    q: "msgGrpCd=MSG", 
-                    offset: 0, limit: 100}).$promise;
+                    offset: 0, limit: 100
+                    }).$promise;
                 var param = ""
                 list1.then(
                     function(data){
-                        vm.gridMstData = {
-                              data: angular.fromJson(angular.toJson(data)),
-                              /* schema: {
-                                  model: {
-                                      id: "messageDataMst",
-                                      fields: {
-                                          id: { type: "string", editable: false },
-                                          itemDescr: { type: "string", editable: false },
-                                          cat: { type: "string", editable: false },
-                                          mfg: { type: "string", editable: false },
-                                          mfgPartNo: { type: "string", editable: false },
-                                          itmStat2: { type: "string", editable: false },
-                                          price: { type: "number" },
-                                          qty: { type: "number" }
-                                      },
-                                                                      total: function() {
-                                            return this.get("qty") *  this.get("price");
-                                          }
-                                  }
-                              }, */
-                              pageSize: 10,
-                              serverPaging: true,
-                              serverSorting: true
-                        }
+                        vm.gridMstData.data(angular.fromJson(angular.toJson(data)));
                     },
                     function(error){
                         
                     }
                 )
                 .then(function(){
-                    vm.gridMst.select("tr:eq(1)");
+                    var tt = vm.gridMst.select("tr:eq(0)");
+                    console.log(tt);
                     console.log(vm.gridMst.select());
                 });
         };
         vm.gridMstChange = function(data, dataItem, columns) {
-            //console.log(dataItem);
-            vm.gridDtlData = {transport: {
-                read: function(options){
-                    RESTfulService.getList({area: "app", service: "messages", 
-                        inquiry: "getMessageLocaleListByParam", 
-                        msgGrpCd: dataItem.MSG_GRP_CD, 
-                        msgCd: dataItem.MSG_CD}).$promise
-                    .then(function(data){
-                        options.success(angular.fromJson(angular.toJson(data)))
-                    }
-                    ,function(error){
-                        options.error(error);
-                    });
-                    
-                },
-                parameterMap: function(data, type) {
-                    console.log(data);
-                    console.log(type);
-                    if (type == "read") {
-                        console.log(data);
-                    }
-                },
-                create : function(options){
-                    console.log(options);
-                },
-                update: function(options){
-                    console.log(options);
-                },
-                destroy: function(options){
-                    console.log(options);
-                }
-            },
-            pageSize: 10,
-            serverPaging: true,
-            serverSorting: true}
-            //console.log(columns); //option selectable : 'cell'
+            vm.mstSelectedItem = dataItem;
+            console.log(vm.mstSelectedItem);
+            Message.query({
+                inquiry: "getMessageLocaleListByParam",
+                msgGrpCd: dataItem.MSG_GRP_CD, 
+                msgCd: dataItem.MSG_CD}).$promise
+            .then(function(data){
+                vm.gridDtlData.data(angular.fromJson(angular.toJson(data)));
+            }
+            ,function(error){
+                options.error(error);
+            });
         };
+        vm.save = function(){
+            if(!vm.gridDtlData.UPDATE && !vm.gridMstData.UPDATE) return false;
+            vm.gridMst1.trigger("saveChanges");
+            vm.gridMst.trigger("saveChanges");
+            vm.gridDtl.trigger("saveChanges");
+            vm.gridDtlData.data().at(0).set("MSG_GRP_CD", "MSG");
+            
+            var data = null;
+            if(!vm.gridMstData.UPDATE) {
+                data = angular.copy(vm.mstSelectedItem);
+            }
+            else{
+                data = vm.gridMstData.UPDATE[0];
+            }
+            console.log(data);
+            if(!data) return;
+            data.MSG_LOC_LIST = vm.gridDtlData.UPDATE;
+            
+            if(data.MSG_PK){
+                /* Message.save({id: vm.gridMstData.UPDATE[0].MSG_PK}, angular.toJson(data)
+                ,function(response){
+                    console.log(response);
+                },function(error){
+                    console.log(error.data.MESSAGE);
+                }); */
+            }
+            else{
+                /* Message.save(angular.toJson(data)
+                ,function(response){
+                    console.log(response);
+                },function(error){
+                    console.log(error.data.MESSAGE);
+                }); */
+            }
+            console.log(data);
+        };
+        vm.gridMstSavechange = function(e){
+            console.log("gridMstSavechange");
+            //console.log(e);
+        }
+        vm.iputchange = function(){
+            //$scope.$applyAsync($scope.$apply());
+        }
     }]);
 })();
 
@@ -151,7 +208,7 @@
             <kendo-button k-scope-field="vm.btn_Search" class="btn_a3" k-on-click="vm.search()" disabled="disabled">태그</kendo-button>
             <input sprite-css-class ="'k-icon k-i-refresh'" type="button" name="" class="btn_a3" value="동적활성버튼" title="" ng-click="vm.search()" ng-disabled="vm.disabled"/>
             <input type="button" name="" class="btn_a3" value="ng태그" title="" ng-click="vm.search()" ng-disabled="true"/>
-            <input type="button" name="" class="btn_a3" value="태그" title="" ng-click="vm.search()" disabled="disabled"/>
+            <input type="button" name="" class="btn_a3" value="저장" title="" ng-click="vm.save()"/>
         </div>
     </div>
     <div class="searchbox">
@@ -184,17 +241,54 @@
                     </td>
                     <th ng-bind="vm.label.msgGrpCd"></th>
                     <td>
-                        <common-code-test code="resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST" ng-disabled="vm.disabled"></common-code-test>
+                        <common-code-test code="api/login/resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST" ng-disabled="vm.disabled"></common-code-test>
                     </td>
                     <th ng-bind="vm.label.msgCd"></th>
                     <td>
-                        <common-code-Combo code="resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST" ng-disabled="vm.disabled"></common-code-Combo>
+                        <common-code-Combo code="api/login/resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST" ng-disabled="vm.disabled"></common-code-Combo>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="datatable1">
+        <table>
+            <colgroup>
+                <col width="100px"><col width="">
+                <col width="100px"><col width="">
+                <col width="100px"><col width="">
+                <col width="100px"><col width="">
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th ng-bind="vm.label.msgGrpCd">부서</th>
+                    <td>
+                        <select class="sel2" title="" ng-disabled="vm.disabled">
+                            <option value="MSG">메세지</option>
+                            <option value="LAB">라벨</option>
+                        </select>
+                    </td>
+                    <th ng-bind="vm.label.msgCd">부서1</th>
+                    <td>
+                        <select kendo-combo-box class="sel2" ng-disabled="vm.disabled" title="">
+                            <option value="MSG">메세지</option>
+                            <option value="LAB">라벨</option>
+                        </select>
+                    </td>
+                    <th ng-bind="vm.label.msgGrpCd"></th>
+                    <td>
+                        <common-code-test code="api/login/resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST" ng-disabled="vm.disabled"></common-code-test>
+                    </td>
+                    <th ng-bind="vm.label.msgCd"></th>
+                    <td>
+                        <common-code-Combo code="api/login/resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST" ng-disabled="vm.disabled"></common-code-Combo>
                     </td>
                 </tr>
                 <tr>
                     <th ng-bind="vm.label.msgGrpCd">부서</th>
                     <td>
-                        <select kendo-drop-down-list class="sel2" ng-disabled="vm.disabled" title="">
+                        <select kendo-drop-down-list="vm.dropdonlist" class="sel2" ng-disabled="vm.disabled" title="">
                             <option value="MSG">메세지</option>
                             <option value="LAB">라벨</option>
                         </select>
@@ -211,12 +305,28 @@
                     <td>
                     </td>
                 </tr>
+                <tr>
+                    <th>{{'LAB.SAVE' | translate}}</th>
+                    <td>
+                        <select kendo-drop-down-list="vm.dropdown1" class="sel2" ng-model="vm.mstSelectedItem.MSG_GRP_CD" title="">
+                            <option value="MSG">메세지</option>
+                            <option value="LAB">라벨</option>
+                        </select>
+                    </td>
+                    <th >{{'LAB.DELETE' | translate}}</th>
+                    <td>
+                        <input class="k-textbox ip4" k-min="0" k-max="100" k-ng-model="vm.mstSelectedItem.MSG_CD" ng-model="vm.mstSelectedItem.MSG_CD" ng-change="vm.iputchange()" style="width: 100%;" />
+                    </td>
+                    <th></th>
+                    <td>
+                        <input class="k-textbox" k-min="0" k-max="100" k-ng-model="vm.mstSelectedItem.MSG_CD" ng-model="vm.mstSelectedItem.MSG_CD" style="width: 100%;" />
+                    </td>
+                    <th ></th>
+                    <td>
+                    </td>
+                </tr>
             </tbody>
         </table>
-    </div>
-    
-    <div class="datatable1">
-        
     </div>
     <div class="totalbox">
         <div class="l_box">
@@ -231,7 +341,8 @@
     </div>
     <div class="datatable2">
         <kendo-grid  k-scope-field="vm.gridMst" 
-                     ims-grid k-options="imsgrid.options" 
+                     ims-grid k-options="imsgrid.options"
+                     k-editable='{"mode": "popup", "create": true, "update": true, "destroy": false}'
                      k-data-source="vm.gridMstData" 
                      k-ng-delay="vm.gridMstData" 
                      k-columns="vm.gridMstColumns" 
@@ -253,12 +364,14 @@
                      ims-grid k-options="imsgrid.options" 
                      k-data-source="vm.gridDtlData" 
                      k-ng-delay="vm.gridDtlData" 
-                     k-columns="vm.gridDtlColumns"></kendo-grid>
+                     k-columns="vm.gridDtlColumns"
+                     k-on-change="{dtlSelectedItem}"></kendo-grid>
     </div>
-<kendo-grid  k-scope-field="vm.gridMst" 
+<kendo-grid  k-scope-field="vm.gridMst1" 
                      ims-grid k-options="imsgrid.options" 
                      k-data-source="vm.gridMstData" 
                      k-ng-delay="vm.gridMstData" 
                      k-columns="vm.gridMstColumns" 
-                     k-on-change="vm.gridMstChange(data, dataItem, columns)"></kendo-grid>
+                     k-on-change="vm.gridMstChange(data, dataItem, columns)"
+                     k-on-save-changes="vm.gridMstSavechange(kendoEvent)"></kendo-grid>
 </div>
