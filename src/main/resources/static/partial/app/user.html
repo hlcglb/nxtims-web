@@ -1,23 +1,217 @@
 <script type="text/javascript">
-(function(){
-    'use strict';
-    function ProgramController($scope, $injector){
-        var vm = this;
-        vm.number = 3588500;
-        vm.text = "module user test";
-    }
+    (function() {
+        'use strict';
+        angular.module("programModule").controller("ProgramController",
+                ["$scope", "RESTfulService", "$resource", "$q", function($scope, RESTfulService, $resource, $q) {
+                    var vm = this;
+                    vm.startDate = new Date();   
+                    vm.endDate = new Date();   
+                    vm.grid1Data = [];
+                    vm.grid2Data = [];
+                    vm.grid2columns = [];
+                    $scope.onChange=function(data){
+                        $scope.selected = data;
+                        $scope.selected.dirty=true;                
+                    };
+                    vm.search = function() {
+                        console.log(vm.grid);
+                        var list1 = RESTfulService.getList({
+                            area: "app",
+                            service: "messages",
+                            inquiry: "getMessageListByParam",
+                            q: "msgGrpCd=MSG",
+                            offset: 1,
+                            limit: 10}).$promise;
+                        var list2 = RESTfulService.getList({
+                            area: "app",
+                            service: "messages",
+                            inquiry: "getMessageListByParam",
+                            q: "msgGrpCd=MSG",
+                            offset: 1,
+                            limit: 10}).$promise;
+                        var param = ""
+                        
+                        list1.then(function(data) {
+                            vm.grid1Data = angular.fromJson(angular.toJson(data));
+                            console.log(vm.grid1Data);
+                            return RESTfulService.getList({
+                                area: "app",
+                                service: "messages",
+                                inquiry: "getMessageLocaleListByParam",
+                                msgGrpCd: "MSG",
+                                msgCd: data[0].MSG_CD}).$promise;
+                        }, function(error) {
+                        }).then(function(data) {
+                            vm.grid2Data = angular.fromJson(angular.toJson(data));
+                        }, function(error) {
+
+                        })
+                    };
+                   
+                    vm.grid = function(data){
+                        alert(data);
+                       // vm.grid1Data = angular.fromJson(angular.toJson(Data));
+                        
+                    };
+                    
+                    vm.watch = $scope.$watch('value2', function(newValue, oldValue){
+                        if(oldValue != newValue){
+                            $scope.grid1.$dirty = true;
+                            $scope.grid1.$pristine = false;
+                            watch();
+                          }
+                        })
+                    
+                }]);
+    })();
+
     
-    ProgramController.injector = ["$scope", "$injector"];
-    angular.module("programModule")
-    .controller("ProgramController", ProgramController);
-})();
+    
+</script>
+
+<script>
+/*
+ * 
+ * Excel file dataSource에 붙여넣기후 grid에 적용하는 예제
+ * 
+ */
+var X = XLSX;
+var xlf = document.getElementById('xlf');
+if(xlf.addEventListener) xlf.addEventListener('change', handleFile, false);
+if(grid1.addEventListener) grid1.addEventListener('change', handleFile, false);
+function to_json(workbook) {
+    var roa;
+    workbook.SheetNames.forEach(function(sheetName) {
+        roa = X.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+    });
+    return roa;
+}
+function process_wb(wb) {
+    //angular.element(document.getElementById('grid1')).scope().vm.grid(Data);
+    localStorage["grid_data"] = JSON.stringify(to_json(wb), 2);;
+    $("#grid").data("kendoGrid").dataSource.read();
+}
+function handleFile(e) {
+    var files = e.target.files;
+    var f = files[0];
+    {
+        var reader = new FileReader();
+        var name = f.name;
+        reader.onload = function(e) {
+            if(typeof console !== 'undefined') console.log("onload", new Date());
+            var data = e.target.result;
+            var wb;
+            wb = X.read(data, {type: 'binary'});
+            process_wb(wb);
+            }
+        };
+        reader.readAsBinaryString(f);
+    }
+</script>
+
+<script>
+/*
+ * 
+ * Excel copy후 창에 붙여넣기 하면 paste되는 예제
+ * rest부분도 같이
+ */
+ function setTestData(){
+     setdata = [];
+     var testData = [
+       {ProductID: 1, ProductName: "TEST1", UnitPrice : "12", UnitsInStock:"19", Discontinued:"false"},
+       {ProductID: 2, ProductName: "TEST2", UnitPrice : "23", UnitsInStock:"43", Discontinued:"true"},
+       {ProductID: 3, ProductName: "TEST3", UnitPrice : "34", UnitsInStock:"23", Discontinued:"false"},
+       {ProductID: 4, ProductName: "TEST4", UnitPrice : "56", UnitsInStock:"14", Discontinued:"false"},
+       {ProductID: 5, ProductName: "TEST5", UnitPrice : "78", UnitsInStock:"16", Discontinued:"true"}  
+     ];
+     for(key in testData[0]) {
+         setdata[key] = key;
+     }
+     localStorage["grid_data"] = JSON.stringify(testData);   
+ }
+ function getTestData(paste){
+     var grid = $("#grid").data("kendoGrid");
+     var data = [];
+    for(var i = 0; i < paste.length-1; i++){   
+        var cells = paste[i].split('\t');
+     grid.dataSource.add({
+           ProductID: cells[0],
+           ProductName: cells[1],
+           UnitPrice : cells[2],
+           UnitsInStock : cells[3],
+           Discontinued : cells[4]
+     });
+      }
+     localStorage["grid_data"] = JSON.stringify(Data);
+ }
+
+ $(document).ready(function(){
+     if(localStorage["grid_date"] == undefined){
+         setTestData();
+     }
+ })
+ function paste(e){
+     var clipboardData, pastedData;
+     e.stopPropagation();
+     e.preventDefault();
+     clipboardData = e.clipboardData || window.clipboardData;
+     pastedData = clipboardData.getData('Text');
+     var dataSplit = pastedData.split("\n");  
+     var data = dataSplit.join("\t");
+    getTestData(dataSplit);
+    $("#grid").data("kendoGrid").dataSource.read();
+ }
+ document.getElementById('editableDiv').addEventListener('paste', paste);
+
+ function reset(){
+     setTestData();
+     $("#grid").data("kendoGrid").dataSource.read();
+ }
+ function test(){
+   angular.element(document.getElementById('gridtest')).scope().vm.grid('a');
+ }
+</script>
+<script>
+
 </script>
 <div id="program" data-dynamic-controller="ProgramController as vm">
-    <p>{{program.id}}</p>
-    <input type="text" class="k-textbox" data-ng-model="program.id"></input>
-    <input type="text" data-ng-model="vm.text"></input>
-    <p>{{vm.number}}</p>
-    <p>{{vm.text}}</p>
-    <p>{{vm.number | currency}}</p>
+    <calendar front="2016/09/07" back="2016/09/10"></calendar>
+    <button onClick="reset(this)" id="btn_grid" class="k-button">rest</button>
+    <button onClick="paste()" class="k-button">paste</button>
+    <input type="file" onClick="file()" id="xlf" />
+    <div id='editableDiv' contenteditable='true'>Paste</div>
+    <a class='k-button k-grid-add' href='#' onlick='customCommand()'>Add new record</a>
+    <div class="bind">
 
+            
+    </div>
+    <grid></grid>
+    
+    <div class="gridtest" id ="gridtest">
+ 
+            <label>MSG_PK<input ng-model="selected.MSG_PK"/></label>
+            <label>MSG_GRP_CD<input ng-model="selected.MSG_GRP_CD"/></label>
+            <label>MSG_CD<input ng-model="selected.MSG_CD"/></label>
+            <label>MSG_NM<input ng-model="selected.MSG_NM"/></label><br>
+            <label>USER_ID<input ng-model="selected.USER_ID"/></label>
+            <label>MSG_LOC_LIST<input ng-model="selected.MSG_LOC_LIST"/></label><br>
+    
+        <kendo-button k-scope-field="vm.btn_Search" k-on-click="vm.search()">조회</kendo-button>
+        <kendo-button id="test" onclick="test(  )">test</kendo-button>
+        <input type="file" onclick="file()" id="grid1"/>
+        <kendo-grid id="grid1" k-scope-field="vm.grid" ims-grid k-options="imsgrid.options" k-data-source="vm.grid1Data"k-ng-delay="vm.grid2Data" k-selectable="true" k-on-change="onChange(data)"></kendo-grid>
+    <label>dirty : {{grid1.$dirty}}</label>
+    </div>
+    
+    <div class="gridtest">
+        {{vm.startDate}}
+        {{vm.endDate}}
+        <input id="front" kendo-date-picker ims-Calendar k-options="imsCalendar.options" mg-model="vm.startDate" k-rebind="vm.endDate" max = "vm.endDate"/>
+        <input id="back" kendo-date-picker ims-Calendar k-options="imsCalendar.options" mg-model="vm.endDate" k-rebind="vm.startDate" min = "vm.startDate"/>
+        <kendo-grid id="grid2" k-scope-field="vm.grid" comgrid k-options="comgrid.options" k-data-source="vm.grid1Data"k-ng-delay="vm.grid2Data"></kendo-grid>
+   
+    </div>
+    
 </div>
+
+
