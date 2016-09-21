@@ -111,7 +111,7 @@ public class AuthServiceTest {
 
             auth.setAuthId("TEST");
             auth.setAuthNm("TEST");
-            auth.setUserId("200065");
+            auth.setSessionUserId("200065");
             
             AuthResource authResource1 = new AuthResource();
             
@@ -148,7 +148,7 @@ public class AuthServiceTest {
 
             auth.setAuthId("ADMIN");
             auth.setAuthNm("어드민");
-            auth.setUserId("200065");
+            auth.setSessionUserId("200065");
 
             authService.insertAuth(auth);
         }
@@ -165,7 +165,7 @@ public class AuthServiceTest {
 
             auth.setAuthId("TEST");
             auth.setAuthNm("TEST");
-            auth.setUserId("200065");
+            auth.setSessionUserId("200065");
             
             AuthResource authResource1 = new AuthResource();
             
@@ -200,7 +200,7 @@ public class AuthServiceTest {
 
             auth.setAuthId("TEST");
             auth.setAuthNm("TEST");
-            auth.setUserId("200065");
+            auth.setSessionUserId("200065");
             
             AuthResource authResource1 = new AuthResource();
             
