@@ -1,0 +1,57 @@
+<script type="text/javascript">
+(function(){
+    'use strict';
+    angular.module("programModule")
+    .controller("PopupController", ["$scope","RESTfulService", "$resource", "$q",function controller($scope,RESTfulService,$resource, $q){
+        var popup = this;
+        popup.grid1Data = [];
+        var parent = $scope.$parent;
+        popup.search = function(){
+            var list1 = RESTfulService.getList({
+                area: "app",
+                service: "messages",
+                inquiry: "getMessageListByParam",
+                q: "msgGrpCd=MSG",
+                offset: 0,
+                limit: 100}).$promise;
+            var param = "";
+            
+            list1.then(function(data){
+                popup.grid1Data = angular.fromJson(angular.toJson(data));
+                return RESTfulService.getList({
+                    area: "app",
+                    service: "messages",
+                    inquiry: "getMessageLocaleListByParam",
+                    msgGrpCd: "MSG",
+                    msgCd: data[0].MSG_CD}).$promise;
+            }, function(error) {
+            })
+        };
+        
+        popup.confirm = function(){
+            parent.$windowInstance.close(true);
+        };
+
+        popup.cancel = function(){
+            parent.$windowInstance.close(false);
+        };
+        console.log($scope);
+    }]);
+})();
+</script>
+<div data-dynamic-controller="PopupController as pop">
+    <div class="box_cont">
+        <h3>거래처명 코드검색</h3>
+        <div class="searchbox">
+        <label for="search">코드/평점</label> <input type = "text" id="search" value={{item}}>
+        <button kendo-button type="button" ng-click="pop.search()">검색</button>
+        </div>
+    </div>
+    <div class="grid">
+        <kendo-grid id="resultgrid" k-scope-field="pop.grid" comgrid k-option="comgrid.options" k-data-source="pop.grid1Data"></kendo-grid>
+    </div>
+    
+    <button kendo-button type="button" ng-click="pop.confirm()">Confirm</button>
+    <button kendo-button type="button" ng-click="pop.cancel()">Cancel</button>
+    
+</div>

@@ -20,20 +20,20 @@
                             service: "messages",
                             inquiry: "getMessageListByParam",
                             q: "msgGrpCd=MSG",
-                            offset: 1,
-                            limit: 10}).$promise;
+                            offset: 0,
+                            limit: 100}).$promise;
                         var list2 = RESTfulService.getList({
                             area: "app",
                             service: "messages",
                             inquiry: "getMessageListByParam",
                             q: "msgGrpCd=MSG",
-                            offset: 1,
-                            limit: 10}).$promise;
+                            offset: 0,
+                            limit: 100}).$promise;
                         var param = ""
                         
                         list1.then(function(data) {
                             vm.grid1Data = angular.fromJson(angular.toJson(data));
-                            console.log(vm.grid1Data);
+                           
                             return RESTfulService.getList({
                                 area: "app",
                                 service: "messages",
@@ -170,6 +170,7 @@ function handleFile(e) {
  function test(){
    angular.element(document.getElementById('gridtest')).scope().vm.grid('a');
  }
+
 </script>
 <script>
 
@@ -189,7 +190,7 @@ function handleFile(e) {
     
     <div class="gridtest" id ="gridtest">
  
-            <label>MSG_PK<input ng-model="selected.MSG_PK"/></label>
+            <label>MSG_PK<input data-bind="value : selected.MSG_PK"/></label>
             <label>MSG_GRP_CD<input ng-model="selected.MSG_GRP_CD"/></label>
             <label>MSG_CD<input ng-model="selected.MSG_CD"/></label>
             <label>MSG_NM<input ng-model="selected.MSG_NM"/></label><br>
@@ -199,19 +200,18 @@ function handleFile(e) {
         <kendo-button k-scope-field="vm.btn_Search" k-on-click="vm.search()">조회</kendo-button>
         <kendo-button id="test" onclick="test(  )">test</kendo-button>
         <input type="file" onclick="file()" id="grid1"/>
-        <kendo-grid id="grid1" k-scope-field="vm.grid" ims-grid k-options="imsgrid.options" k-data-source="vm.grid1Data"k-ng-delay="vm.grid2Data" k-selectable="true" k-on-change="onChange(data)"></kendo-grid>
+        <kendo-grid id="grid1" k-scope-field="vm.grid" comgrid k-options="comgrid.options" k-data-source="vm.grid1Data" k-ng-delay="vm.grid2Data" k-selectable="true" k-on-change="onChange(data)"></kendo-grid>
     <label>dirty : {{grid1.$dirty}}</label>
     </div>
     
-    <div class="gridtest">
+    <div class="gridtest1">
         {{vm.startDate}}
         {{vm.endDate}}
         <input id="front" kendo-date-picker ims-Calendar k-options="imsCalendar.options" mg-model="vm.startDate" k-rebind="vm.endDate" max = "vm.endDate"/>
         <input id="back" kendo-date-picker ims-Calendar k-options="imsCalendar.options" mg-model="vm.endDate" k-rebind="vm.startDate" min = "vm.startDate"/>
-        <kendo-grid id="grid2" k-scope-field="vm.grid" comgrid k-options="comgrid.options" k-data-source="vm.grid1Data"k-ng-delay="vm.grid2Data"></kendo-grid>
+        <kendo-grid id="grid2" k-scope-field="vm.grid2" comgrid k-options="comgrid.options" k-data-source="vm.grid2Data"k-ng-delay="vm.grid2Data"></kendo-grid>
    
     </div>
     
 </div>
-
 
