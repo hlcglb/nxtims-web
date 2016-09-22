@@ -59,6 +59,7 @@ angular.module("nxtIms",
         controller : "NavigationController",
         controllerAs: "controller"
     })
+    
     .state("main", {
         url : constants.mainUrl,
         views: {
@@ -71,6 +72,7 @@ angular.module("nxtIms",
             }
         }
     })
+
     .state("program", {
         url : constants.programUrl,
         views: {

@@ -1,4 +1,5 @@
 angular.module('nxtims.components',[])
+
 .component('popup', {})
 .component('commonCode', {
     template: '<select kendo-drop-down-list k-options="$ctrl.officeOptions"></select>',
@@ -30,10 +31,10 @@ angular.module('nxtims.components',[])
         controller: ['$element', function(element){
             var ctrl = this;
             ctrl.options = {
-                            toolbar:["excel","create"],
+                            toolbar:["excel","create",{template: "<span>Toolbar template</span>"}],
                             excel:{fileName : "text.xlsx"},    
                             dataSource : null,
-                            editable: true,
+                            
                             selectable: "row",
                             sortable: true,
                             pageable: true,
