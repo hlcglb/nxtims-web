@@ -108,6 +108,7 @@ public class UserControllerTests {
             user.setUserId("XXXXXX");
             user.setUserNm("XXXXXX");
             user.setUserPwd("12345qwert");
+            user.setEmail("xxxxxx@hyundai-uni.com");
             user.setUseYn("Y");
             
             Auth auth = new Auth();

@@ -6,6 +6,14 @@
       auto-deregistration: true
       client:
         prefer-ip: true
+mail:
+  host: 203.228.216.25
+  default-encoding: UTF-8
+  system-name: LET'S
+  homepage-url: http://gaia.e-hlc.com
+  from-email: nxtims@e-hlc.com
+  from-name: TEAMS
+  subject-prefix: TEAMS
 ---
 spring:
   profiles: default
