@@ -8,8 +8,8 @@
 
 angular.module('nxtIms.home',[])
 .controller("MainController", 
-        ["$state", "Authentication", "constants",
-         function($state, Authentication, constants) {
+        ["$state",
+         function($state) {
     var self = this;
 
 }]);

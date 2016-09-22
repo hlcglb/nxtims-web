@@ -135,7 +135,7 @@ angular.module("programModule")
 });
 angular.module("programModule")
 .component('commonCodeCombo', {
-    template: '<select kendo-combo-box k-options="$ctrl.options"></select>',
+    template: '<select class="sel2" kendo-combo-box k-options="$ctrl.options"></select>',
     bindings: {
         code: '@',
         text: '@',

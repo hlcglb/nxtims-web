@@ -15,7 +15,7 @@ angular.module('nxtims.services',[])
 /*
  * kendo datasource로 변환 
  */
-.factory('KendoDataHelper',[function(){
+.factory('KendoDataHelper',['UserService', function(UserService){
     
     var transform = function(object, handler) {
         if(jQuery.isPlainObject(object) || angular.isArray(object)) {
@@ -64,6 +64,43 @@ angular.module('nxtims.services',[])
         }
         return false;
     }
+    
+    var setUdateData = function(dataSource, orgModel){
+        var model = orgModel.toJSON();
+        model.uid = angular.copy(orgModel.uid);
+        var updateData = dataSource.UPDATE;
+        var idx = -1;
+        if(updateData){
+            switch(model.TRANSACTION_TYPE){
+            case "C":
+            case "U":
+                for(var i in updateData){
+                    if(updateData[i].uid == model.uid) idx = i;
+                }
+                idx > -1 ? updateData[idx] = model : updateData.push(model);
+                break;
+            case "D":
+                for(var i in updateData){
+                    if(updateData[i].uid == model.uid) idx = i;
+                }
+                if(idx > -1){
+                    updateData[i].TRANSACTION_TYPE == "C" ? updateData.splice(i,1) : updateData[i] = model;
+                }
+                else updateData.push(model);
+                break;
+            }
+        }
+        else{
+            dataSource.UPDATE = new Array();
+            if(model.TRANSACTION_TYPE == "D"){
+                for(var i=0; i<dataSource._destroyed.length; i++){
+                    dataSource.UPDATE.push(dataSource._destroyed[i]);
+                }
+            }
+            else dataSource.UPDATE.push(model);
+        }
+        console.log(dataSource);
+    };
     /**
      * type에 따른 kendo datasource 리턴
      * 
@@ -80,7 +117,51 @@ angular.module('nxtims.services',[])
             }
             
             break;
-        case 'grid':
+        case 'data':
+            var defualtDataSource = {
+                data: [],
+                schema: {
+                    model: {}
+                },
+                pageSize: 10
+            };
+            var changeFunction = function(e){
+                switch(e.action){
+                case "add" :
+                    e.items[0].TRANSACTION_TYPE = "C";
+                case "itemchange" :
+                    console.log("itemchange --------");console.log(e);
+                    var model = e.items[0];
+                    if(model.dirty){
+                        (model.isNew()) ? model.TRANSACTION_TYPE = "C" : model.TRANSACTION_TYPE = "U";
+                        if(model.SESSION_USER_ID == null) model.SESSION_USER_ID = UserService.getUser().USER_ID;
+                    }
+                    setUdateData(this, model);
+                    if(angular.isFunction(data.change)){
+                        data.change(e);
+                    }
+                    break;
+                case "remove" :
+                    console.log("remove --------");console.log(e);
+                    var model = e.items[0];
+                    model.TRANSACTION_TYPE = "D";
+                    setUdateData(this, model);
+                    if(angular.isFunction(data.change)){
+                        data.change(e);
+                    }
+                    break;
+                case "sync":
+                    console.log("sync --------");console.log(e);
+                    break;
+                default:
+                    if(this.UPDATE) delete this.UPDATE;
+                    break;
+                }
+                
+            };
+            angular.extend(defualtDataSource, data);
+            defualtDataSource.change = changeFunction;
+            dataSource = new kendo.data.DataSource(defualtDataSource);
             break;
         default:
             break;
@@ -91,5 +172,7 @@ angular.module('nxtims.services',[])
     return {
         toKendoData: toKendoData
     };
+    
+    
 
 }]);

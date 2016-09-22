@@ -3,9 +3,10 @@
 (function(){
     'use strict';
     angular.module("programModule")
-    .controller("ProgramController", ["$scope", "RESTfulService", "$resource", "$q", function($scope, RESTfulService, $resource, $q){
+    .controller("ProgramController", ["$scope", "RESTfulService", "$resource", "$q", "KendoDataHelper", 
+                                      function($scope, RESTfulService, $resource, $q, KendoDataHelper){
         var vm = this;
-        var Message = RESTfulService("api/app/messages");
+        var Message = RESTfulService("api/app/messages/:msgPk");
         vm.number = 1234;
         vm.text = "module authority test";
         vm.label = {
@@ -38,23 +39,26 @@
         
         //grid
         //mst
-        vm.gridMstData = new kendo.data.DataSource({
+        vm.gridMstData = KendoDataHelper.toKendoData({
             data: [],
             schema: {
                 model: {
                     id: "MSG_PK",
                     fields: {
                         MSG_PK: { type: "string", editable: false, nullable: true },
-                        MSG_GRP_CD: { type: "string", editable: true, validation: { required: true }},
-                        MSG_CD: { type: "string", editable: true, validation: { required: true } },
+                        MSG_GRP_CD: { type: "string", editable: false, validation: { required: true }},
+                        MSG_CD: { type: "string", editable: false, validation: { required: true } },
                         MSG_NM: { type: "string", editable: true },
                         USER_ID: { type: "string", editable: false },
                         MSG_LOC_LIST: { type: "string", editable: false }
                     }
                 }
             },
-            pageSize: 10
-        });
+            pageSize: 10,
+            change: function(e){
+                console.log("MST change out");
+            } 
+        }, "data");
         vm.gridMstColumns = [
             {field: "MSG_PK", title: "{{'LAB.SAVE' | translate}}"},
             {field: "MSG_GRP_CD", title: "Group Code"},
@@ -65,7 +69,7 @@
             {command: ["edit"], title: "&nbsp;", width: "150px" }];
         
         //detaile
-        vm.gridDtlData = new kendo.data.DataSource({
+        vm.gridDtlData = KendoDataHelper.toKendoData({
             data: [],
             schema: {
                 model: {
@@ -83,10 +87,9 @@
             },
             pageSize: 10,
             change: function(e){
-                console.log("datasource change");
-                console.log(e);
+                console.log("datasource change out");
             } 
-        });
+        }, "data");
         vm.gridDtlColumns = [{field: "MSG_LOC_PK"},
                              {field: "MSG_GRP_CD", title: "Group Code"},
                              {field: "MSG_CD", title: "Msg Code"},
@@ -97,20 +100,10 @@
         
         //event
         vm.addRow = function(property){
-            console.log(property);
             vm[property].addRow();
-            if(property == "gridDtl"){
-                console.log(vm.gridDtlData.data());
-                vm.gridDtlData.data().at(0).set("MSG_LOC_PK", vm.mstSelectedItem.MSG_PK);
-                vm.gridDtlData.data().at(0).set("MSG_GRP_CD", "MSG");
-                vm.gridDtlData.data().at(0).set("MSG_CD", vm.mstSelectedItem.MSG_CD);
-                console.log(vm.gridDtlData.data());
-            }
         }
         vm.removeRow = function(property){
             vm[property].removeRow(vm[property].select());
-            //vm.gridMst.select("tr:eq(0)");
-            console.log(vm[property].select());
         }
         vm.search = function(){
             /* if(confirm("조회 하시겠습니까?"))
@@ -128,15 +121,10 @@
                     function(error){
                         
                     }
-                )
-                .then(function(){
-                    var tt = vm.gridMst.select("tr:eq(0)");
-                    console.log(tt);
-                    console.log(vm.gridMst.select());
-                });
+                );
         };
         vm.gridMstChange = function(data, dataItem, columns) {
-            vm.mstSelectedItem = dataItem;
+            vm.mstSelectedItem = data;
             console.log(vm.mstSelectedItem);
             Message.query({
                 inquiry: "getMessageLocaleListByParam",
@@ -149,40 +137,63 @@
                 options.error(error);
             });
         };
+        vm.gridMst1Change = function(e) {
+            console.log(e);
+        };
+        vm.gridMstEdit = function(e){
+            console.log(e);
+            if(e.model.isNew()){
+                console.log();
+            }
+        };
+        vm.gridMstRemove = function(e){
+            if(vm.gridMstData.UPDATE && vm.gridMstData.UPDATE.length > 0){
+                alert("업데이트한 정보가 있습니다.");
+                vm.gridMstData.cancelChanges();
+            }
+        }
+        vm.gridDtlEdit = function(e){
+            if(e.model.isNew()){
+                e.model.MSG_GRP_CD = vm.mstSelectedItem.MSG_GRP_CD;
+                e.model.MSG_CD = vm.mstSelectedItem.MSG_CD;
+            }
+        };
         vm.save = function(){
+            console.log(vm.gridDtlData);
             if(!vm.gridDtlData.UPDATE && !vm.gridMstData.UPDATE) return false;
             vm.gridMst1.trigger("saveChanges");
             vm.gridMst.trigger("saveChanges");
             vm.gridDtl.trigger("saveChanges");
-            vm.gridDtlData.data().at(0).set("MSG_GRP_CD", "MSG");
             
             var data = null;
             if(!vm.gridMstData.UPDATE) {
-                data = angular.copy(vm.mstSelectedItem);
+                data = vm.mstSelectedItem;
             }
             else{
                 data = vm.gridMstData.UPDATE[0];
             }
-            console.log(data);
-            if(!data) return;
-            data.MSG_LOC_LIST = vm.gridDtlData.UPDATE;
             
-            if(data.MSG_PK){
-                /* Message.save({id: vm.gridMstData.UPDATE[0].MSG_PK}, angular.toJson(data)
+            if(!data) return;
+            data.SESSION_USER_ID = "tester";
+             data.MSG_LOC_LIST = vm.gridDtlData.UPDATE;
+            console.log(data);
+            
+            /* if(data.MSG_PK){ //update
+                Message.update({msgPk: data.MSG_PK}, angular.toJson(data)
                 ,function(response){
                     console.log(response);
                 },function(error){
                     console.log(error.data.MESSAGE);
-                }); */
+                });
             }
-            else{
-                /* Message.save(angular.toJson(data)
+            else{ //save
+                Message.save(angular.toJson(data)
                 ,function(response){
                     console.log(response);
                 },function(error){
                     console.log(error.data.MESSAGE);
-                }); */
-            }
+                });
+            } */
             console.log(data);
         };
         vm.gridMstSavechange = function(e){
@@ -295,11 +306,11 @@
                     </td>
                     <th ></th>
                     <td>
-                        <input kendo-numeric-text-box k-min="0" k-max="100" k-ng-model="vm.value" style="width: 100%;" />
+                        <input class="ip4" kendo-numeric-text-box k-min="0" k-max="100" k-ng-model="vm.value"/>
                     </td>
                     <th></th>
                     <td>
-                        <select kendo-multi-select k-options="vm.selectOptions" k-ng-model="vm.selectedIds"></select>
+                        <select class="ip4" kendo-multi-select k-options="vm.selectOptions" k-ng-model="vm.selectedIds"></select>
                     </td>
                     <th ></th>
                     <td>
@@ -315,11 +326,11 @@
                     </td>
                     <th >{{'LAB.DELETE' | translate}}</th>
                     <td>
-                        <input class="k-textbox ip4" k-min="0" k-max="100" k-ng-model="vm.mstSelectedItem.MSG_CD" ng-model="vm.mstSelectedItem.MSG_CD" ng-change="vm.iputchange()" style="width: 100%;" />
+                        <input class="k-textbox ip4" k-min="0" k-max="100" ng-model="vm.mstSelectedItem.MSG_CD" ng-change="vm.iputchange()" />
                     </td>
                     <th></th>
                     <td>
-                        <input class="k-textbox" k-min="0" k-max="100" k-ng-model="vm.mstSelectedItem.MSG_CD" ng-model="vm.mstSelectedItem.MSG_CD" style="width: 100%;" />
+                        <input type="text" class="ip4" k-min="0" k-max="100" ng-model="vm.mstSelectedItem.MSG_CD" />
                     </td>
                     <th ></th>
                     <td>
@@ -346,7 +357,9 @@
                      k-data-source="vm.gridMstData" 
                      k-ng-delay="vm.gridMstData" 
                      k-columns="vm.gridMstColumns" 
-                     k-on-change="vm.gridMstChange(data, dataItem, columns)"></kendo-grid>
+                     k-on-change="vm.gridMstChange(data, dataItem, columns)"
+                     k-on-remove="vm.gridMstRemove(kendoEvent)"
+                     k-on-edit="vm.gridMstEdit(kendoEvent)"></kendo-grid>
     </div>
     <div class="totalbox">
         <div class="l_box">
@@ -365,13 +378,13 @@
                      k-data-source="vm.gridDtlData" 
                      k-ng-delay="vm.gridDtlData" 
                      k-columns="vm.gridDtlColumns"
-                     k-on-change="{dtlSelectedItem}"></kendo-grid>
+                     k-on-edit="vm.gridDtlEdit(kendoEvent)"></kendo-grid>
     </div>
 <kendo-grid  k-scope-field="vm.gridMst1" 
                      ims-grid k-options="imsgrid.options" 
                      k-data-source="vm.gridMstData" 
                      k-ng-delay="vm.gridMstData" 
                      k-columns="vm.gridMstColumns" 
-                     k-on-change="vm.gridMstChange(data, dataItem, columns)"
+                     k-on-change="vm.gridMst1Change(kendoEvent)"
                      k-on-save-changes="vm.gridMstSavechange(kendoEvent)"></kendo-grid>
 </div>

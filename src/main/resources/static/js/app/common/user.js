@@ -8,9 +8,7 @@
 
 angular.module('comn.service.user',[])
 .service('UserService', [function () {
-        var user = [];
-        var menuList = [];
-        var menu = [];
+        var user, menu, menuList;
         this.setResource = function(resource){
             this.User(resource.USER, resource.MENU_LIST);
         };
