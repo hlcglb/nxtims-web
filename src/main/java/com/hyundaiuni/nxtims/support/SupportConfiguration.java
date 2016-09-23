@@ -13,6 +13,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import com.hyundaiuni.nxtims.domain.app.CodeDetail;
 import com.hyundaiuni.nxtims.exception.SupportConfigurationException;
 import com.hyundaiuni.nxtims.service.app.CodeService;
+import com.hyundaiuni.nxtims.support.ftp.FtpClientTemplate;
 import com.hyundaiuni.nxtims.support.mail.VelocityEmailSender;
 
 @Configuration
@@ -37,6 +38,18 @@ public class SupportConfiguration {
 
     @Value("${mail.subject-prefix}")
     private String mailSubjectPrefix;
+    
+    @Value("${ftp.server}")
+    private String ftpServer;
+    
+    @Value("${ftp.username}")
+    private String ftpUsername;
+    
+    @Value("${ftp.password}")
+    private String ftpPassword;
+    
+    @Value("${ftp.mode}")
+    private String ftpMode;    
 
     @Autowired
     private CodeService codeService;
@@ -99,4 +112,16 @@ public class SupportConfiguration {
 
         return velocityEmailSender;
     }
+    
+    @Bean
+    public FtpClientTemplate ftpClientTemplate() {
+        FtpClientTemplate ftpClientTemplate = new FtpClientTemplate();
+        
+        ftpClientTemplate.setServer(ftpServer);
+        ftpClientTemplate.setUsername(ftpUsername);
+        ftpClientTemplate.setPassword(ftpPassword);
+        ftpClientTemplate.setMode(ftpMode);
+
+        return ftpClientTemplate;
+    }    
 }
