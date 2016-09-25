@@ -1,14 +1,11 @@
 package com.hyundaiuni.nxtims.service.app;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,10 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.hyundaiuni.nxtims.domain.app.Notice;
 import com.hyundaiuni.nxtims.domain.app.NoticeFile;
-import com.hyundaiuni.nxtims.exception.FtpClientException;
-import com.hyundaiuni.nxtims.exception.ServiceException;
 import com.hyundaiuni.nxtims.support.rest.RestApiTemplate;
-import com.hyundaiuni.nxtims.support.ftp.FtpClientTemplate;
 
 @Service
 public class NoticeService {
@@ -30,14 +24,6 @@ public class NoticeService {
 
     @Autowired
     private RestApiTemplate apiTemplate;
-
-    @Autowired
-    private FtpClientTemplate ftpClientTemplate;
-
-    private String remoteDir = "/app/javadaemon/global/nxtims/notice/attachedFile/";
-
-    @Value("${system.temp-local-dir}")
-    private String tempLocalDir;
 
     public List<Notice> getNoticeListByParam(String query, int offset, int limit) {
         Assert.notNull(query, "parameter must not be null");
@@ -79,20 +65,6 @@ public class NoticeService {
                 MultipartFile attachedFile = noticeFile.getFile();
                 noticeFile.setFileNm(attachedFile.getOriginalFilename());
 
-                File tempFile = new File(tempLocalDir + noticeFile.getFileNm());
-
-                noticeFile.setFileUrl(remoteDir + tempFile.getName());
-
-                try {
-                    attachedFile.transferTo(tempFile);
-                    ftpClientTemplate.sendFile(remoteDir, tempFile);
-
-                    FileUtils.deleteQuietly(tempFile);
-                }
-                catch(IOException | FtpClientException e) {
-                    throw new ServiceException("MSG.FTP_SEND_ERROR", e.getMessage(),
-                        new String[] {noticeFile.getFileNm()});
-                }
             }
         }
 
@@ -114,20 +86,6 @@ public class NoticeService {
                     MultipartFile attachedFile = noticeFile.getFile();
                     noticeFile.setFileNm(attachedFile.getOriginalFilename());
 
-                    File tempFile = new File(tempLocalDir + noticeFile.getFileNm());
-
-                    noticeFile.setFileUrl(remoteDir + tempFile.getName());
-
-                    try {
-                        attachedFile.transferTo(tempFile);
-                        ftpClientTemplate.sendFile(remoteDir, tempFile);
-
-                        FileUtils.deleteQuietly(tempFile);
-                    }
-                    catch(IOException | FtpClientException e) {
-                        throw new ServiceException("MSG.FTP_SEND_ERROR", e.getMessage(),
-                            new String[] {noticeFile.getFileNm()});
-                    }
                 }
             }
         }
