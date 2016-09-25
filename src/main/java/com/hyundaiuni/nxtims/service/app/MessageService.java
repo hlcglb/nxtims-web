@@ -15,7 +15,7 @@ import org.springframework.util.Assert;
 
 import com.hyundaiuni.nxtims.domain.app.Message;
 import com.hyundaiuni.nxtims.domain.app.MessageLocale;
-import com.hyundaiuni.nxtims.service.RestApiTemplate;
+import com.hyundaiuni.nxtims.support.rest.RestApiTemplate;
 
 @Service
 public class MessageService {

@@ -1,4 +1,4 @@
-package com.hyundaiuni.nxtims.handler;
+package com.hyundaiuni.nxtims.support.rest;
 
 import java.util.HashMap;
 import java.util.Map;

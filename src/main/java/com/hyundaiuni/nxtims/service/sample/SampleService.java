@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import com.hyundaiuni.nxtims.service.RestApiTemplate;
+import com.hyundaiuni.nxtims.support.rest.RestApiTemplate;
 
 @Component
 public class SampleService {

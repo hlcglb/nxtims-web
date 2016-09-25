@@ -19,7 +19,7 @@ import com.hyundaiuni.nxtims.domain.app.Notice;
 import com.hyundaiuni.nxtims.domain.app.NoticeFile;
 import com.hyundaiuni.nxtims.exception.FtpClientException;
 import com.hyundaiuni.nxtims.exception.ServiceException;
-import com.hyundaiuni.nxtims.service.RestApiTemplate;
+import com.hyundaiuni.nxtims.support.rest.RestApiTemplate;
 import com.hyundaiuni.nxtims.support.ftp.FtpClientTemplate;
 
 @Service

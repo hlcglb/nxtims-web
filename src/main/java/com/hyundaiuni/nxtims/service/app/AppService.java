@@ -14,7 +14,7 @@ import org.springframework.util.Assert;
 import com.hyundaiuni.nxtims.domain.app.Resource;
 import com.hyundaiuni.nxtims.domain.app.User;
 import com.hyundaiuni.nxtims.exception.ServiceException;
-import com.hyundaiuni.nxtims.service.RestApiTemplate;
+import com.hyundaiuni.nxtims.support.rest.RestApiTemplate;
 
 @Service
 public class AppService {

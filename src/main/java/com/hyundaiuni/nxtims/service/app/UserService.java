@@ -23,7 +23,7 @@ import org.springframework.util.Assert;
 
 import com.hyundaiuni.nxtims.domain.app.Auth;
 import com.hyundaiuni.nxtims.domain.app.User;
-import com.hyundaiuni.nxtims.service.RestApiTemplate;
+import com.hyundaiuni.nxtims.support.rest.RestApiTemplate;
 import com.hyundaiuni.nxtims.support.mail.Address;
 import com.hyundaiuni.nxtims.support.mail.VelocityEmailSender;
 
