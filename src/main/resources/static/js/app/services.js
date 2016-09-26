@@ -10,8 +10,14 @@
  * auth Module
  */
 
+angular.module('nxtims.services', []);
+angular.module('nxtims.services').factory('notify', ['$window', function(win) {
+    return function(msg) {
+        win.alert(msg);
+    };
+}]);
+angular.module('nxtims.services')
 
-angular.module('nxtims.services',[])
 /*
  * kendo datasource로 변환 
  */
@@ -99,7 +105,7 @@ angular.module('nxtims.services',[])
             }
             else dataSource.UPDATE.push(model);
         }
-        console.log(dataSource);
+        //console.log(dataSource);
     };
     /**
      * type에 따른 kendo datasource 리턴
@@ -126,11 +132,16 @@ angular.module('nxtims.services',[])
                 pageSize: 10
             };
             var changeFunction = function(e){
+                console.log(this.hasChanges());
                 switch(e.action){
                 case "add" :
-                    e.items[0].TRANSACTION_TYPE = "C";
+                    //e.items[0].TRANSACTION_TYPE = "C";
+                    console.log("add --------");console.log(this);
+                    this.sync();
+                    break;
                 case "itemchange" :
-                    console.log("itemchange --------");console.log(e);
+                    console.log("itemchange --------");console.log(this);
+                    console.log(e);
                     var model = e.items[0];
                     if(model.dirty){
                         (model.isNew()) ? model.TRANSACTION_TYPE = "C" : model.TRANSACTION_TYPE = "U";
@@ -142,7 +153,7 @@ angular.module('nxtims.services',[])
                     }
                     break;
                 case "remove" :
-                    console.log("remove --------");console.log(e);
+                    console.log("remove --------");console.log(this);
                     var model = e.items[0];
                     model.TRANSACTION_TYPE = "D";
                     setUdateData(this, model);
@@ -151,7 +162,8 @@ angular.module('nxtims.services',[])
                     }
                     break;
                 case "sync":
-                    console.log("sync --------");console.log(e);
+                    console.log("sync --------");console.log(this);
+                    console.log(e);
                     break;
                 default:
                     if(this.UPDATE) delete this.UPDATE;
@@ -175,4 +187,117 @@ angular.module('nxtims.services',[])
     
     
 
+}]);
+angular.module('nxtims.services')
+.service('ApiEvent',['RESTfulService', '$q', 'notify', function(RESTfulService, $q, notify){
+    var api;
+    var argsToArray = function(args){
+        /*var list = new Array(args.length);
+        for(var i = 0; i < list.length; i++) {
+            list[i] = args[i];
+        }*/
+        return Array.prototype.slice.call(args); //list;
+    };
+    
+    var apiFunction = function(){
+        var args = argsToArray(arguments);
+        var property = args.shift();
+        var that = this;
+        var defer = $q.defer();
+        api[property].apply(null, args).$promise.then(function(response){
+            var value = angular.fromJson(angular.toJson(response));
+            //console.log(that.dataSource === kendo.data.DataSource);
+            if(that.dataSource && property != "remove"){
+                (property == "query" || property == "get") ? that.dataSource.data(value) : setDataSource(value);
+                console.log(that.dataSource.data());
+            }
+
+            defer.resolve(value);
+        },function(reason){
+            defer.reject(reason);
+        });
+        return defer.promise;
+    }
+    this.dataSource;
+    this.isUpdate = function(){
+        return (this.dataSource.UPDATE && this.dataSource.UPDATE.length > 0) ? true : false;
+    };
+    this.getApi = function(){
+        return api;
+    }
+    this.query = function(){
+        var args = argsToArray(arguments);
+        args.unshift("query");
+        return apiFunction.apply(this, args);
+    };
+    this.get = function(){
+        var args = argsToArray(arguments);
+        args.unshift("get");
+        return apiFunction.apply(this, args);
+    };
+    this.save = function(){
+        var args = argsToArray(arguments);
+        args.unshift("save");
+        return apiFunction.apply(this, args);
+    };
+    this.update = function(){
+        var args = argsToArray(arguments);
+        args.unshift("update");
+        return apiFunction.apply(this, args);
+    };
+    this.remove = function(){
+        var args = argsToArray(arguments);
+        args.unshift("remove");
+        return apiFunction.apply(this, args);
+    };
+    this.saveChanges = function(parameter, successFunc, errorFunc){
+        var qList = new Array();
+        if(this.dataSource.UPDATE.length > 1){
+            notify("1건 이상의 데이터를 저장할 수 없습니다.");
+            return false;
+        }
+        for(var i in this.dataSource.UPDATE){
+            switch(this.dataSource.UPDATE[i].TRANSACTION_TYPE){
+            case "C":
+                console.log("save");
+                console.log(this.dataSource);
+                //qList.push(this.save(angular.toJson(this.dataSource.UPDATE[i])));
+                break;
+            case "U":
+                console.log("update");
+                console.log(this.dataSource);
+                //qList.push(this.update(parameters, this.dataSource.UPDATE[i]));
+                break;
+            case "D":
+                console.log("delete");
+                console.log(this.dataSource);
+                //qList.push(this.remove(parameters));
+                break;
+            default:
+                console.log("there is no TRANSACTION_TYPE");
+                return false;
+                break;
+            }
+        }
+        $q.all(qList).then(function(response){
+            if(angular.isFunction(successFunc)) successFunc(response);
+        },function(error){
+            if(angular.isFunction(errorFunc)) errorFunc(error);
+        });
+        
+    };
+    this.getInstance = function(url){
+        if(!url) return false;
+        api = RESTfulService(url);
+        return this;
+    };
+}]);
+
+angular.module('nxtims.services')
+.factory('ApiEvent1',['RESTfulService', '$q', function(RESTfulService, $q){
+    var api = RESTfulService;
+    api.dd = "123";
+    return function(url){
+        return api(rul);
+    }
 }]);

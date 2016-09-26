@@ -7,7 +7,6 @@
 'use strict';
 
 angular.module('nxtIms.navigation',[])
-.constant('Login.CookieKey', 'NXTIMS_SAVE_ID') //아이디 저장 cookie key
 .constant('PAGE_SESSION', 'NXTIMS_PAG_IN')     //이동할 페이지 정보 저장 session key
 /**
  * 페이지 이동 
@@ -91,7 +90,7 @@ angular.module('nxtIms.navigation',[])
         scope: false,
         restrict: "A",
         replace: true,
-        templateUrl: constants.comnTemplUrl + 'menu.html',
+        templateUrl: constants.layoutTemplUrl + 'menu.html',
         controller: ['$scope', function($scope){
             var ctrl = this;
         }],
@@ -168,7 +167,7 @@ angular.module('nxtIms.navigation',[])
                                 // 메뉴클릭시 권한 없을때 ui router event 전송
                                 $scope.$emit("$stateChangeStart", {}, {name: url}, null, $state.current, $state.params);
                             }
-                            else $window.open("/view" + url,currData.RESOURCE_NM);
+                            else $window.open(url,currData.RESOURCE_NM);
                         }
                             
                     }
@@ -182,53 +181,24 @@ angular.module('nxtIms.navigation',[])
 /**
  * navigation controller
  */
-.controller("NavigationController",["$state", "Authentication", "constants", "$kWindow", "$cookies", "Login.CookieKey", "$timeout",
-                            function($state, Authentication, constants, $kWindow, $cookies, CookieKey, $timeout) {
-
-    var self = this;
-    self.credentials = {};
-    self.buttonDisabled = false; //button diabled
+.controller("NavigationController",["$state", "Authentication", "constants", "$kWindow", "User", "$window",
+                            function($state, Authentication, constants, $kWindow, User, $window) {
     
-    /*
-     * 아이디 저장 쿠키 존재여부 확인 후 셋팅
-     */
-    if($cookies.get(CookieKey)){
-        self.credentials.username = atob($cookies.get(CookieKey));
-        self.saveId = true;
+    var self = this;
+    self.UserInfo = User.USER_NM + " " + (User.DEPT_CD || "부서이름");
+
+    self.reload = function(){
+        //$window.location.reload(true);
+        history.go(0);
     }
-    //login
-    self.login = function(event) {
-        self.buttonDisabled = true;
-        Authentication.login(self.credentials)
-        .then(
-                function(message){
-                    self.error = false;
-                    console.log(message);
-                    if(!$cookies.get(CookieKey) && self.saveId){
-                        // 쿠키가 없고 아이디저장 체크된 상태이면 쿠키 7일간 저장
-                        var now = new Date();
-                        now.setDate(now.getDate() + 7);
-                        $cookies.put(CookieKey, btoa(self.credentials.username), {expires: now});
-                    }
-                    $state.go(constants.main);
-                }, 
-                function(data){
-                    console.log(data);
-                    self.error = true;
-                    self.errorData = data;
-                    console.log(self);
-                    self.loginNotify.show(data.message/*kValue: data.message*/, "error"/*"ngTemplate"*/);
-                }
-        ).catch(function(error){
-            console.log("[#catch] " + error);
-        })
-        .finally(function(){
-            // 로그인 버튼 2번 클릭 방지
-            $timeout(function(){
-                self.buttonDisabled = false;
-            },500);
-            
-        });
+    self.test = "test";
+    //header style change on scroll
+    $window.onscroll = function() {
+        if ($window.pageYOffset > 61) {
+            self.test = "test1";
+        } else {
+            self.test = "test";
+        }
     };
     
     //logout
@@ -247,7 +217,7 @@ angular.module('nxtIms.navigation',[])
     }
     
     //password 찾기
-    self.find = function(){
+    self.userInfoClick = function(){
         var windowInstance = $kWindow.open({
             options:{
                 modal: true,
@@ -278,40 +248,7 @@ angular.module('nxtIms.navigation',[])
             }
         });
     };
-    
-    // container tracking
-    self.tracking = function(){
-        var windowInstance = $kWindow.open({
-            options:{
-                modal: true,
-                title: "find Password",
-                resizable: true,
-                height: 150,
-                width: 400,
-                visible: false
-            },
-            windowTemplateUrl: constants.popTemplUrl + "window.html",
-            templateUrl: constants.popTemplUrl + "commonPopup.html",
-            controller: ["$scope", "$windowInstance", "message", function($scope, $windowInstance, message){
-                $scope.message = message;
-                $scope.$windowInstance = $windowInstance;
-            }],
-            resolve: {
-                message: function () {
-                    return self.tracker;
-                }
-            }
-        });
-        windowInstance.result.then(function (result) {
-            if (result) {
-                self.result = "confirmed!";
-            }
-            else{
-                self.result = "canceled!";
-            }
-        });
-    };
-    
+
     //
     self.notifyOptions = {
                            templates: [{
