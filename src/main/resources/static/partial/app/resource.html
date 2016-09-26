@@ -4,7 +4,6 @@
     angular.module("programModule")
     .controller("searchController",["$scope", "$state", "Authentication", "constants", "$kWindow", "$cookies", "Login.CookieKey", "$timeout","RESTfulService","$resource", "$q", "KendoDataHelper",
                                     function($scope, $state, Authentication, constants, $kWindow, $cookies, CookieKey, $timeout, RESTfulService, $resource, $q, KendoDataHelper) {
-        var Message = RESTfulService("api/app/messages/:msgPk");
             var self = this;        
             self.search = function(){
                 var value = $("#search").val();            

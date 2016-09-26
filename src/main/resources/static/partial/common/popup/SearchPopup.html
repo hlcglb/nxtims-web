@@ -5,7 +5,7 @@
     .controller("PopupController", ["$scope","RESTfulService", "$resource", "$q","KendoDataHelper", function controller($scope,RESTfulService,$resource, $q, KendoDataHelper){
         var popup = this;
         var parent = $scope.$parent;
-        var Message = RESTfulService("api/app/resource/:msgPk");   
+        var Message = RESTfulService("api/app/resource");   
         console.log($scope.item);
         popup.gridMstData = KendoDataHelper.toKendoData({
             data: []},"data");
@@ -13,8 +13,8 @@
             /* if(confirm("조회 하시겠습니까?"))
             alert("search"); */
             var list1 = Message.query({
-                inquiry: "getMessageListByParam", 
-                q: "msgGrpCd=MSG", 
+                inquiry: "GetTestByParam", 
+                msgNM: $scope.item, 
                 offset: 0, limit: 100
                 }).$promise;
             var param = ""
