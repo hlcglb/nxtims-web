@@ -50,7 +50,7 @@ public class NoticeServiceTest {
         Exception ex = null;
 
         try {
-            noticeService.getNotice("0000000002");
+            noticeService.getNotice("0000000000");
         }
         catch(Exception e) {
             log.error(e.getMessage());
@@ -67,6 +67,21 @@ public class NoticeServiceTest {
             assertThat(e).isInstanceOf(ServiceException.class).hasMessageContaining("not found");
         }
     }
+    
+    @Test
+    public void testGetNoticeFileContentByPk() {
+        Exception ex = null;
+
+        try {
+            noticeService.getNoticeFileContentByPk("0000000000",1);
+        }
+        catch(Exception e) {
+            log.error(e.getMessage());
+            ex = e;
+        }
+
+        assertEquals(null, ex);
+    }    
 
     @Test
     public void testInsertNotice() {

@@ -3,6 +3,7 @@ package com.hyundaiuni.nxtims.controller.app;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -54,6 +55,24 @@ public class NoticeControllerTest {
 
         assertEquals(null, ex);
     }
+    
+    @Test
+    public void testGetNoticeFileContent() {
+        Exception ex = null;
+
+        try {
+
+            mvc.perform(get(URL + "/getNoticeFileContent?noticeId=0000000000&seq=1")).andDo(
+                print()).andExpect(status().isOk()).andExpect(
+                    content().contentType(MediaType.APPLICATION_OCTET_STREAM));
+        }
+        catch(Exception e) {
+            log.error(e.getMessage());
+            ex = e;
+        }
+
+        assertEquals(null, ex);
+    }    
 
     @Test
     public void testInsertNotice() throws Exception {

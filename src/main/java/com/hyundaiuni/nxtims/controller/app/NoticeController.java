@@ -1,7 +1,12 @@
 package com.hyundaiuni.nxtims.controller.app;
 
+import java.util.Map;
+
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -38,13 +43,31 @@ public class NoticeController {
         return new ResponseEntity<>(noticeService.getNotice(noticeId), HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/getNoticeFileContent", method = RequestMethod.GET)
+    public ResponseEntity<?> getNoticeFileContent(@RequestParam("noticeId") String noticeId,
+        @RequestParam("seq") int seq) {
+        Assert.notNull(noticeId, "noticeId must not be null");
+        Assert.notNull(seq, "seq must not be null");
+
+        Map<String, Object> fileContent = noticeService.getNoticeFileContentByPk(noticeId, seq);
+
+        String fileNm = MapUtils.getString(fileContent, "FILE_NM");
+        byte[] attachedFileContent = (byte[])MapUtils.getObject(fileContent, "FILE_CONTENT");
+        final HttpHeaders headers = new HttpHeaders();
+
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.set("Content-Disposition", String.format("inline; filename=\"" + fileNm + "\""));
+
+        return new ResponseEntity<byte[]>(attachedFileContent, headers, HttpStatus.OK);
+    }
+
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> insertNotice(@ModelAttribute Notice notice) {
         Assert.notNull(notice, "notice must not be null");
 
         return new ResponseEntity<>(noticeService.insertNotice(notice), HttpStatus.OK);
     }
-    
+
     @RequestMapping(value = "/{noticeId}", method = RequestMethod.POST)
     public ResponseEntity<?> updateNotice(@PathVariable("noticeId") String noticeId, @ModelAttribute Notice notice) {
         Assert.notNull(noticeId, "noticeId must not be null");
@@ -57,8 +80,8 @@ public class NoticeController {
         noticeService.updateNotice(notice);
 
         return new ResponseEntity<>(HttpStatus.OK);
-    }    
-    
+    }
+
     @RequestMapping(value = "/{noticeId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteNotice(@PathVariable("noticeId") String noticeId) {
         Assert.notNull(noticeId, "noticeId must not be null");
@@ -66,5 +89,5 @@ public class NoticeController {
         noticeService.deleteNotice(noticeId);
 
         return new ResponseEntity<>(HttpStatus.OK);
-    }    
+    }
 }
