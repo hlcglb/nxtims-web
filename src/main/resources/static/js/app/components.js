@@ -1,5 +1,4 @@
 angular.module('nxtims.components',[])
-
 .component('popup', {})
 .component('commonCode', {
     template: '<select kendo-drop-down-list k-options="$ctrl.officeOptions"></select>',
