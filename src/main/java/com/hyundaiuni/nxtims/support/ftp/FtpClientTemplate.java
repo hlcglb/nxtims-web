@@ -164,7 +164,6 @@ public class FtpClientTemplate {
                 }
                 catch(IOException e) {
                     log.info(e);
-                    ftpClient = null;
                 }
             }
 
@@ -174,7 +173,6 @@ public class FtpClientTemplate {
                 }
                 catch(IOException e) {
                     log.info(e);
-                    ftpClient = null;
                 }
             }
         }
@@ -221,7 +219,6 @@ public class FtpClientTemplate {
                 }
                 catch(IOException e) {
                     log.info(e);
-                    ftpClient = null;
                 }
             }
 
@@ -231,7 +228,6 @@ public class FtpClientTemplate {
                 }
                 catch(IOException e) {
                     log.info(e);
-                    ftpClient = null;
                 }
             }
         }
@@ -273,7 +269,6 @@ public class FtpClientTemplate {
                 }
                 catch(IOException e) {
                     log.info(e);
-                    ftpClient = null;
                 }
             }
 
@@ -283,7 +278,6 @@ public class FtpClientTemplate {
                 }
                 catch(IOException e) {
                     log.info(e);
-                    ftpClient = null;
                 }
             }
         }
