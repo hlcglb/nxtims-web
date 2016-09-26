@@ -13,14 +13,14 @@
             /* if(confirm("조회 하시겠습니까?"))
             alert("search"); */
             var list1 = Message.query({
-                inquiry: "GetTestByParam", 
-                msgNM: $scope.item, 
+                inquiry: "getMessageListByParam", 
+                q: "msgGrpCd=MSG", 
                 offset: 0, limit: 100
                 }).$promise;
             var param = ""
             list1.then(
                 function(data){
-                    popup.gridMstData.data(angular.fromJson(angular.toJson(data)));
+                    vm.gridMstData.data(angular.fromJson(angular.toJson(data)));
                 },
                 function(error){
                     
