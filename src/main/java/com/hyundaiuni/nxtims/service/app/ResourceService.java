@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.hyundaiuni.nxtims.domain.app.AuthResource;
+import com.hyundaiuni.nxtims.domain.app.Message;
 import com.hyundaiuni.nxtims.domain.app.Resource;
 import com.hyundaiuni.nxtims.service.RestApiTemplate;
 
@@ -85,6 +86,28 @@ public class ResourceService {
         return resourceList;
     }
 
+    public List<Message> GetTestByParam(String query, int offset, int limit) {
+        Assert.notNull(query, "parameter must not be null");
+        Assert.notNull(offset, "offset must not be null");
+        Assert.notNull(limit, "limit must not be null");
+
+        Map<String, Object> urlVariables = new HashMap<>();
+
+        urlVariables.put("inquiry", "getMessageListByParam");
+        urlVariables.put("msgNM", query);
+        urlVariables.put("offset", offset);
+        urlVariables.put("limit", limit);
+
+        String resourceUrl = apiServerUrl + apiUrl + "?inquiry={inquiry}&q={q}&offset={offset}&limit={limit}";
+
+        List<Message> messageList = new ArrayList<>();
+
+        CollectionUtils.addAll(messageList,
+            apiTemplate.getRestTemplate().getForObject(resourceUrl, Message[].class, urlVariables));
+
+        return messageList;
+    }
+    
     public Resource getResource(String resourceId) {
         Assert.notNull(resourceId, "resourceId must not be null");
 

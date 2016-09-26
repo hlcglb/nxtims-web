@@ -22,6 +22,16 @@ import com.hyundaiuni.nxtims.service.app.ResourceService;
 public class ResourceController {
     @Autowired
     private ResourceService resourceService;
+    
+    @RequestMapping(params = "inquiry=GetTestByParam", method = RequestMethod.GET)
+    public ResponseEntity<?> GetTestByParam(@RequestParam("msgNM") String query, @RequestParam("offset") int offset,
+        @RequestParam("limit") int limit) {
+        Assert.notNull(query, "query must not be null");
+        Assert.notNull(offset, "offset must not be null");
+        Assert.notNull(limit, "limit must not be null");
+
+        return new ResponseEntity<>(resourceService.GetTestByParam(query, offset, limit), HttpStatus.OK);
+    }
 
     @RequestMapping(params = "inquiry=getResourceListByParam", method = RequestMethod.GET)
     public ResponseEntity<?> getResourceListByParam(@RequestParam("q") String query, @RequestParam("offset") int offset,
