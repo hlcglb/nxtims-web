@@ -78,7 +78,7 @@ public class MultiValueMapConverter {
                             };
                         }
                         catch(IOException e) {
-                            log.info(e.getMessage());
+                            log.info(e);
                         }
                         mvm.add(_name, resource);
                     }
@@ -90,7 +90,7 @@ public class MultiValueMapConverter {
                 }
             }
             catch(Exception e) {
-                log.info(e.getMessage());
+                log.info(e);
             }
         }
 
