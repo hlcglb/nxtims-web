@@ -163,7 +163,8 @@ public class FtpClientTemplate {
                     ftpClient.logout();
                 }
                 catch(IOException e) {
-                    log.info(e.getMessage());
+                    log.info(e);
+                    ftpClient = null;
                 }
             }
 
@@ -172,7 +173,8 @@ public class FtpClientTemplate {
                     ftpClient.disconnect();
                 }
                 catch(IOException e) {
-                    log.info(e.getMessage());
+                    log.info(e);
+                    ftpClient = null;
                 }
             }
         }
@@ -218,7 +220,8 @@ public class FtpClientTemplate {
                     ftpClient.logout();
                 }
                 catch(IOException e) {
-                    log.info(e.getMessage());
+                    log.info(e);
+                    ftpClient = null;
                 }
             }
 
@@ -227,7 +230,8 @@ public class FtpClientTemplate {
                     ftpClient.disconnect();
                 }
                 catch(IOException e) {
-                    log.info(e.getMessage());
+                    log.info(e);
+                    ftpClient = null;
                 }
             }
         }
@@ -268,7 +272,8 @@ public class FtpClientTemplate {
                     ftpClient.logout();
                 }
                 catch(IOException e) {
-                    log.info(e.getMessage());
+                    log.info(e);
+                    ftpClient = null;
                 }
             }
 
@@ -277,7 +282,8 @@ public class FtpClientTemplate {
                     ftpClient.disconnect();
                 }
                 catch(IOException e) {
-                    log.info(e.getMessage());
+                    log.info(e);
+                    ftpClient = null;
                 }
             }
         }
