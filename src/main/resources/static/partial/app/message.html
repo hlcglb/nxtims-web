@@ -3,39 +3,19 @@
 (function(){
     'use strict';
     angular.module("programModule")
-    .controller("ProgramController", ["$scope", "RESTfulService", "$resource", "$q", "KendoDataHelper", 
-                                      function($scope, RESTfulService, $resource, $q, KendoDataHelper){
+    .controller("ProgramController", ["$scope", "RESTfulService", "KendoDataHelper", "ApiEvent",
+                                      function($scope, RESTfulService, KendoDataHelper, ApiEvent){
         var vm = this;
-        var Message = RESTfulService("api/app/messages/:msgPk");
-        vm.number = 1234;
-        vm.text = "module authority test";
+
         vm.label = {
-            msgGrpCd: "그룹 코드",
-            msgCd: "메세지 코드"
+                    msgGrpCd: "그룹코드",
+                    msgCd: "코드",
+                    msgCdNm: "코드명"
         }
         vm.disabled = true;
         vm.disableChange = function(){
             vm.disabled ? vm.disabled = false : vm.disabled = true;
         }
-        
-        //multiselecte
-        vm.selectOptions = {
-                                placeholder: "Select products...",
-                                dataTextField: "ProductName",
-                                dataValueField: "ProductID",
-                                valuePrimitive: true,
-                                autoBind: false,
-                                dataSource: {
-                                    type: "odata",
-                                    serverFiltering: true,
-                                    transport: {
-                                        read: {
-                                            url: "//demos.telerik.com/kendo-ui/service/Northwind.svc/Products",
-                                        }
-                                    }
-                                }
-                            };
-        vm.selectedIds = [ 4, 7 ];
         
         //grid
         //mst
@@ -98,7 +78,13 @@
                              {field: "USER_ID", title: "User ID"},
                              {field: "TRANSACTION_TYPE"}];
         
-        //event
+        
+        // event
+        var Message = ApiEvent.getInstance("api/app/messages/:msgPk");
+        Message.dataSource = vm.gridMstData;
+        var Messagedtl = Object.create(Message);
+        Messagedtl.dataSource = vm.gridDtlData;
+
         vm.addRow = function(property){
             vm[property].addRow();
         }
@@ -110,40 +96,49 @@
                 alert("search"); */
                 var list1 = Message.query({
                     inquiry: "getMessageListByParam", 
-                    q: "msgGrpCd=MSG", 
+                    q: "", 
                     offset: 0, limit: 100
-                    }).$promise;
-                var param = ""
+                    });
                 list1.then(
                     function(data){
-                        vm.gridMstData.data(angular.fromJson(angular.toJson(data)));
                     },
                     function(error){
                         
                     }
                 );
         };
-        vm.gridMstChange = function(data, dataItem, columns) {
+        vm.gridMstChange = function(e, data, dataItem) {
             vm.mstSelectedItem = data;
-            console.log(vm.mstSelectedItem);
-            Message.query({
+            //console.log(vm.mstSelectedItem);
+            Messagedtl.query({
                 inquiry: "getMessageLocaleListByParam",
                 msgGrpCd: dataItem.MSG_GRP_CD, 
-                msgCd: dataItem.MSG_CD}).$promise
+                msgCd: dataItem.MSG_CD})
             .then(function(data){
-                vm.gridDtlData.data(angular.fromJson(angular.toJson(data)));
+                
             }
             ,function(error){
-                options.error(error);
+                console.log(error);
             });
         };
-        vm.gridMst1Change = function(e) {
-            console.log(e);
+        vm.gridMstChange2 = function(row, rowData){
+            console.log("change");
+            console.log(row);
+            console.log(rowData);
+
+        };
+        vm.gridMstClick = function(row, rowData){
+            console.log("==click==");
+
+        };
+        vm.gridMstDblClick = function(event, row, rowData){
+            
+
         };
         vm.gridMstEdit = function(e){
             console.log(e);
             if(e.model.isNew()){
-                console.log();
+                console.log(e);
             }
         };
         vm.gridMstRemove = function(e){
@@ -158,43 +153,32 @@
                 e.model.MSG_CD = vm.mstSelectedItem.MSG_CD;
             }
         };
+        
+        //RESTful
         vm.save = function(){
-            console.log(vm.gridDtlData);
-            if(!vm.gridDtlData.UPDATE && !vm.gridMstData.UPDATE) return false;
-            vm.gridMst1.trigger("saveChanges");
+            console.log(vm.gridDtlData.hasChanges());
+            console.log(vm.gridMstData.hasChanges());
+            console.log(vm.gridDtlData.isUpdated());
+            console.log(vm.gridMstData.isUpdated());
+            if(!vm.gridDtlData.hasChanges() && !vm.gridMstData.hasChanges()) return false;
             vm.gridMst.trigger("saveChanges");
             vm.gridDtl.trigger("saveChanges");
             
             var data = null;
-            if(!vm.gridMstData.UPDATE) {
-                data = vm.mstSelectedItem;
+            if(!vm.gridMstData.hasChanges()) {
+                vm.mstSelectedItem.TRANSACTION_TYPE = "U";
+                vm.gridMstData.UPDATE = new Array(vm.mstSelectedItem);
             }
-            else{
-                data = vm.gridMstData.UPDATE[0];
-            }
+            data = vm.gridMstData.UPDATE[0];
             
-            if(!data) return;
-            data.SESSION_USER_ID = "tester";
-             data.MSG_LOC_LIST = vm.gridDtlData.UPDATE;
-            console.log(data);
-            
-            /* if(data.MSG_PK){ //update
-                Message.update({msgPk: data.MSG_PK}, angular.toJson(data)
-                ,function(response){
-                    console.log(response);
-                },function(error){
-                    console.log(error.data.MESSAGE);
-                });
-            }
-            else{ //save
-                Message.save(angular.toJson(data)
-                ,function(response){
-                    console.log(response);
-                },function(error){
-                    console.log(error.data.MESSAGE);
-                });
-            } */
-            console.log(data);
+            if(!data) return false;
+            data.MSG_LOC_LIST = vm.gridDtlData.UPDATE;
+            Message.saveChanges({msgPk: data.MSG_PK}
+            ,function(response){
+                console.log(response);
+            },function(error){
+                console.log(error.data.MESSAGE);
+            });
         };
         vm.gridMstSavechange = function(e){
             console.log("gridMstSavechange");
@@ -208,61 +192,11 @@
 
 </script>
 <div id="program" data-dynamic-controller="ProgramController as vm">
-    <div class="btn_cbox">
-        <div class="bnt_l">
-            <input type="button" k-scope-field="vm.btn_Create" name="" class="btn_a1" value="활성토글" title="" ng-click="vm.disableChange()" />
-        </div>
-        <div class="bnt_r">
-            <kendo-button k-scope-field="vm.btn_Search" class="btn_a1" k-on-click="vm.search()">조 회</kendo-button>
-            <kendo-button k-scope-field="vm.btn_Search" class="btn_a3" k-on-click="vm.search()" ng-disabled="vm.disabled"
-                sprite-css-class ="'k-icon k-i-refresh'">동적활성버튼</kendo-button>
-            <kendo-button k-scope-field="vm.btn_Search" class="btn_a3" k-on-click="vm.search()" disabled="disabled">태그</kendo-button>
-            <input sprite-css-class ="'k-icon k-i-refresh'" type="button" name="" class="btn_a3" value="동적활성버튼" title="" ng-click="vm.search()" ng-disabled="vm.disabled"/>
-            <input type="button" name="" class="btn_a3" value="ng태그" title="" ng-click="vm.search()" ng-disabled="true"/>
-            <input type="button" name="" class="btn_a3" value="저장" title="" ng-click="vm.save()"/>
-        </div>
+    <div class="location">
+        <div program-location></div>
+        <input type="button" name="" class="btn_reset" value="{{'LAB.INQUIRY' | translate}}" title="" ng-click="vm.search()"/>
     </div>
-    <div class="searchbox">
-        <label for="name">serachbox</label>
-        <input name="name" class="k-textbox" />
-        <select kendo-multi-select k-options="vm.selectOptions" k-ng-model="vm.selectedIds"></select>
-        <input kendo-numeric-text-box k-min="0" k-max="100" k-ng-model="vm.value"/>
-        <table>
-            <colgroup>
-                <col width="100px"><col width="">
-                <col width="100px"><col width="">
-                <col width="100px"><col width="">
-                <col width="100px"><col width="">
-            </colgroup>
-            <tbody>
-                <tr>
-                    <th ng-bind="vm.label.msgGrpCd">부서</th>
-                    <td>
-                        <select class="sel2" title="" ng-disabled="vm.disabled">
-                            <option value="MSG">메세지</option>
-                            <option value="LAB">라벨</option>
-                        </select>
-                    </td>
-                    <th ng-bind="vm.label.msgCd">부서1</th>
-                    <td>
-                        <select kendo-combo-box class="sel2" ng-disabled="vm.disabled" title="">
-                            <option value="MSG">메세지</option>
-                            <option value="LAB">라벨</option>
-                        </select>
-                    </td>
-                    <th ng-bind="vm.label.msgGrpCd"></th>
-                    <td>
-                        <common-code-test code="api/login/resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST" ng-disabled="vm.disabled"></common-code-test>
-                    </td>
-                    <th ng-bind="vm.label.msgCd"></th>
-                    <td>
-                        <common-code-Combo code="api/login/resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST" ng-disabled="vm.disabled"></common-code-Combo>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    
+    <kendo-button k-on-click="vm.save()">{{'LAB.SAVE' | translate}}</kendo-button>
     <div class="datatable1">
         <table>
             <colgroup>
@@ -275,73 +209,76 @@
                 <tr>
                     <th ng-bind="vm.label.msgGrpCd">부서</th>
                     <td>
-                        <select class="sel2" title="" ng-disabled="vm.disabled">
+                        <select class="sel w96" title="">
                             <option value="MSG">메세지</option>
                             <option value="LAB">라벨</option>
                         </select>
                     </td>
                     <th ng-bind="vm.label.msgCd">부서1</th>
                     <td>
-                        <select kendo-combo-box class="sel2" ng-disabled="vm.disabled" title="">
-                            <option value="MSG">메세지</option>
-                            <option value="LAB">라벨</option>
-                        </select>
+                        <input class="k-textbox" />
                     </td>
-                    <th ng-bind="vm.label.msgGrpCd"></th>
+                    <th ng-bind="vm.label.msgCdNm"></th>
                     <td>
-                        <common-code-test code="api/login/resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST" ng-disabled="vm.disabled"></common-code-test>
-                    </td>
-                    <th ng-bind="vm.label.msgCd"></th>
-                    <td>
-                        <common-code-Combo code="api/login/resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST" ng-disabled="vm.disabled"></common-code-Combo>
-                    </td>
-                </tr>
-                <tr>
-                    <th ng-bind="vm.label.msgGrpCd">부서</th>
-                    <td>
-                        <select kendo-drop-down-list="vm.dropdonlist" class="sel2" ng-disabled="vm.disabled" title="">
-                            <option value="MSG">메세지</option>
-                            <option value="LAB">라벨</option>
-                        </select>
-                    </td>
-                    <th ></th>
-                    <td>
-                        <input class="ip4" kendo-numeric-text-box k-min="0" k-max="100" k-ng-model="vm.value"/>
+                        <input class="k-textbox" /><common-code-test code="api/login/resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST" ng-disabled="vm.disabled"></common-code-test>
                     </td>
                     <th></th>
-                    <td>
-                        <select class="ip4" kendo-multi-select k-options="vm.selectOptions" k-ng-model="vm.selectedIds"></select>
-                    </td>
-                    <th ></th>
-                    <td>
-                    </td>
-                </tr>
-                <tr>
-                    <th>{{'LAB.SAVE' | translate}}</th>
-                    <td>
-                        <select kendo-drop-down-list="vm.dropdown1" class="sel2" ng-model="vm.mstSelectedItem.MSG_GRP_CD" title="">
-                            <option value="MSG">메세지</option>
-                            <option value="LAB">라벨</option>
-                        </select>
-                    </td>
-                    <th >{{'LAB.DELETE' | translate}}</th>
-                    <td>
-                        <input class="k-textbox ip4" k-min="0" k-max="100" ng-model="vm.mstSelectedItem.MSG_CD" ng-change="vm.iputchange()" />
-                    </td>
-                    <th></th>
-                    <td>
-                        <input type="text" class="ip4" k-min="0" k-max="100" ng-model="vm.mstSelectedItem.MSG_CD" />
-                    </td>
-                    <th ></th>
-                    <td>
-                    </td>
+                    <td></td>
                 </tr>
             </tbody>
         </table>
     </div>
+    <table>
+            <colgroup>
+                <col width="100px"><col width="">
+                <col width="100px"><col width="">
+                <col width="100px"><col width="">
+                <col width="100px"><col width="">
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th ng-bind="vm.label.msgGrpCd">부서</th>
+                    <td>
+                        <select class="sel w96" title="">
+                            <option value="MSG">메세지</option>
+                            <option value="LAB">라벨</option>
+                        </select>
+                    </td>
+                    <th ng-bind="vm.label.msgCd">부서1</th>
+                    <td>
+                        <input class="k-textbox" />
+                    </td>
+                    <th ng-bind="vm.label.msgCdNm"></th>
+                    <td>
+                        <input class="k-textbox" />
+                    </td>
+                    <th ng-bind="vm.label.msgCdNm"></th>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th ng-bind="vm.label.msgGrpCd">부서</th>
+                    <td>
+                        <select class="sel w96" title="">
+                            <option value="MSG">메세지</option>
+                            <option value="LAB">라벨</option>
+                        </select>
+                    </td>
+                    <th ng-bind="vm.label.msgCd">부서1</th>
+                    <td>
+                        <common-code-combo code="api/login/resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST" ng-disabled="vm.disabled"></common-code-combo>
+                    </td>
+                    <th ng-bind="vm.label.msgCdNm"></th>
+                    <td>
+                        <common-code-test code="api/login/resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST" ng-disabled="vm.disabled"></common-code-test>
+                    </td>
+                    <th ng-bind="vm.label.msgCdNm"></th>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
     <div class="totalbox">
         <div class="l_box">
-            <div class="total"><strong>Order 총 <span>298</span></strong> 건</div>
+            <div class="total"><strong>Order 총 <span ng-bind="vm.gridMst.dataSource.total()">298</span></strong> 건</div>
             <ul>
                 <li><a href="#"><img src="img/common/btn_icon1.gif" alt=""></a></li>
                 <li><a href="#"><img src="img/common/btn_icon2.gif" alt="+" ng-click="vm.addRow('gridMst')"></a></li>
@@ -351,19 +288,22 @@
         </div>
     </div>
     <div class="datatable2">
-        <kendo-grid  k-scope-field="vm.gridMst" 
+        <kendo-grid  k-scope-field="vm.gridMst"
                      ims-grid k-options="imsgrid.options"
                      k-editable='{"mode": "popup", "create": true, "update": true, "destroy": false}'
                      k-data-source="vm.gridMstData" 
                      k-ng-delay="vm.gridMstData" 
                      k-columns="vm.gridMstColumns" 
-                     k-on-change="vm.gridMstChange(data, dataItem, columns)"
+                     k-on-change="vm.gridMstChange(kendoEvent, data, dataItem)"
                      k-on-remove="vm.gridMstRemove(kendoEvent)"
-                     k-on-edit="vm.gridMstEdit(kendoEvent)"></kendo-grid>
+                     k-on-edit="vm.gridMstEdit(kendoEvent)"
+                     k-on-grid-row-change="vm.gridMstChange2(currRow, currData)" 
+                     k-on-grid-row-dblclick="vm.gridMstDblClick(event, rowData)"
+                     ></kendo-grid>
     </div>
     <div class="totalbox">
         <div class="l_box">
-            <div class="total"><strong>Order 총 <span>298</span></strong> 건</div>
+            <div class="total"><strong>Order 총 <span ng-bind="vm.gridDtl.dataSource.total()">298</span></strong> 건</div>
             <ul>
                 <li><a href="#"><img src="img/common/btn_icon1.gif" alt=""></a></li>
                 <li><a href="#"><img src="img/common/btn_icon2.gif" alt="+" ng-click="vm.addRow('gridDtl')"></a></li>
@@ -380,11 +320,3 @@
                      k-columns="vm.gridDtlColumns"
                      k-on-edit="vm.gridDtlEdit(kendoEvent)"></kendo-grid>
     </div>
-<kendo-grid  k-scope-field="vm.gridMst1" 
-                     ims-grid k-options="imsgrid.options" 
-                     k-data-source="vm.gridMstData" 
-                     k-ng-delay="vm.gridMstData" 
-                     k-columns="vm.gridMstColumns" 
-                     k-on-change="vm.gridMst1Change(kendoEvent)"
-                     k-on-save-changes="vm.gridMstSavechange(kendoEvent)"></kendo-grid>
-</div>

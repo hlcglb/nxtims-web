@@ -82,32 +82,6 @@ angular.module('comn.service.resource',['ngResource'])
     );
 }])
 
-.factory('RESTfulService1', ['RESTfulFactory', 
-                             function (RESTfulFactory) {
-    
-    var defaultOptions = {
-                   url: '/api/:app0/:app1/:app2/:app3:id',
-                   paramDefaults: {
-                       app0: '@app0',
-                       app1: '@app1',
-                       app2: '@app2',
-                       app3: '@app3',
-                       id: '@id'
-                   }
-    }
-    return RESTfulFactory(defaultOptions.url, defaultOptions.paramDefaults);
-    
-}])
-.factory('RESTfulServiceTest', ['$resource', 'RESTfulInterceptor', 
-                             function ($resource, RESTfulInterceptor) {
-    return function(url){
-        return $resource(url,
-                {},
-                {
-                    get: {method: 'GET', interceptor: RESTfulInterceptor.log}
-                });
-    }
-}])
 .factory('RESTfulInterceptor', [ '$rootScope', '$q',
                                          function ($rootScope, $q) {
     return {
@@ -139,24 +113,6 @@ angular.module('comn.service.resource',['ngResource'])
         },
         getPromise: function(){
             return LoginRESTService.get({service: 'resource'}).$promise;
-        }
-    }
-
-}])
-.factory('MessageService', ['AppRESTService', '$q', function (AppRESTService, $q) {
-    return{
-        getMessage: function(msgCode, successHandler, faileHandler){
-            return RESTfulService.get({service: "message", id:msgCode}, 
-                    function(messageData){
-                        if(angular.isFunction(successHandler)) successHandler(messageData);
-                    },
-                    function(error){
-                        if(angular.isFunction(faileHandler)) faileHandler(error.data)
-                    }
-            );
-        },
-        getPromise: function(msgCode){
-            return RESTfulService.get({service: "message", id:msgCode}).$promise;
         }
     }
 

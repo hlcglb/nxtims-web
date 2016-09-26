@@ -61,9 +61,17 @@ angular.module("programModule")
     };
 }]);
 angular.module("programModule")
+.directive('programLocation', [function() {
+    return {
+        restrict: 'A',
+        template: '<dl><dt>현위치</dt><dd program-path></dd></dl>'
+    };
+}]);
+angular.module("programModule")
 .directive('programPath', [function() {
     return {
         restrict: 'A',
+        
         controller: ['Function', 'UserService', 'ProgramInfo', function(Function, UserService, ProgramInfo){
             var ctrl = this;
             ctrl.prgmPath = "";
@@ -109,7 +117,7 @@ angular.module("programModule")
         value: '@',
         property: '@'
     },
-    controller: ['RESTfulServiceTest', function(RESTfulService){
+    controller: ['RESTfulService', function(RESTfulService){
         var ctrl = this; 
         ctrl.dataSource = {
             transport: {
@@ -142,7 +150,7 @@ angular.module("programModule")
         value: '@',
         property: '@'
     },
-    controller: ['RESTfulServiceTest', function(RESTfulService){
+    controller: ['RESTfulService', function(RESTfulService){
         var ctrl = this; 
         ctrl.dataSource = {
             transport: {

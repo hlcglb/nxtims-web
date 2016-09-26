@@ -1,2 +1,12 @@
-<div ui-view="navigation"></div>
-<div ui-view="application"></div>
+<div class="skipmenu">
+    <dl>
+        <dt class="hidden">바로가기 메뉴</dt>
+        <dd><a href="#gnb" class="skip_link">메뉴바로가기</a></dd>
+        <dd><a href="#container" class="skip_link">본문바로가기</a></dd>
+    </dl>
+</div>
+<div class="wrap">
+    <div ui-view="navigation"></div>
+    <div ui-view="application"></div>
+    <div ui-view="message"></div>
+</div>
