@@ -378,16 +378,13 @@
                      k-data-source="vm.gridDtlData" 
                      k-ng-delay="vm.gridDtlData" 
                      k-columns="vm.gridDtlColumns"
-                     k-on-edit="vm.gridDtlEdit(kendoEvent)">
-                     </kendo-grid>
-    
+                     k-on-edit="vm.gridDtlEdit(kendoEvent)"></kendo-grid>
     </div>
-        <kendo-grid  k-scope-field="vm.gridMst1" 
+<kendo-grid  k-scope-field="vm.gridMst1" 
                      ims-grid k-options="imsgrid.options" 
                      k-data-source="vm.gridMstData" 
                      k-ng-delay="vm.gridMstData" 
                      k-columns="vm.gridMstColumns" 
                      k-on-change="vm.gridMst1Change(kendoEvent)"
-                     k-on-save-changes="vm.gridMstSavechange(kendoEvent)">
-                     </kendo-grid>
+                     k-on-save-changes="vm.gridMstSavechange(kendoEvent)"></kendo-grid>
 </div>
