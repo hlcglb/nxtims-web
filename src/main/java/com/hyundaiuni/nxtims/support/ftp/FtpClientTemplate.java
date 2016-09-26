@@ -2,11 +2,11 @@ package com.hyundaiuni.nxtims.support.ftp;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.SocketException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -43,7 +43,7 @@ public class FtpClientTemplate {
         this.mode = mode;
     }
 
-    private FTPClient login() throws SocketException, IOException, FtpClientException {
+    private FTPClient login() throws FtpClientException {
         int connectFailCnt = 0;
         int reply;
 
@@ -94,14 +94,21 @@ public class FtpClientTemplate {
 
         log.info("Logging on the FTP Server [" + this.server + "].");
 
-        if(!ftpClient.login(this.username, this.password)) {
-            log.info("Cannot login the FTP Server [" + this.server + "] with id [" + this.username + "] and password ["
-                     + this.password + "].");
+        try {
+            if(!ftpClient.login(this.username, this.password)) {
+                log.info("Cannot login the FTP Server [" + this.server + "] with id [" + this.username
+                         + "] and password [" + this.password + "].");
 
-            ftpClient.logout();
+                ftpClient.logout();
 
+                throw new FtpClientException("Cannot login the FTP Server [" + this.server + "] with id ["
+                                             + this.username + "] and password [" + this.password + "].");
+            }
+        }
+        catch(IOException e) {
             throw new FtpClientException("Cannot login the FTP Server [" + this.server + "] with id [" + this.username
-                                         + "] and password [" + this.password + "].");
+                                         + "] and password [" + this.password + "].",
+                e);
         }
 
         log.info("Logged on the FTP Server [" + this.server + "].");
@@ -121,7 +128,7 @@ public class FtpClientTemplate {
         return ftpClient;
     }
 
-    public void sendFile(String remoteDir, File file) throws SocketException, IOException, FtpClientException {
+    public void sendFile(String remoteDir, File file) throws FtpClientException {
         FTPClient ftpClient = null;
         InputStream input = null;
 
@@ -140,6 +147,12 @@ public class FtpClientTemplate {
             ftpClient.storeFile(file.getName(), input);
 
             log.info("File [" + file.getName() + "] was stored.");
+        }
+        catch(FileNotFoundException e) {
+            throw new FtpClientException("Cannot find file to send.", e);
+        }
+        catch(IOException e) {
+            throw new FtpClientException("Cannot send file.", e);
         }
         finally {
             IOUtils.closeQuietly(input);
@@ -166,7 +179,7 @@ public class FtpClientTemplate {
     }
 
     public void receiveFile(String remoteDir, String remotefileName, File file)
-        throws SocketException, IOException, FtpClientException {
+        throws FtpClientException {
 
         FTPClient ftpClient = null;
         OutputStream outputStream = null;
@@ -194,6 +207,9 @@ public class FtpClientTemplate {
                     "Cannot receive file [" + remotefileName + "] of the FTP Server [" + this.server + "].");
             }
         }
+        catch(IOException e) {
+            throw new FtpClientException("Cannot retrieve file.", e);
+        }
         finally {
             IOUtils.closeQuietly(outputStream);
 
@@ -218,7 +234,7 @@ public class FtpClientTemplate {
     }
 
     public void deleteFile(String remoteDir, String remotefileName)
-        throws SocketException, IOException, FtpClientException {
+        throws FtpClientException {
 
         FTPClient ftpClient = null;
 
@@ -242,6 +258,9 @@ public class FtpClientTemplate {
                 throw new FtpClientException(
                     "Cannot delete file [" + remotefileName + "] of the FTP Server [" + this.server + "].");
             }
+        }
+        catch(IOException e) {
+            throw new FtpClientException("Cannot delete file.", e);
         }
         finally {
             if(ftpClient != null) {
