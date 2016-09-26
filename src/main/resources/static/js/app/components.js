@@ -24,31 +24,49 @@ angular.module('nxtims.components',[])
         };
     }
 })
-.directive('comgrid',[function(){
+.directive('kendoGridRowDblClick',  
+        [function kendoGridRowDblClick(){
+    return{
+        link: function (scope, element, attrs) {
+            scope.$on("kendoWidgetCreated", function (event, widget) {
+
+                if (widget !== element.getKendoGrid())
+                    return;
+
+                attachDblClickToRows(scope, element, attrs);
+
+                element.data("kendoGrid").bind('dataBound', function () {
+                    attachDblClickToRows(scope, element, attrs);
+                });
+            });
+        }
+    };
+
+    function attachDblClickToRows(scope, element, attrs) {
+            element.find('tbody tr').on('dblclick', function (event) {
+                var rowScope = angular.element(event.currentTarget).scope();
+                scope.$eval(attrs.kendoGridRowDblClick, { rowData: rowScope.dataItem });
+            });
+    }
+}
+])
+.directive('comGrid',[function(){
     return {
         restrict : 'A',
-        controller: ['$element', function(element){
+        controller: ['$element', '$scope', function(element){
             var ctrl = this;
             ctrl.options = {
-                            toolbar:["excel","create"],
-                            excel:{fileName : "text.xlsx"},    
-                            dataSource : null,
-                            editable: true,
-                            selectable: "row",
+                            selectable: true,
                             sortable: true,
-                            pageable: true,
                             dataBound: function() {
-                                this.expandRow(this.tbody.find("tr.k-master-row").first());
+                                this.select("tr:eq(0)");
                             },
-                            height: 453,
-                            groupable: false,
-                            resizable: true,
-                            reorderable: false,
-                            columnMenu: true   
+                            height: 453
                         };
         }],
         controllerAs : 'comgrid',
         link: function(scope, element, attrs, ctrl){ 
+            
         }
     };
 }])
