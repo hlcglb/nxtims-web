@@ -2,25 +2,26 @@
 (function(){
     'use strict';
     angular.module("programModule")
-    .controller("searchController",["$state", "Authentication", "constants", "$kWindow", "$cookies", "Login.CookieKey", "$timeout",
-                                    function($state, Authentication, constants, $kWindow, $cookies, CookieKey, $timeout) {
-           
+    .controller("searchController",["$scope", "$state", "Authentication", "constants", "$kWindow", "$cookies", "Login.CookieKey", "$timeout","RESTfulService","$resource", "$q", "KendoDataHelper",
+                                    function($scope, $state, Authentication, constants, $kWindow, $cookies, CookieKey, $timeout, RESTfulService, $resource, $q, KendoDataHelper) {
+        var Message = RESTfulService("api/app/messages/:msgPk");
             var self = this;
-            self.buttonDisabled = false; //button diabled
+            
             self.search = function(){
+                var value = $("#search").val();            
                 var windowInstance = $kWindow.open({
                     options:{
-                        modal: true,
+                        modal: true,    
                         title: "search item",
                         resizable: true,
                         height: 800,
                         width: 500,
-                        visible: false
+                        visible: false,
                     },
                     windowTemplateUrl: constants.popTemplUrl + "window.html",
                     templateUrl: constants.popTemplUrl + "SearchPopup.html",
                     controller: ["$scope", "$windowInstance", "item", function($scope, $windowInstance, item){
-                        $scope.item = $("#search").val();
+                        $scope.item = value;
                         $scope.$windowInstance = $windowInstance;
                         console.log(item);
                     }],
@@ -32,13 +33,22 @@
                 });
                 windowInstance.result.then(function (result) {
                     if (result) {
-                        self.result = "confirmed!";
+                        var sParson = JSON.stringify(result);
+                        var oParson = JSON.parse(sParson);      
+                        $scope.searchId = oParson.MSG_NM;
+                        $scope.search =  oParson.MSG_PK;
+                        console.log("confirmed!"+ JSON.stringify(result));
                     }
                     else{
                         self.result = "canceled!";
+                        console.log("canceled!");
                     }
                 });
             };
+            self.change=function(){
+                $scope.searchId="";
+            }
+           
             
         }])
     
@@ -46,11 +56,10 @@
 </script>
 <div id="program" dynamic-controller="searchController as vm">
  
-    <div class="poptest" >
-    <input type="text" id="search" />
+    <div>
+    <input type="text" id="search" ng-model="search" ng-change="vm.change()"><input type="text" id="searchID" ng-model="searchId" disabled="disabled"/>
     <button type="button" id="btn_search" ng-click="vm.search()" >버튼</button>
-    </div>
-        
+    </div>  
 </div>
 
 
