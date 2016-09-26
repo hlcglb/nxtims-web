@@ -1,5 +1,7 @@
 package com.hyundaiuni.nxtims.service.app;
 
+import java.beans.IntrospectionException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +61,7 @@ public class NoticeService {
 
         return apiTemplate.getRestTemplate().getForObject(resourceUrl, Notice.class, noticeId);
     }
-    
+
     public Map<String, Object> getNoticeFileContentByPk(String noticeId, int seq) {
         Assert.notNull(noticeId, "noticeId must not be null");
         Assert.notNull(seq, "seq must not be null");
@@ -68,19 +70,21 @@ public class NoticeService {
 
         urlVariables.put("noticeId", noticeId);
         urlVariables.put("seq", seq);
-        
+
         String resourceUrl = apiServerUrl + apiUrl + "/getNoticeFileContent?noticeId={noticeId}&seq={seq}";
-        
+
         @SuppressWarnings("unchecked")
-        Map<String, Object> fileContentMap = (Map<String, Object>)apiTemplate.getRestTemplate().getForObject(resourceUrl, Map.class, urlVariables);
-        
+        Map<String, Object> fileContentMap = (Map<String, Object>)apiTemplate.getRestTemplate().getForObject(
+            resourceUrl, Map.class, urlVariables);
+
         String decodedFileContent;
 
-        decodedFileContent = MessageDigestUtils.decodeBase64(MapUtils.getString(fileContentMap, "FILE_CONTENT").getBytes());        
-        
+        decodedFileContent = MessageDigestUtils.decodeBase64(
+            MapUtils.getString(fileContentMap, "FILE_CONTENT").getBytes());
+
         fileContentMap.put("FILE_CONTENT", decodedFileContent.getBytes());
 
-        return fileContentMap;        
+        return fileContentMap;
     }
 
     @SuppressWarnings("unchecked")
@@ -97,14 +101,14 @@ public class NoticeService {
         }
 
         String resourceUrl = apiServerUrl + apiUrl;
-        
+
         MultiValueMap<String, Object> multiValueMap = null;
 
         try {
             multiValueMap = new MultiValueMapConverter(notice).convert();
         }
-        catch(Exception e) {
-            throw new ServiceException("MSG.MSG_CONVERT_ERROR", e.getMessage(), null);
+        catch(InvocationTargetException | IllegalAccessException | NoSuchMethodException | IntrospectionException e) {
+            throw new ServiceException("MSG.MSG_CONVERT_ERROR", e.getMessage(), null, e);
         }
 
         return apiTemplate.getRestTemplate().postForObject(resourceUrl, multiValueMap, Notice.class);
@@ -120,13 +124,13 @@ public class NoticeService {
             for(NoticeFile noticeFile : noticeFileList) {
                 if("C".equals(noticeFile.getTransactionType()) || "U".equals(noticeFile.getTransactionType())) {
                     noticeFile.setNoticeId(notice.getNoticeId());
-                    
+
                     MultipartFile attachedFile = noticeFile.getFile();
                     noticeFile.setFileNm(attachedFile.getOriginalFilename());
                 }
             }
         }
-        
+
         MultiValueMap<String, Object> multiValueMap = null;
 
         try {
@@ -134,10 +138,10 @@ public class NoticeService {
         }
         catch(Exception e) {
             throw new ServiceException("MSG.MSG_CONVERT_ERROR", e.getMessage(), null);
-        }        
+        }
 
         String resourceUrl = apiServerUrl + apiUrl + "/{noticeId}";
-        
+
         apiTemplate.getRestTemplate().postForObject(resourceUrl, multiValueMap, Notice.class, notice.getNoticeId());
 
         return getNotice(notice.getNoticeId());

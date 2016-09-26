@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeUtility;
 
@@ -19,6 +20,11 @@ import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
+/**
+ * Velocity 템플릿을 이용하여 메일을 전송하는 클래스.
+ * 
+ * @author 권중규
+ */
 public class VelocityEmailSender {
     private static final Log logger = LogFactory.getLog(VelocityEmailSender.class);
 
@@ -217,6 +223,7 @@ public class VelocityEmailSender {
         if(!model.containsKey(systemName)) {
             model.put("systemName", systemName);
         }
+
         if(!model.containsKey(homepageUrl)) {
             model.put("homepageUrl", homepageUrl);
         }
@@ -258,7 +265,7 @@ public class VelocityEmailSender {
     }
 
     private void send(JavaMailSender mailSender, Address from, Address[] tos, String subject, String text,
-        String encoding, FileAttachment... attachments) throws Exception {
+        String encoding, FileAttachment... attachments) throws MessagingException, UnsupportedEncodingException{
         int attachmentLength = ArrayUtils.getLength(attachments);
         boolean multipart = attachmentLength > 0;
         MimeMessage message = mailSender.createMimeMessage();

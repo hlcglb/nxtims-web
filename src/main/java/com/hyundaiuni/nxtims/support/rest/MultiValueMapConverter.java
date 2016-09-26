@@ -28,7 +28,7 @@ public class MultiValueMapConverter {
     }
 
     @SuppressWarnings("rawtypes")
-    public MultiValueMap convert() throws Exception {
+    public MultiValueMap convert() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, IntrospectionException{
         this.addMultiValueFromBean(this.multiValueMap, "", this.bean);
         return this.multiValueMap;
     }
@@ -52,7 +52,7 @@ public class MultiValueMapConverter {
         Field[] fields = object.getClass().getDeclaredFields();
 
         for(Field field : fields) {
-            String _name = (name.equals("")) ? field.getName() : name + "." + field.getName();
+            String _name = ("").equals(name) ? field.getName() : name + "." + field.getName();
 
             try {
                 Object value = new PropertyDescriptor(field.getName(), object.getClass()).getReadMethod().invoke(

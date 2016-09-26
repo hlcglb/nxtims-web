@@ -56,9 +56,9 @@ public class NoticeController {
         final HttpHeaders headers = new HttpHeaders();
 
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.set("Content-Disposition", String.format("inline; filename=\"" + fileNm + "\""));
+        headers.set("Content-Disposition", String.format("inline; filename=%s", fileNm));
 
-        return new ResponseEntity<byte[]>(attachedFileContent, headers, HttpStatus.OK);
+        return new ResponseEntity<>(attachedFileContent, headers, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST)
