@@ -13,7 +13,7 @@ import org.springframework.util.Assert;
 
 import com.hyundaiuni.nxtims.domain.app.CodeDetail;
 import com.hyundaiuni.nxtims.domain.app.CodeMaster;
-import com.hyundaiuni.nxtims.service.RestApiTemplate;
+import com.hyundaiuni.nxtims.support.rest.RestApiTemplate;
 
 @Service
 public class CodeService {

@@ -6,6 +6,19 @@
       auto-deregistration: true
       client:
         prefer-ip: true
+mail:
+  host: 203.228.216.25
+  default-encoding: UTF-8
+  system-name: LET'S
+  homepage-url: http://gaia.e-hlc.com
+  from-email: nxtims@e-hlc.com
+  from-name: TEAMS
+  subject-prefix: TEAMS
+ftp:
+  server: 203.228.216.29
+  username: global
+  password: global15
+  mode: P
 ---
 spring:
   profiles: default
@@ -15,6 +28,7 @@ system:
   api:
     server:
       url: http://10.41.104.189:7311/
+  temp-local-dir: C:\\temp\\    
 ---
 spring:
   profiles: development
@@ -30,6 +44,7 @@ system:
   api:
     server:
       url: http://system-kong-dev.default
+  temp-local-dir: /NOT-YET    
 ---
 spring:
   profiles: staging
@@ -45,6 +60,7 @@ system:
   api:
     server:
       url: http://system-kong-stage.default
+  temp-local-dir: /NOT-YET  
 ---
 spring:
   profiles: production
@@ -60,3 +76,4 @@ system:
   api:
     server:
       url: http://system-kong.default
+  temp-local-dir: /NOT-YET    

@@ -10,6 +10,9 @@ import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,16 +23,28 @@ import org.springframework.util.Assert;
 
 import com.hyundaiuni.nxtims.domain.app.Auth;
 import com.hyundaiuni.nxtims.domain.app.User;
-import com.hyundaiuni.nxtims.service.RestApiTemplate;
+import com.hyundaiuni.nxtims.support.rest.RestApiTemplate;
+import com.hyundaiuni.nxtims.support.mail.Address;
+import com.hyundaiuni.nxtims.support.mail.VelocityEmailSender;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService implements UserDetailsService, MessageSourceAware {
     @Value("${system.api.server.url}")
     private String apiServerUrl;
     private String apiUrl = "/api/v1/app/users";
 
     @Autowired
     private RestApiTemplate apiTemplate;
+
+    @Autowired
+    private VelocityEmailSender velocityEmailSender;
+
+    private MessageSource messageSource;
+
+    @Autowired
+    public void setMessageSource(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -126,7 +141,7 @@ public class UserService implements UserDetailsService {
 
         return apiTemplate.getRestTemplate().getForObject(resourceUrl, User.class, userId);
     }
-    
+
     public User insertUser(User user) {
         Assert.notNull(user, "user must not be null");
 
@@ -151,5 +166,30 @@ public class UserService implements UserDetailsService {
         String resourceUrl = apiServerUrl + apiUrl + "/{userId}";
 
         apiTemplate.getRestTemplate().delete(resourceUrl, userId);
-    }    
+    }
+
+    public void reissuePassword(String userId, String userNm, String email) {
+        Assert.notNull(userId, "userId must not be null");
+        Assert.notNull(userNm, "userNm must not be null");
+        Assert.notNull(email, "email must not be null");
+
+        String resourceUrl = apiServerUrl + apiUrl;
+
+        Map<String, Object> parameter = new HashMap<>();
+        parameter.put("USER_ID", userId);
+        parameter.put("USER_NM", userNm);
+        parameter.put("EMAIL", email);
+
+        User user = apiTemplate.getRestTemplate().getForObject(resourceUrl + "/reissuePassword", User.class, parameter);
+
+        Map<String, String> model = new HashMap<String, String>();
+        model.put("userNm", user.getUserNm());
+        model.put("userPwd", user.getUserPwd());
+
+        String title = messageSource.getMessage("TITLE_REISSUE_PASSWORD", new String[] {user.getUserNm()},
+            "The password of " + user.getUserNm() + "is reissued.", LocaleContextHolder.getLocale());
+
+        velocityEmailSender.send(new Address[] {new Address(user.getEmail(), user.getUserNm())}, title,
+            "reissuePassword.vm", "UTF-8", model, false);
+    }
 }

@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hyundaiuni.nxtims.exception.ServiceException;
+import com.hyundaiuni.nxtims.support.rest.RestApiResponseErrorHandler;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

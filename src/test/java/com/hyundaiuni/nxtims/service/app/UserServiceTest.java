@@ -142,6 +142,7 @@ public class UserServiceTest {
             user.setUserId("XXXXXX");
             user.setUserNm("XXXXXX");
             user.setUserPwd("12345qwert");
+            user.setEmail("xxx@hyundai-uni.com");
             user.setUseYn("Y");
             
             Auth auth = new Auth();
@@ -170,6 +171,7 @@ public class UserServiceTest {
             user.setUserId("XXXXXX");
             user.setUserNm("XXXXXX");
             user.setUserPwd("12345qwert");
+            user.setEmail("xxx@hyundai-uni.com");
             user.setUseYn("Y");
             
             Auth auth = new Auth();

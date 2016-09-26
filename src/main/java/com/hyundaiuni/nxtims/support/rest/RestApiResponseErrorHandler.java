@@ -1,4 +1,4 @@
-package com.hyundaiuni.nxtims.service;
+package com.hyundaiuni.nxtims.support.rest;
 
 import java.io.IOException;
 import java.util.Map;
