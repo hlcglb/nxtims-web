@@ -14,7 +14,7 @@ server:
 system:
   api:
     server:
-      url: http://10.41.104.189:7311/
+      url: http://localhost:7311/
 ---
 spring:
   profiles: development

@@ -93,12 +93,12 @@ public class ResourceService {
 
         Map<String, Object> urlVariables = new HashMap<>();
 
-        urlVariables.put("inquiry", "getMessageListByParam");
+        urlVariables.put("inquiry", "GetTestByParam");
         urlVariables.put("msgNM", query);
         urlVariables.put("offset", offset);
         urlVariables.put("limit", limit);
 
-        String resourceUrl = apiServerUrl + apiUrl + "?inquiry={inquiry}&q={q}&offset={offset}&limit={limit}";
+        String resourceUrl = apiServerUrl + apiUrl + "?inquiry={inquiry}&msgNM={msgNM}&offset={offset}&limit={limit}";
 
         List<Message> messageList = new ArrayList<>();
 

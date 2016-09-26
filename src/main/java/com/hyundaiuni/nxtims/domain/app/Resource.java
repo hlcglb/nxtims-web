@@ -41,6 +41,17 @@ public class Resource implements Serializable {
     
     @JsonProperty(value = "TRANSACTION_TYPE")
     private String transactionType;
+    
+    @JsonProperty(value = "MSG_NM")
+    private String msgNM;
+    
+    public String getmsgNM() {
+        return msgNM;
+    }
+
+    public void setmsgNM(String msgNM) {
+        this.msgNM = msgNM;
+    }
 
     public String getResourceLevel() {
         return resourceLevel;
