@@ -149,14 +149,18 @@ public class FtpClientTemplate {
                     ftpClient.setSoTimeout(THIRTYSECONDS);
                     ftpClient.logout();
                 }
-                catch(IOException e) {}
+                catch(IOException e) {
+                    log.info(e.getMessage());
+                }
             }
 
             if(ftpClient != null) {
                 try {
                     ftpClient.disconnect();
                 }
-                catch(IOException e) {}
+                catch(IOException e) {
+                    log.info(e.getMessage());
+                }
             }
         }
     }
@@ -197,14 +201,18 @@ public class FtpClientTemplate {
                 try {
                     ftpClient.logout();
                 }
-                catch(IOException e) {}
+                catch(IOException e) {
+                    log.info(e.getMessage());
+                }
             }
 
             if(ftpClient != null) {
                 try {
                     ftpClient.disconnect();
                 }
-                catch(IOException e) {}
+                catch(IOException e) {
+                    log.info(e.getMessage());
+                }
             }
         }
     }
@@ -240,14 +248,18 @@ public class FtpClientTemplate {
                 try {
                     ftpClient.logout();
                 }
-                catch(IOException e) {}
+                catch(IOException e) {
+                    log.info(e.getMessage());
+                }
             }
 
             if(ftpClient != null) {
                 try {
                     ftpClient.disconnect();
                 }
-                catch(IOException e) {}
+                catch(IOException e) {
+                    log.info(e.getMessage());
+                }
             }
         }
     }

@@ -136,8 +136,8 @@ public class NoticeService {
         try {
             multiValueMap = new MultiValueMapConverter(notice).convert();
         }
-        catch(Exception e) {
-            throw new ServiceException("MSG.MSG_CONVERT_ERROR", e.getMessage(), null);
+        catch(InvocationTargetException | IllegalAccessException | NoSuchMethodException | IntrospectionException e) {
+            throw new ServiceException("MSG.MSG_CONVERT_ERROR", e.getMessage(), null, e);
         }
 
         String resourceUrl = apiServerUrl + apiUrl + "/{noticeId}";
