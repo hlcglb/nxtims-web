@@ -1,5 +1,4 @@
 angular.module('nxtims.components',[])
-
 .component('popup', {})
 .component('commonCode', {
     template: '<select kendo-drop-down-list k-options="$ctrl.officeOptions"></select>',
@@ -25,49 +24,31 @@ angular.module('nxtims.components',[])
         };
     }
 })
-.directive('kendoGridRowDblClick',  
-        [function kendoGridRowDblClick(){
-    return{
-        link: function (scope, element, attrs) {
-            scope.$on("kendoWidgetCreated", function (event, widget) {
-
-                if (widget !== element.getKendoGrid())
-                    return;
-
-                attachDblClickToRows(scope, element, attrs);
-
-                element.data("kendoGrid").bind('dataBound', function () {
-                    attachDblClickToRows(scope, element, attrs);
-                });
-            });
-        }
-    };
-
-    function attachDblClickToRows(scope, element, attrs) {
-            element.find('tbody tr').on('dblclick', function (event) {
-                var rowScope = angular.element(event.currentTarget).scope();
-                scope.$eval(attrs.kendoGridRowDblClick, { rowData: rowScope.dataItem });
-            });
-    }
-}
-])
-.directive('comGrid',[function(){
+.directive('comgrid',[function(){
     return {
         restrict : 'A',
-        controller: ['$element', '$scope', function(element){
+        controller: ['$element', function(element){
             var ctrl = this;
             ctrl.options = {
-                            selectable: true,
+                            toolbar:["excel","create"],
+                            excel:{fileName : "text.xlsx"},    
+                            dataSource : null,
+                            editable: true,
+                            selectable: "row",
                             sortable: true,
+                            pageable: true,
                             dataBound: function() {
-                                this.select("tr:eq(0)");
+                                this.expandRow(this.tbody.find("tr.k-master-row").first());
                             },
-                            height: 453
+                            height: 453,
+                            groupable: false,
+                            resizable: true,
+                            reorderable: false,
+                            columnMenu: true   
                         };
         }],
         controllerAs : 'comgrid',
         link: function(scope, element, attrs, ctrl){ 
-            
         }
     };
 }])

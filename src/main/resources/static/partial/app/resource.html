@@ -1,65 +1,24 @@
 <script type="text/javascript">
 (function(){
     'use strict';
-    angular.module("programModule")
-    .controller("searchController",["$scope", "$state", "Authentication", "constants", "$kWindow", "$cookies", "Login.CookieKey", "$timeout","RESTfulService","$resource", "$q", "KendoDataHelper",
-                                    function($scope, $state, Authentication, constants, $kWindow, $cookies, CookieKey, $timeout, RESTfulService, $resource, $q, KendoDataHelper) {
-        var Message = RESTfulService("api/app/messages/:msgPk");
-            var self = this;
-            
-            self.search = function(){
-                var value = $("#search").val();            
-                var windowInstance = $kWindow.open({
-                    options:{
-                        modal: true,    
-                        title: "search item",
-                        resizable: true,
-                        height: 800,
-                        width: 500,
-                        visible: false,
-                    },
-                    windowTemplateUrl: constants.popTemplUrl + "window.html",
-                    templateUrl: constants.popTemplUrl + "SearchPopup.html",
-                    controller: ["$scope", "$windowInstance", "item", function($scope, $windowInstance, item){
-                        $scope.item = value;
-                        $scope.$windowInstance = $windowInstance;
-                        console.log(item);
-                    }],
-                    resolve: {
-                        item : function () {
-                            return "search item"
-                        }
-                    }
-                });
-                windowInstance.result.then(function (result) {
-                    if (result) {
-                        var sParson = JSON.stringify(result);
-                        var oParson = JSON.parse(sParson);      
-                        $scope.searchId = oParson.MSG_NM;
-                        $scope.search =  oParson.MSG_PK;
-                        console.log("confirmed!"+ JSON.stringify(result));
-                    }
-                    else{
-                        self.result = "canceled!";
-                        console.log("canceled!");
-                    }
-                });
-            };
-            self.change=function(){
-                $scope.searchId="";
-            }
-           
-            
-        }])
+    function ProgramController($scope, $injector){
+        console.log("module controller");
+        console.log(this);
+        var vm = this;
+        vm.number = 3588500;
+        vm.text = "module user test";
+    }
     
+    ProgramController.injector = ["$scope", "$injector"];
+    angular.module("programModule")
+    .controller("ProgramController", ProgramController);
 })();
 </script>
-<div id="program" dynamic-controller="searchController as vm">
- 
-    <div>
-    <input type="text" id="search" ng-model="search" ng-change="vm.change()"><input type="text" id="searchID" ng-model="searchId" disabled="disabled"/>
-    <button type="button" id="btn_search" ng-click="vm.search()" >버튼</button>
-    </div>  
+<div id="program" dynamic-controller="ProgramController as vm">
+    <div class="content">
+        <p>resource</p>
+        <p>{{vm.id}}</p>
+        <p>{{vm.number | currency }}</p>
+        <span>{{vm.text}}</span>
+    </div>
 </div>
-
-
