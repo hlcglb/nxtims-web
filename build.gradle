@@ -28,7 +28,7 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-security'
     compile 'org.springframework.boot:spring-boot-devtools'
     compile 'org.springframework.boot:spring-boot-starter-velocity'
-    compile "org.springframework:spring-context-support"
+    compile 'org.springframework:spring-context-support'
     compile 'org.apache.httpcomponents:httpclient:4.5.2'
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'org.apache.commons:commons-collections4:4.1'
@@ -56,12 +56,12 @@ targetCompatibility = 1.8
 
 task resources(dependsOn: build) << {
     copy {
-        from "build/wro/webjars/jquery/2.2.4"
+        from 'build/wro/webjars/jquery/2.2.4'
         into 'src/main/resources/static/js/jquery'
         include '*.min.js'
     }
     copy {
-        from "build/wro/webjars/angularjs/1.5.7"
+        from 'build/wro/webjars/angularjs/1.5.7'
         into 'src/main/resources/static/js/angularjs'
         include '*.min.js'
         include '**/angular-locale_en-us.js'
