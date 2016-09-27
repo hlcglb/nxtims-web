@@ -13,8 +13,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 import com.hyundaiuni.nxtims.service.app.MessageService;
-import com.hyundaiuni.nxtims.support.LocaleManager;
-import com.hyundaiuni.nxtims.support.ReloadableStoredMessageSource;
+import com.hyundaiuni.nxtims.support.message.LocaleManager;
+import com.hyundaiuni.nxtims.support.message.ReloadableStoredMessageSource;
 
 @Configuration
 public class WebMvcConfiguration extends WebMvcConfigurerAdapter {

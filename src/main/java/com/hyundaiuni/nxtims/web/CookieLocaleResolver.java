@@ -11,7 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
-import com.hyundaiuni.nxtims.support.LocaleManager;
+import com.hyundaiuni.nxtims.support.message.LocaleManager;
 import com.hyundaiuni.nxtims.util.WebUtils;
 
 public class CookieLocaleResolver extends SessionLocaleResolver {

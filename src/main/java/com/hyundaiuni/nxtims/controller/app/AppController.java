@@ -22,7 +22,7 @@ import com.hyundaiuni.nxtims.exception.ServiceException;
 import com.hyundaiuni.nxtims.service.app.AppService;
 import com.hyundaiuni.nxtims.service.app.MessageService;
 import com.hyundaiuni.nxtims.service.app.NoticeService;
-import com.hyundaiuni.nxtims.support.CodeMessageSourceHandler;
+import com.hyundaiuni.nxtims.support.message.CodeMessageSourceHandler;
 import com.hyundaiuni.nxtims.util.WebUtils;
 
 @RestController

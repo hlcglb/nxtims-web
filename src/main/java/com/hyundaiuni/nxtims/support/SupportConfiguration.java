@@ -15,6 +15,8 @@ import com.hyundaiuni.nxtims.exception.SupportConfigurationException;
 import com.hyundaiuni.nxtims.service.app.CodeService;
 import com.hyundaiuni.nxtims.support.ftp.FtpClientTemplate;
 import com.hyundaiuni.nxtims.support.mail.VelocityEmailSender;
+import com.hyundaiuni.nxtims.support.message.CodeFactoryBean;
+import com.hyundaiuni.nxtims.support.message.CodeMessageSourceHandler;
 
 @Configuration
 public class SupportConfiguration {

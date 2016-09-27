@@ -1,4 +1,4 @@
-package com.hyundaiuni.nxtims.support;
+package com.hyundaiuni.nxtims.support.message;
 
 import java.util.Locale;
 import java.util.Properties;

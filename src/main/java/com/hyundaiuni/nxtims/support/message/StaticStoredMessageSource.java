@@ -1,4 +1,4 @@
-package com.hyundaiuni.nxtims.support;
+package com.hyundaiuni.nxtims.support.message;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
