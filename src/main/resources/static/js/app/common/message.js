@@ -7,13 +7,19 @@
 'use strict';
 
 angular.module('comn.service.message',['comn.service.resource', 'pascalprecht.translate', 'ngSanitize'])
-.config(["$translateProvider", function ($translateProvider) {
+.config(['$translateProvider', function ($translateProvider) {
+    //manually get $cookies
+    var $cookies;
+    angular.injector(['ngCookies']).invoke(['$cookies', function(_$cookies_) {
+        $cookies = _$cookies_;
+    }]);
+    //tranlate 설정
     $translateProvider.useUrlLoader('/api/login/message');
     $translateProvider.useStorage('UrlMessageStorage');
-    $translateProvider.preferredLanguage('ko_KR');
-    $translateProvider.fallbackLanguage('ko_KR');
-    //security
-    $translateProvider.useSanitizeValueStrategy('escape'); //(https://angular-translate.github.io/docs/#/guide/19_security)
+    $translateProvider.preferredLanguage($cookies.get("language"));
+    $translateProvider.fallbackLanguage($cookies.get("language"));
+    //tranlate security
+    $translateProvider.useSanitizeValueStrategy('escape'); //(https://angular-translate.github.io/docs/#/guide/19_security) 
 }])
 .factory('UrlMessageStorage', ['$location', function($location) {
     return {
@@ -23,28 +29,36 @@ angular.module('comn.service.message',['comn.service.resource', 'pascalprecht.tr
         }
     };
 }])
-.factory('MessageService', ['$location', function($location) {
+.factory('MessageService', ['$filter', function($filter) {
+    function parametersMapping(list, str){
+        for(var i in list){
+            var regExp = new RegExp('\\{'+i+'\\}',"gim");
+            str = str.replace(regExp, list[i]);
+        }
+        return str;
+    }
     return {
-        put: function (name, value) {},
-        get: function (name) {
-            return $location.search()['langCode']
+        get: function(name, parameters){
+            var message = $filter('translate')(name)
+            if(parameters && angular.isObject(parameters)) return parametersMapping(parameters, message);
+            else return message;
         }
     };
 }])
-.directive('nxtMessage', ['MessageService', function (MessageService) {
+.filter('imstMessage', [function(){
+    
+}])
+.directive('imsMessage', ['MessageService', function (MessageService) {
     return{
-        restrict: 'EA',
+        restrict: 'A',
         link: function($scope, element, attrs, ctrl){
-            MessageService.getMessage("code",
-                    function(messageData){
-                        (element[0].tagName == "INPUT" || element[0].tagName == "TEXTAREA") 
-                            ? angular.element(element).val("메세지") :angular.element(element).text(messageData);
-                    },
-                    function(error){
-                        (element[0].tagName == "INPUT" || element[0].tagName == "TEXTAREA")
-                            ? angular.element(element).val("메세지") : angular.element(element).text("메세지");
-                    }
-            );
+            var key = attrs.imsMessage;
+            var parameters = attrs.imsMessageValues;
+            if(key){
+                var message = MessageService.get(key, angular.fromJson(parameters));
+                (element[0].tagName == "INPUT" || element[0].tagName == "TEXTAREA") 
+                ? angular.element(element).val(message) : angular.element(element).text(message);
+            }
         }
     }
 

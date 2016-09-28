@@ -1,0 +1,139 @@
+<script type="text/javascript">
+
+(function(){
+    'use strict';
+    angular.module("programModule")
+    .controller("ProgramController", ["$scope", "RESTfulService", 
+                                      "KendoDataHelper", "ApiEvent", 
+                                      '$kWindow', 'constants',
+                                      function($scope, RESTfulService, 
+                                              KendoDataHelper, ApiEvent, 
+                                              $kWindow, constants){
+        var vm = this;
+        var parent = $scope.$parent;
+
+        vm.label = {
+                    msgGrpCd: "그룹코드",
+                    msgCd: "코드",
+                    msgCdNm: "코드명"
+        }
+        vm.disabled = true;
+        vm.disableChange = function(){
+            vm.disabled ? vm.disabled = false : vm.disabled = true;
+        }
+        
+        //grid
+        //detaile
+        vm.mst = parent.data;
+        vm.gridDtlData = KendoDataHelper.toKendoData({
+            data: parent.data.MSG_LOC_LIST,
+            schema: {
+                model: {
+                    id: "MSG_LOC_PK",
+                    fields: {
+                        MSG_LOC_PK: { type: "string", editable: false, nullable: true},
+                        MSG_GRP_CD: { type: "string", editable: false, validation: { required: true }},
+                        MSG_CD: { type: "string", editable: false, validation: { required: true }},
+                        LANG_CD: { type: "string", editable: true, validation: { required: true } },
+                        MSG_NM: { type: "string", editable: true }
+                    }
+                }
+            },
+            change: function(e){
+                console.log("datasource change out");
+            } 
+        }, "data");
+        vm.gridDtlColumns = [{field: "MSG_LOC_PK"},
+                             {field: "MSG_GRP_CD", title: "Group Code"},
+                             {field: "MSG_CD", title: "Msg Code"},
+                             {field: "LANG_CD", title: "Lang Code"},
+                             {field: "MSG_NM", title: "Message"},
+                             {field: "TRANSACTION_TYPE"}];
+        
+        
+        // event
+        var Message = ApiEvent.getInstance("api/app/messages/:msgPk");
+        vm.addRow = function(property){
+            if(vm[property].dataSource.total() == 0) return;
+            vm[property].addRow();
+        }
+        vm.removeRow = function(property){
+            if(vm[property].dataSource.total() == 0) return;
+            vm[property].removeRow(vm[property].select());
+        }
+        
+        //RESTful
+        vm.save = function(){
+            console.log(vm.form);
+            if(!vm.gridDtlData.isUpdated() && (!vm.form.$dirty || !vm.form.$valid)) return false;
+            var data = null;
+            if(!vm.mst.UPDATE) {
+                vm.mst.TRANSACTION_TYPE = "U";
+                vm.mst.UPDATE = new Array(vm.mst);
+            }
+            data = vm.mst.UPDATE[0];
+            if(!data) return false;
+            data.MSG_LOC_LIST = vm.gridDtlData.UPDATE || null;
+            console.log(data);
+            return;
+            Message.saveChanges({msgPk: data.MSG_PK}
+            ,function(response){
+                console.log(response);
+            },function(error){
+                console.log(error.data.MESSAGE);
+            });
+        };
+    }]);
+})();
+
+</script>
+<div id="program" data-dynamic-controller="ProgramController as vm">
+    <kendo-button k-on-click="vm.save()">{{'LAB.SAVE' | translate}}</kendo-button>
+    <div class="datatable1">
+        <form name="vm.form">
+            <table>
+            <colgroup>
+                <col width="100px"><col width="">
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th ng-bind="vm.label.msgGrpCd"></th>
+                    <td>
+                        <input class="k-textbox" name="msgGrpCd" ng-model="vm.mst.MSG_GRP_CD"/>
+                    </td>
+                </tr>
+                <tr>
+                    <th ng-bind="vm.label.msgCd"></th>
+                    <td>
+                        <input class="k-textbox" name="msgCd" ng-model="vm.mst.MSG_CD" />
+                    </td>
+                </tr>
+                <tr>
+                    <th ng-bind="vm.label.msgCdNm"></th>
+                    <td>
+                        <input class="k-textbox" name="msgCdNm" ng-model="vm.mst.MSG_NM"/>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </form>
+        
+    </div>
+    <div class="totalbox">
+        <div class="l_box">
+            <div class="total"><strong>Order 총 <span ng-bind="vm.gridDtl.dataSource.total()"></span></strong> 건</div>
+            <ul>
+                <li><a href="#"><img src="img/common/btn_icon1.gif" alt="+" ng-click="vm.addRow('gridDtl')"></a></li>
+                <li><a href="#"><img src="img/common/btn_icon2.gif" alt="-" ng-click="vm.removeRow('gridDtl')" ></a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="datatable2">
+        <kendo-grid  k-scope-field="vm.gridDtl" 
+                     ims-grid k-options="imsgrid.options" 
+                     k-editable="true"
+                     k-data-source="vm.gridDtlData" 
+                     k-ng-delay="vm.gridDtlData" 
+                     k-columns="vm.gridDtlColumns"></kendo-grid>
+    </div>
+</div>

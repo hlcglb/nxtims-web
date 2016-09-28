@@ -3,12 +3,12 @@
 (function(){
     'use strict';
     angular.module("programModule")
-    .controller("ProgramController", ["$scope", "RESTfulService", 
+    .controller("ProgramController", ["$scope", "GfnService", '$filter',
                                       "KendoDataHelper", "ApiEvent", 
                                       '$kWindow', 'constants',
-                                      function($scope, RESTfulService, 
+                                      function($scope, GfnService, $filter,
                                               KendoDataHelper, ApiEvent, 
-                                              $kWindow, constants){
+                                              $kWindow, constants ){
         var vm = this;
         var dtlApi;
         vm.label = {
@@ -16,6 +16,10 @@
                     msgCd: "코드",
                     msgCdNm: "코드명"
         }
+        vm.test = {
+            height: 275
+        }
+        console.log(GfnService.getMessage("MSG.SAVE", [1]));
         vm.disabled = true;
         vm.disableChange = function(){
             vm.disabled ? vm.disabled = false : vm.disabled = true;
@@ -258,18 +262,24 @@
                         <th ng-bind="vm.label.msgGrpCd">부서</th>
                         <td>
                             <common-code-combo code="RESOURCE_TYPE" value="CODE_DTL_CD" text="CODE_DTL_NM" property="CODE_DETAIL_LIST" ng-disabled="vm.disabled" ng-model="vm.search.msgGrpCd" name="grpCode"></common-code-combo>
-                        </td>
-                        <th ng-bind="vm.label.msgCd">부서1</th>
-                        <td>
-                            <input class="k-textbox w100" ng-model="vm.search.msgCd" name="code"/>
                             <span class="shbox w100">
                                 <input type="text" name="" class="k-textbox ip1" value="" title="" />
                                 <input type="button" name="" class="k-button k-primary btn_search" value="" title="" />
                             </span>
                         </td>
+                        <th ng-bind="vm.label.msgCd">부서1</th>
+                        <td>
+                            <input class="k-textbox w100" ng-model="vm.search.msgCd" name="code"/>
+                            
+                            <span class="k-textbox k-space-right w100">
+                                <input type="text" id="icon-right"/>
+                                <a href="#" class="k-icon k-i-search">&nbsp;</a>
+                            </span>
+                        </td>
                         <th ng-bind="vm.label.msgCdNm"></th>
                         <td>
                             <input class="k-textbox w95" ng-model="vm.search.msgNm" name="name"/>
+                            <span ims-message="MSG.SAVE" ims-message-values="[2]"></span>
                         </td>
                         <th></th>
                         <td></td>
@@ -291,7 +301,7 @@
     </div>
     <div class="datatable2">
         <kendo-grid  k-scope-field="vm.gridMst"
-                     ims-grid="" k-options="imsgrid.options"
+                     ims-grid="vm.test" k-options="imsgrid.options"
                      k-editable='{"mode": "popup", "create": true, "update": true, "destroy": false}'
                      k-data-source="vm.gridMstData" 
                      k-ng-delay="vm.gridMstData" 
@@ -317,7 +327,7 @@
     </div>
     <div class="datatable2">
         <kendo-grid  k-scope-field="vm.gridDtl" 
-                     ims-grid k-options="imsgrid.options" 
+                     ims-grid="vm.test" k-options="imsgrid.options" 
                      k-data-source="vm.gridDtlData" 
                      k-ng-delay="vm.gridDtlData" 
                      k-columns="vm.gridDtlColumns"

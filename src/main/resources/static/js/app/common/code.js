@@ -15,7 +15,7 @@ angular.module('comn.service.code',['comn.service.resource'])
     //security
     $translateProvider.useSanitizeValueStrategy('escape'); //(https://angular-translate.github.io/docs/#/guide/19_security)
 }])
-.factory('UrlMessageStorage', ['$location', function($location) {
+.factory('CodeStorage', ['$location', function($location) {
     return {
         put: function (name, value) {},
         get: function (name) {

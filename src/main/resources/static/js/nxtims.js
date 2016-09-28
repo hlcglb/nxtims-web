@@ -23,11 +23,12 @@ angular.module("nxtIms",
           "nxtIms.home",
           "programModule"
           ])
-.config(["$stateProvider", "$urlRouterProvider", "$httpProvider", "$locationProvider", 
+.config(["$stateProvider", "$urlRouterProvider", "$httpProvider", "$locationProvider", "$translateProvider",
          "constants", "ProgramInfoProvider",
-         function($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider, 
+         function($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider, $translateProvider,
                  constants, ProgramInfoProvider) {
     ProgramInfoProvider.init();
+    
     //ui-router 
     $urlRouterProvider.otherwise(constants.login);
     var stateNav = {

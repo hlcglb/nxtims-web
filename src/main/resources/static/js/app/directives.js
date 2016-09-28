@@ -107,6 +107,7 @@ angular.module('nxtims.directives')
         restrict: 'A',
         controller: ['$scope', '$element', function($scope, element){
             var ctrl = this;
+            var obj = $scope.$eval(element.attr("ims-grid"));
             ctrl.options = {
                             editable: false,
                             selectable: true,
@@ -121,6 +122,9 @@ angular.module('nxtims.directives')
                             columnMenu: false,
                             scrollable: true
                         };
+            if(obj) {
+                angular.extend(ctrl.options, obj);
+            }
         }],
         controllerAs: 'imsgrid',
         link: function(scope, element, attrs, ctrl){
