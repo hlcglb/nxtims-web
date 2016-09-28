@@ -8,7 +8,7 @@
 
 angular.module('comn.service.code',['comn.service.resource'])
 .config(["$translateProvider", function ($translateProvider) {
-    $translateProvider.useUrlLoader('/api/login/message');
+    $translateProvider.useUrlLoader('/api/login/code');
     $translateProvider.useStorage('UrlMessageStorage');
     $translateProvider.preferredLanguage('ko_KR');
     $translateProvider.fallbackLanguage('ko_KR');

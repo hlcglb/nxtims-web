@@ -128,11 +128,10 @@ angular.module('nxtims.services')
                 data: [],
                 schema: {
                     model: {}
-                },
-                pageSize: 10
+                }
             };
             var changeFunction = function(e){
-                console.log(this.hasChanges());
+                //console.log(this.hasChanges());
                 switch(e.action){
                 case "add" :
                     //e.items[0].TRANSACTION_TYPE = "C";
@@ -174,6 +173,9 @@ angular.module('nxtims.services')
             angular.extend(defualtDataSource, data);
             defualtDataSource.change = changeFunction;
             dataSource = new kendo.data.DataSource(defualtDataSource);
+            dataSource.isUpdated = function(){
+                return (this.UPDATE && this.UPDATE.length > 0) ? true : false;
+            }
             break;
         default:
             break;
@@ -188,8 +190,15 @@ angular.module('nxtims.services')
     
 
 }]);
+/**
+ * common API service
+ * dataSource가 있으면 자동저장 기능 제공
+ * dataSource의 업데이트 정보를 통해 자동 콜 기능이 있는 saveChanges 제공
+ * @example get(),query(),save(),update(),remove()는 $resource의 사용방법과 같음
+ * @example saveChanges(urlParameter, successFunction, errorFunction)
+ */
 angular.module('nxtims.services')
-.service('ApiEvent',['RESTfulService', '$q', 'notify', function(RESTfulService, $q, notify){
+.service('ApiEvent1',['RESTfulService', '$q', 'notify', function(RESTfulService, $q, notify){
     var api;
     var argsToArray = function(args){
         /*var list = new Array(args.length);
@@ -208,10 +217,10 @@ angular.module('nxtims.services')
             var value = angular.fromJson(angular.toJson(response));
             //console.log(that.dataSource === kendo.data.DataSource);
             if(that.dataSource && property != "remove"){
-                (property == "query" || property == "get") ? that.dataSource.data(value) : setDataSource(value);
+                (property == "query" || property == "get") ? that.dataSource.data(value) : angular.noop();
                 console.log(that.dataSource.data());
             }
-
+            if(that.dataSource.UPDATE) delete that.dataSource.UPDATE;
             defer.resolve(value);
         },function(reason){
             defer.reject(reason);
@@ -219,9 +228,6 @@ angular.module('nxtims.services')
         return defer.promise;
     }
     this.dataSource;
-    this.isUpdate = function(){
-        return (this.dataSource.UPDATE && this.dataSource.UPDATE.length > 0) ? true : false;
-    };
     this.getApi = function(){
         return api;
     }
@@ -250,7 +256,7 @@ angular.module('nxtims.services')
         args.unshift("remove");
         return apiFunction.apply(this, args);
     };
-    this.saveChanges = function(parameter, successFunc, errorFunc){
+    this.saveChanges = function(parameters, successFunc, errorFunc){
         var qList = new Array();
         if(this.dataSource.UPDATE.length > 1){
             notify("1건 이상의 데이터를 저장할 수 없습니다.");
@@ -261,17 +267,17 @@ angular.module('nxtims.services')
             case "C":
                 console.log("save");
                 console.log(this.dataSource);
-                //qList.push(this.save(angular.toJson(this.dataSource.UPDATE[i])));
+                qList.push(this.save(angular.toJson(this.dataSource.UPDATE[i])));
                 break;
             case "U":
                 console.log("update");
                 console.log(this.dataSource);
-                //qList.push(this.update(parameters, this.dataSource.UPDATE[i]));
+                qList.push(this.update(parameters, this.dataSource.UPDATE[i]));
                 break;
             case "D":
                 console.log("delete");
                 console.log(this.dataSource);
-                //qList.push(this.remove(parameters));
+                qList.push(this.remove(parameters));
                 break;
             default:
                 console.log("there is no TRANSACTION_TYPE");
@@ -294,10 +300,99 @@ angular.module('nxtims.services')
 }]);
 
 angular.module('nxtims.services')
-.factory('ApiEvent1',['RESTfulService', '$q', function(RESTfulService, $q){
-    var api = RESTfulService;
-    api.dd = "123";
-    return function(url){
-        return api(rul);
+.factory('ApiEvent',['RESTfulService', '$q', function(RESTfulService, $q){
+    return function ApiEvent(url){
+        var api = RESTfulService(url);;
+        var argsToArray = function(args){
+            /*var list = new Array(args.length);
+            for(var i = 0; i < list.length; i++) {
+                list[i] = args[i];
+            }*/
+            return Array.prototype.slice.call(args); //list;
+        };
+        
+        var apiFunction = function(){
+            var args = argsToArray(arguments);
+            var property = args.shift();
+            var that = this;
+            var defer = $q.defer();
+            api[property].apply(null, args).$promise.then(function(response){
+                var value = angular.fromJson(angular.toJson(response));
+                //console.log(that.dataSource === kendo.data.DataSource);
+                if(that.dataSource && property != "remove"){
+                    (property == "query" || property == "get") ? that.dataSource.data(value) : angular.noop();
+                }
+                if(that.dataSource && that.dataSource.UPDATE) delete that.dataSource.UPDATE;
+                defer.resolve(value);
+            },function(reason){
+                defer.reject(reason);
+            });
+            return defer.promise;
+        }
+        this.dataSource;
+        this.getApi = function(){
+            return api;
+        }
+        this.query = function(){
+            var args = argsToArray(arguments);
+            args.unshift("query");
+            return apiFunction.apply(this, args);
+        };
+        this.get = function(){
+            var args = argsToArray(arguments);
+            args.unshift("get");
+            return apiFunction.apply(this, args);
+        };
+        this.save = function(){
+            var args = argsToArray(arguments);
+            args.unshift("save");
+            return apiFunction.apply(this, args);
+        };
+        this.update = function(){
+            var args = argsToArray(arguments);
+            args.unshift("update");
+            return apiFunction.apply(this, args);
+        };
+        this.remove = function(){
+            var args = argsToArray(arguments);
+            args.unshift("remove");
+            return apiFunction.apply(this, args);
+        };
+        this.saveChanges = function(parameters, successFunc, errorFunc){
+            var qList = new Array();
+            if(this.dataSource.UPDATE.length > 1){
+                notify("1건 이상의 데이터를 저장할 수 없습니다.");
+                return false;
+            }
+            for(var i in this.dataSource.UPDATE){
+                switch(this.dataSource.UPDATE[i].TRANSACTION_TYPE){
+                case "C":
+                    console.log("save");
+                    console.log(this.dataSource);
+                    qList.push(this.save(angular.toJson(this.dataSource.UPDATE[i])));
+                    break;
+                case "U":
+                    console.log("update");
+                    console.log(this.dataSource);
+                    qList.push(this.update(parameters, this.dataSource.UPDATE[i]));
+                    break;
+                case "D":
+                    console.log("delete");
+                    console.log(this.dataSource);
+                    qList.push(this.remove(parameters));
+                    break;
+                default:
+                    console.log("there is no TRANSACTION_TYPE");
+                    return false;
+                    break;
+                }
+            }
+            $q.all(qList).then(function(response){
+                if(angular.isFunction(successFunc)) successFunc(response);
+            },function(error){
+                if(angular.isFunction(errorFunc)) errorFunc(error);
+            });
+            
+        };
     }
 }]);

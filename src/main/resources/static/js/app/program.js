@@ -143,20 +143,23 @@ angular.module("programModule")
 });
 angular.module("programModule")
 .component('commonCodeCombo', {
-    template: '<select class="sel2" kendo-combo-box k-options="$ctrl.options"></select>',
+    template: '<select kendo-combo-box k-options="$ctrl.options"></select>',
     bindings: {
         code: '@',
         text: '@',
         value: '@',
         property: '@'
     },
-    controller: ['RESTfulService', function(RESTfulService){
+    controller: ['ApiEvent', function(ApiEvent){
         var ctrl = this; 
+        var codeApi = new ApiEvent("/api/app/code/:codeMstCd");
         ctrl.dataSource = {
             transport: {
                 read: function(options){
-                    RESTfulService(ctrl.code).get({}
-                    ,function success(data){
+                    codeApi.get({codeMstCd: ctrl.code}
+                    ,function success(response){
+                        var data = angular.fromJson(angular.toJson(response));
+                        console.log(data);
                         ctrl.property ? options.success(data[ctrl.property]) : options.success(data);
                     }
                     ,function error(data){

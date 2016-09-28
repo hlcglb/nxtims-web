@@ -3,10 +3,14 @@
 (function(){
     'use strict';
     angular.module("programModule")
-    .controller("ProgramController", ["$scope", "RESTfulService", "KendoDataHelper", "ApiEvent",
-                                      function($scope, RESTfulService, KendoDataHelper, ApiEvent){
+    .controller("ProgramController", ["$scope", "RESTfulService", 
+                                      "KendoDataHelper", "ApiEvent", 
+                                      '$kWindow', 'constants',
+                                      function($scope, RESTfulService, 
+                                              KendoDataHelper, ApiEvent, 
+                                              $kWindow, constants){
         var vm = this;
-
+        var dtlApi;
         vm.label = {
                     msgGrpCd: "그룹코드",
                     msgCd: "코드",
@@ -16,7 +20,7 @@
         vm.disableChange = function(){
             vm.disabled ? vm.disabled = false : vm.disabled = true;
         }
-        
+
         //grid
         //mst
         vm.gridMstData = KendoDataHelper.toKendoData({
@@ -26,15 +30,14 @@
                     id: "MSG_PK",
                     fields: {
                         MSG_PK: { type: "string", editable: false, nullable: true },
-                        MSG_GRP_CD: { type: "string", editable: false, validation: { required: true }},
-                        MSG_CD: { type: "string", editable: false, validation: { required: true } },
+                        MSG_GRP_CD: { type: "string", editable: true, validation: { required: true }},
+                        MSG_CD: { type: "string", editable: true, validation: { required: true } },
                         MSG_NM: { type: "string", editable: true },
                         USER_ID: { type: "string", editable: false },
                         MSG_LOC_LIST: { type: "string", editable: false }
                     }
                 }
             },
-            pageSize: 10,
             change: function(e){
                 console.log("MST change out");
             } 
@@ -44,8 +47,6 @@
             {field: "MSG_GRP_CD", title: "Group Code"},
             {field: "MSG_CD", title: "Code"},
             {field: "MSG_NM", title: "Message"},
-            {field: "USER_ID", title: "User ID"},
-            {field: "MSG_LOC_LIST"},
             {command: ["edit"], title: "&nbsp;", width: "150px" }];
         
         //detaile
@@ -65,7 +66,6 @@
                     }
                 }
             },
-            pageSize: 10,
             change: function(e){
                 console.log("datasource change out");
             } 
@@ -75,32 +75,42 @@
                              {field: "MSG_CD", title: "Msg Code"},
                              {field: "LANG_CD", title: "Lang Code"},
                              {field: "MSG_NM", title: "Message"},
-                             {field: "USER_ID", title: "User ID"},
                              {field: "TRANSACTION_TYPE"}];
         
         
         // event
-        var Message = ApiEvent.getInstance("api/app/messages/:msgPk");
+        var Message = new ApiEvent("api/app/messages/:msgPk");
+        
         Message.dataSource = vm.gridMstData;
         var Messagedtl = Object.create(Message);
         Messagedtl.dataSource = vm.gridDtlData;
-
+        console.log(Message);
+        console.log(Messagedtl);
         vm.addRow = function(property){
+            if(vm.gridMstData.total() == 0) return;
             vm[property].addRow();
         }
         vm.removeRow = function(property){
+            if(vm[property].dataSource.total() == 0) return;
             vm[property].removeRow(vm[property].select());
         }
         vm.search = function(){
             /* if(confirm("조회 하시겠습니까?"))
                 alert("search"); */
-                var list1 = Message.query({
+                var obj = vm.search;
+                var str = "";
+                for(var key in obj){
+                    str += key + "=" + obj[key] + ",";
+                }
+                str.substring(0, str.lastIndexOf(",") -1);
+                console.log(str);
+                Message.query({
                     inquiry: "getMessageListByParam", 
-                    q: "", 
+                    q: str, 
                     offset: 0, limit: 100
-                    });
-                list1.then(
+                }).then(
                     function(data){
+                        console.log(vm.gridMstData);
                     },
                     function(error){
                         
@@ -108,32 +118,73 @@
                 );
         };
         vm.gridMstChange = function(e, data, dataItem) {
-            vm.mstSelectedItem = data;
+            console.log(e);
+            console.log("change event");
+            var grid = vm.gridMst;
+            var oldIdx = grid.select().index();
+            var oldRowData = grid.dataItem(grid.select());
+            var currIdx = grid.dataSource.indexOf(dataItem);
+
             //console.log(vm.mstSelectedItem);
+            
+        };
+        vm.gridMstRowChange = function(row, rowData){
+            vm.mstSelectedItem = rowData;
+            console.log("row change");
             Messagedtl.query({
                 inquiry: "getMessageLocaleListByParam",
-                msgGrpCd: dataItem.MSG_GRP_CD, 
-                msgCd: dataItem.MSG_CD})
+                msgGrpCd: vm.mstSelectedItem.MSG_GRP_CD, 
+                msgCd: vm.mstSelectedItem.MSG_CD})
             .then(function(data){
                 
             }
             ,function(error){
                 console.log(error);
             });
-        };
-        vm.gridMstChange2 = function(row, rowData){
-            console.log("change");
-            console.log(row);
-            console.log(rowData);
 
         };
+        vm.gridCanChange = function(oldRow, oldData, currRow, currData){
+            console.log(vm.gridMstData.isUpdated());
+            if(vm.gridMstData.isUpdated()){
+                return false;
+            };
+        }
         vm.gridMstClick = function(row, rowData){
             console.log("==click==");
 
         };
-        vm.gridMstDblClick = function(event, row, rowData){
-            
-
+        vm.gridMstDblClick = function(row, rowData){
+            var windowInstance = $kWindow.open({
+                    options:{
+                        modal: true,
+                        title: "메세지 저장",
+                        resizable: true,
+                        height: 600,
+                        width: 860,
+                        visible: false
+                    },
+                    windowTemplateUrl: constants.popTemplUrl + "window.html",
+                    templateUrl: constants.templateUrl + "app/messageP01.html",
+                    controller: ["$scope", "$windowInstance", "data", function($scope, $windowInstance, data){
+                        rowData.MSG_LOC_LIST = data;
+                        $scope.data = rowData;
+                        $scope.$windowInstance = $windowInstance;
+                    }],
+                    resolve: {
+                        data: Messagedtl.query({
+                                inquiry: "getMessageLocaleListByParam",
+                                msgGrpCd: rowData.MSG_GRP_CD, 
+                                msgCd: rowData.MSG_CD})
+                    }
+            });
+            windowInstance.result.then(function (result) {
+                if (result) {
+                    self.result = "confirmed!";
+                }
+                else{
+                    self.result = "canceled!";
+                }
+            });
         };
         vm.gridMstEdit = function(e){
             console.log(e);
@@ -156,16 +207,12 @@
         
         //RESTful
         vm.save = function(){
-            console.log(vm.gridDtlData.hasChanges());
-            console.log(vm.gridMstData.hasChanges());
-            console.log(vm.gridDtlData.isUpdated());
-            console.log(vm.gridMstData.isUpdated());
-            if(!vm.gridDtlData.hasChanges() && !vm.gridMstData.hasChanges()) return false;
+            if(!vm.gridDtlData.isUpdated() && !vm.gridMstData.isUpdated()) return false;
             vm.gridMst.trigger("saveChanges");
             vm.gridDtl.trigger("saveChanges");
             
             var data = null;
-            if(!vm.gridMstData.hasChanges()) {
+            if(!vm.gridMstData.isUpdated()) {
                 vm.mstSelectedItem.TRANSACTION_TYPE = "U";
                 vm.gridMstData.UPDATE = new Array(vm.mstSelectedItem);
             }
@@ -198,98 +245,53 @@
     </div>
     <kendo-button k-on-click="vm.save()">{{'LAB.SAVE' | translate}}</kendo-button>
     <div class="datatable1">
-        <table>
-            <colgroup>
-                <col width="100px"><col width="">
-                <col width="100px"><col width="">
-                <col width="100px"><col width="">
-                <col width="100px"><col width="">
-            </colgroup>
-            <tbody>
-                <tr>
-                    <th ng-bind="vm.label.msgGrpCd">부서</th>
-                    <td>
-                        <select class="sel w96" title="">
-                            <option value="MSG">메세지</option>
-                            <option value="LAB">라벨</option>
-                        </select>
-                    </td>
-                    <th ng-bind="vm.label.msgCd">부서1</th>
-                    <td>
-                        <input class="k-textbox" />
-                    </td>
-                    <th ng-bind="vm.label.msgCdNm"></th>
-                    <td>
-                        <input class="k-textbox" /><common-code-test code="api/login/resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST" ng-disabled="vm.disabled"></common-code-test>
-                    </td>
-                    <th></th>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
+        <form name="vm.from">
+            <table>
+                <colgroup>
+                    <col width="100px"><col width="">
+                    <col width="100px"><col width="">
+                    <col width="100px"><col width="">
+                    <col width="100px"><col width="">
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th ng-bind="vm.label.msgGrpCd">부서</th>
+                        <td>
+                            <common-code-combo code="RESOURCE_TYPE" value="CODE_DTL_CD" text="CODE_DTL_NM" property="CODE_DETAIL_LIST" ng-disabled="vm.disabled" ng-model="vm.search.msgGrpCd" name="grpCode"></common-code-combo>
+                        </td>
+                        <th ng-bind="vm.label.msgCd">부서1</th>
+                        <td>
+                            <input class="k-textbox w100" ng-model="vm.search.msgCd" name="code"/>
+                            <span class="shbox w100">
+                                <input type="text" name="" class="k-textbox ip1" value="" title="" />
+                                <input type="button" name="" class="k-button k-primary btn_search" value="" title="" />
+                            </span>
+                        </td>
+                        <th ng-bind="vm.label.msgCdNm"></th>
+                        <td>
+                            <input class="k-textbox w95" ng-model="vm.search.msgNm" name="name"/>
+                        </td>
+                        <th></th>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
     </div>
-    <table>
-            <colgroup>
-                <col width="100px"><col width="">
-                <col width="100px"><col width="">
-                <col width="100px"><col width="">
-                <col width="100px"><col width="">
-            </colgroup>
-            <tbody>
-                <tr>
-                    <th ng-bind="vm.label.msgGrpCd">부서</th>
-                    <td>
-                        <select class="sel w96" title="">
-                            <option value="MSG">메세지</option>
-                            <option value="LAB">라벨</option>
-                        </select>
-                    </td>
-                    <th ng-bind="vm.label.msgCd">부서1</th>
-                    <td>
-                        <input class="k-textbox" />
-                    </td>
-                    <th ng-bind="vm.label.msgCdNm"></th>
-                    <td>
-                        <input class="k-textbox" />
-                    </td>
-                    <th ng-bind="vm.label.msgCdNm"></th>
-                    <td></td>
-                </tr>
-                <tr>
-                    <th ng-bind="vm.label.msgGrpCd">부서</th>
-                    <td>
-                        <select class="sel w96" title="">
-                            <option value="MSG">메세지</option>
-                            <option value="LAB">라벨</option>
-                        </select>
-                    </td>
-                    <th ng-bind="vm.label.msgCd">부서1</th>
-                    <td>
-                        <common-code-combo code="api/login/resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST" ng-disabled="vm.disabled"></common-code-combo>
-                    </td>
-                    <th ng-bind="vm.label.msgCdNm"></th>
-                    <td>
-                        <common-code-test code="api/login/resource" value="RESOURCE_ID" text="RESOURCE_NM" property="MENU_LIST" ng-disabled="vm.disabled"></common-code-test>
-                    </td>
-                    <th ng-bind="vm.label.msgCdNm"></th>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
     <div class="totalbox">
         <div class="l_box">
             <div class="total"><strong>Order 총 <span ng-bind="vm.gridMst.dataSource.total()">298</span></strong> 건</div>
             <ul>
-                <li><a href="#"><img src="img/common/btn_icon1.gif" alt=""></a></li>
-                <li><a href="#"><img src="img/common/btn_icon2.gif" alt="+" ng-click="vm.addRow('gridMst')"></a></li>
-                <li><a href="#"><img src="img/common/btn_icon3.gif" alt="-" ng-click="vm.removeRow('gridMst')"></a></li>
-                <li><a href="#"><img src="img/common/btn_icon4.gif" alt="x"></a></li>
+                <li><a href="#"><img src="img/common/btn_icon1.gif" alt="+" ng-click="vm.addRow('gridMst')"></a></li>
+                <li><a href="#"><img src="img/common/btn_icon2.gif" alt="-" ng-click="vm.removeRow('gridMst')"></a></li>
+                <li><a href="#"><img src="img/common/btn_icon3.gif" alt="excel up"></a></li>
+                <li><a href="#"><img src="img/common/btn_icon4.gif" alt="excel down"></a></li>
             </ul>
         </div>
     </div>
     <div class="datatable2">
         <kendo-grid  k-scope-field="vm.gridMst"
-                     ims-grid k-options="imsgrid.options"
+                     ims-grid="" k-options="imsgrid.options"
                      k-editable='{"mode": "popup", "create": true, "update": true, "destroy": false}'
                      k-data-source="vm.gridMstData" 
                      k-ng-delay="vm.gridMstData" 
@@ -297,18 +299,19 @@
                      k-on-change="vm.gridMstChange(kendoEvent, data, dataItem)"
                      k-on-remove="vm.gridMstRemove(kendoEvent)"
                      k-on-edit="vm.gridMstEdit(kendoEvent)"
-                     k-on-grid-row-change="vm.gridMstChange2(currRow, currData)" 
-                     k-on-grid-row-dblclick="vm.gridMstDblClick(event, rowData)"
+                     k-on-grid-row-change="vm.gridMstRowChange(row, dataItem)" 
+                     k-on-grid-row-dblclick="vm.gridMstDblClick(row, dataItem)"
+                     k-on-grid-row-can-change="vm.gridCanChange(oldRow, oldData, currRow, currData)"
                      ></kendo-grid>
     </div>
     <div class="totalbox">
         <div class="l_box">
             <div class="total"><strong>Order 총 <span ng-bind="vm.gridDtl.dataSource.total()">298</span></strong> 건</div>
             <ul>
-                <li><a href="#"><img src="img/common/btn_icon1.gif" alt=""></a></li>
-                <li><a href="#"><img src="img/common/btn_icon2.gif" alt="+" ng-click="vm.addRow('gridDtl')"></a></li>
-                <li><a href="#"><img src="img/common/btn_icon3.gif" alt="-" ng-click="vm.removeRow('gridDtl')"></a></li>
-                <li><a href="#"><img src="img/common/btn_icon4.gif" alt="x"></a></li>
+                <li><a href="#"><img src="img/common/btn_icon1.gif" alt="+" ng-click="vm.addRow('gridDtl')"></a></li>
+                <li><a href="#"><img src="img/common/btn_icon2.gif" alt="-" ng-click="vm.removeRow('gridDtl')" ></a></li>
+                <li><a href="#"><img src="img/common/btn_icon3.gif" alt="excel up" ></a></li>
+                <li><a href="#"><img src="img/common/btn_icon4.gif" alt="excel down"></a></li>
             </ul>
         </div>
     </div>
@@ -320,3 +323,4 @@
                      k-columns="vm.gridDtlColumns"
                      k-on-edit="vm.gridDtlEdit(kendoEvent)"></kendo-grid>
     </div>
+</div>

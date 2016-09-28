@@ -10,7 +10,11 @@ angular.module('nxtims.directives',[]);
  * ims common grid optins
  */
 angular.module('nxtims.directives')
-.directive('imsGrid', [function() {
+.directive('imsGrid', ['$timeout', function($timeout) {
+    var delay = 100;
+    var prevent = false;
+    var cnacel = false;
+    var clickPromise;
     function attachDblClickToRows(scope, element, attrs) {
         /**
          * event bind - grid <tr> double click
@@ -18,46 +22,82 @@ angular.module('nxtims.directives')
          */
         if(attrs.kOnGridRowDblclick){
             element.find('tbody tr').on('dblclick', function(event) {
+                event.preventDefault();
+                cnacel = $timeout.cancel(clickPromise);
                 var rowScope = angular.element(event.currentTarget).scope();
                 var currIdx = element.getKendoGrid().dataSource.indexOf(rowScope.dataItem);
                 scope.$eval(attrs.kOnGridRowDblclick, {
-                    rowIndex: currIdx,
-                    rowData: rowScope.dataItem
+                    row: currIdx,
+                    dataItem: rowScope.dataItem
                 });
             });
         }
         //event bind - grid <tr> click
         if(attrs.kOnGridRowClick || attrs.kOnGridRowChange){
-            element.find('tbody tr').on('click', function(event) {;
-                var rowScope = angular.element(event.currentTarget).scope();
-                var grid = element.getKendoGrid();
-                var oldIdx = grid.select().index();
-                var oldRowData = grid.dataItem(grid.select());
-                var currIdx = grid.dataSource.indexOf(rowScope.dataItem);
-
-                if(oldIdx == currIdx) return; //같은 로우이면 리턴
-                /**
-                 * row click event 
-                 * @example <kendo-grid k-on-grid-row-click="functionName(rowIndex, rowData)" ></kendo-grid>
-                 */
-                if(attrs.kOnGridRowClick){
-                    scope.$eval(attrs.kOnGridRowClick, {
-                        rowIndex: currIdx,
-                        rowData: rowScope.dataItem
-                    });
-                }
-                /**
-                 * row change event 
-                 * @example <kendo-grid k-on-grid-row-click="functionName(oldRow, oldData, currRow, currData)"></kendo-grid>
-                 */
-                if(attrs.kOnGridRowChange){
-
-                    scope.$eval(attrs.kOnGridRowChange, {
-                        oldRow: oldIdx,
-                        oldData: oldRowData,
-                        currRow: currIdx,
-                        currData: rowScope.dataItem
-                    });
+            element.find('tbody tr').on('click', function(event) {
+                //event.preventDefault();
+                if(!prevent){ //연속이벤트 체크
+                    prevent = true;
+                    var rowScope = angular.element(event.currentTarget).scope();
+                    var grid = element.getKendoGrid();
+                    var oldIdx = grid.select().index();
+                    var oldRowData = grid.dataItem(grid.select());
+                    var currIdx = grid.dataSource.indexOf(rowScope.dataItem);
+                    if(oldIdx != currIdx){
+                        var time = attrs.delay || delay;
+                        clickPromise = $timeout(function(){
+                            cnacel = false;
+                        }, time, false);
+                        clickPromise.then(function(){
+                            /**
+                             * row can change event 
+                             * @example <kendo-grid k-on-grid-row-can-change="functionName(rowIndex, rowData)" ></kendo-grid>
+                             */
+                            if(attrs.kOnGridRowCanChange){
+                                var canChange = scope.$eval(attrs.kOnGridRowCanChange, {
+                                    oldRow: oldIdx,
+                                    oldData: oldRowData,
+                                    currRow: currIdx,
+                                    currData: rowScope.dataItem
+                                });
+                                if(canChange == false){
+                                    grid.select("tr:eq(" + oldIdx + ")");
+                                    return false;
+                                }
+                                
+                            }
+                            /**
+                             * row click event 
+                             * @example <kendo-grid k-on-grid-row-click="functionName(rowIndex, rowData)" ></kendo-grid>
+                             */
+                            if(attrs.kOnGridRowClick){
+                                scope.$eval(attrs.kOnGridRowClick, {
+                                    row: currIdx,
+                                    dataItem: rowScope.dataItem
+                                });
+                            }
+                            /**
+                             * row change event 
+                             * @example <kendo-grid k-on-grid-row-change="functionName(oldRow, oldData, currRow, currData)"></kendo-grid>
+                             */
+                            if(attrs.kOnGridRowChange){
+                                scope.$eval(attrs.kOnGridRowChange, {
+                                    row: currIdx,
+                                    dataItem: rowScope.dataItem
+                                });
+                            }
+                        }, function(){
+                        })
+                        .catch(function(error){
+                            console.log(error);
+                        })
+                        .finally(function(){
+                            $timeout.cancel(clickPromise);
+                            prevent = false;
+                        });
+                    }
+                    else prevent = false;
+                    
                 }
             });
         }
@@ -68,22 +108,27 @@ angular.module('nxtims.directives')
         controller: ['$scope', '$element', function($scope, element){
             var ctrl = this;
             ctrl.options = {
-                            editable: true,
+                            editable: false,
                             selectable: true,
                             sortable: true,
-                            pageable: true,
-                            height: 453,
+                            /*pageable: {
+                                pageSize: 10
+                            },*/
+                            height: 450,
                             groupable: false,
                             resizable: true,
                             reorderable: false,
-                            columnMenu: true
+                            columnMenu: false,
+                            scrollable: true
                         };
         }],
         controllerAs: 'imsgrid',
         link: function(scope, element, attrs, ctrl){
             scope.$on("kendoWidgetCreated", function(event, widget) {
-                element.getKendoGrid().bind('dataBound', function () {
-                    this.select("tr:eq(0)");
+                element.getKendoGrid().bind('dataBound', function (e) {
+                    var idx;
+                    (this.dataSource.isUpdated()) ? idx = this.dataSource.indexOf(this.dataSource.UPDATE[0]) : idx = 0;
+                    this.select("tr:eq(" + idx + ")");
                     attachDblClickToRows(scope, element, attrs);
                 });
             });
